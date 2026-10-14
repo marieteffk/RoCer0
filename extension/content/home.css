@@ -1,0 +1,296 @@
+/* Inicio rediseñado de RoCer0. Las tarjetas van en una rejilla de 12 columnas; home.js pone a cada una
+   su ancho (grid-column: span N) según la colocación elegida. También lo usa la vista previa de los temas. */
+#rk-home { --rk-gap: 14px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--rk-gap); margin: 12px 0 24px; color: var(--rk-text); font-size: 14px; line-height: 1.4; }
+#rk-home * { box-sizing: border-box; }
+#rk-home a { color: inherit; text-decoration: none; }
+#rk-home button { font-family: inherit; }
+#rk-home .rk-card {
+  grid-column: 1 / -1; background: var(--rk-panel); border: 1px solid var(--rk-border); border-radius: var(--rk-radius); padding: 16px 18px; min-width: 0;
+  backdrop-filter: var(--rk-backdrop); -webkit-backdrop-filter: var(--rk-backdrop); position: relative; overflow: hidden;
+  display: flex; flex-direction: column; container: rk-card / inline-size;
+}
+#rk-home .rk-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* Cabecera de cada tarjeta */
+#rk-home .rk-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 14px; min-height: 26px; }
+#rk-home .rk-head h2 { margin: 0 !important; font-size: 18px !important; font-weight: 800 !important; letter-spacing: -.01em; line-height: 1.25 !important; color: var(--rk-text) !important; display: flex; align-items: center; gap: 8px; min-width: 0; }
+#rk-home .rk-head h2 > .rk-i { width: calc(17px * var(--rc-icon-scale, 1)); height: calc(17px * var(--rc-icon-scale, 1)); color: var(--rk-accent); flex: none; vertical-align: 0; }
+#rk-home .rk-h-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#rk-home .rk-head-side { display: flex; align-items: center; gap: 10px; margin-left: auto; min-width: 0; }
+#rk-home .rk-viewall { color: var(--rk-accent) !important; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; background: none; border: 0; padding: 0; cursor: pointer; }
+#rk-home .rk-viewall:hover { text-decoration: underline; }
+#rk-home .rk-count {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 12px !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rk-muted);
+  background: var(--rk-panel-2); border: 1px solid var(--rk-border); border-radius: 999px; padding: 1px 9px; white-space: nowrap; -webkit-text-fill-color: currentColor;
+}
+#rk-home .rk-count i { width: 7px; height: 7px; border-radius: 50%; background: #3b82f6; }
+#rk-home .rk-paused { color: #d97706; }
+@container rk-card (max-width: 460px) { #rk-home .rk-paused { padding: 3px 6px; } #rk-home .rk-paused > span { display: none; } }
+#rk-home .rk-tip { display: inline-flex; color: var(--rk-muted); cursor: help; }
+#rk-home .rk-muted { color: var(--rk-muted); font-size: 12px; }
+#rk-home svg.rk-i, #rk-home .rk-i.rc-i-img, #rk-home .rk-i.rc-i-mask { width: calc(13px * var(--rc-icon-scale, 1)); height: calc(13px * var(--rc-icon-scale, 1)); vertical-align: -2px; flex: none; }
+#rk-home svg.rk-i { stroke-width: var(--rc-icon-w, 2); }
+#rk-home .rk-meta { display: flex; align-items: center; gap: 10px; color: var(--rk-muted); font-size: 12px; white-space: nowrap; overflow: hidden; min-height: 17px; }
+#rk-home .rk-meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* Botones */
+#rk-home .rk-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent;
+  font-weight: 700; font-size: 13px; cursor: pointer; transition: filter .12s, transform .12s; white-space: nowrap; flex: none;
+}
+#rk-home .rk-btn:active { transform: scale(.96); }
+#rk-home .rk-btn:hover { filter: brightness(1.12); }
+#rk-home .rk-btn-accent { background: var(--rk-accent); color: var(--rk-accent-text); box-shadow: var(--rk-glow); }
+#rk-home .rk-btn-play { background: var(--rk-success); color: var(--rk-success-text); border-radius: var(--rk-radius-sm); height: 38px; padding: 0 22px; box-shadow: var(--rk-glow); }
+#rk-home .rk-btn-ghost { background: var(--rk-panel-2); color: var(--rk-text); border-color: var(--rk-border); }
+#rk-home .rk-btn-icon { width: 38px; padding: 0; border-radius: var(--rk-radius-sm); }
+#rk-home .rk-btn-icon.rk-on { color: var(--rk-danger); }
+#rk-home .rk-btn-icon.rk-on svg, #rk-home .rk-btn-icon.rk-on svg .rc-d { fill: currentColor; fill-opacity: 1; }
+#rk-home :is(.rk-btn, .rk-tab, .rk-chip, .rk-ghost, .rk-coll, .rk-quickplay, .rk-foot-link, .rk-viewall):focus-visible { outline: 2px solid var(--rk-accent); outline-offset: 2px; }
+
+/* Banner */
+#rk-home .rk-hero { min-height: 170px; padding: 0; flex-direction: row; align-items: stretch; background: var(--rk-panel); }
+#rk-home .rk-hero-img {
+  position: absolute; inset: 0 0 0 30%; background-size: cover; background-position: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 30%, #000 60%); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 30%, #000 60%);
+}
+#rk-home .rk-hero-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.3), transparent 50%); }
+#rk-home .rk-hero-body { position: relative; z-index: 1; flex: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 14px 16px; padding: 22px 24px; flex-wrap: wrap; min-width: 0; }
+#rk-home .rk-hero-main { min-width: 0; max-width: 100%; }
+#rk-home .rk-eyebrow { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--rk-muted); margin-bottom: 6px; }
+#rk-home .rk-eyebrow .rk-i { color: var(--rk-accent); }
+#rk-home .rk-hero-title {
+  font-size: clamp(22px, 4cqi, 32px) !important; line-height: 1.15 !important; font-weight: 900 !important; margin: 0 0 8px !important; color: var(--rk-text) !important; text-shadow: var(--rk-text-glow);
+  max-width: 34ch; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere;
+}
+#rk-home .rk-hero a:hover .rk-hero-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+#rk-home .rk-hero .rk-star { color: var(--rk-success); }
+#rk-home .rk-hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Sobre la foto del banner el botón de jugar va siempre relleno para que se lea, aunque el tema use botones suaves o de solo borde. */
+:is(.rk-l-buttons-soft, .rk-l-buttons-outline) #rk-home .rk-hero .rk-btn-play { background: var(--rk-success) !important; color: var(--rk-success-text) !important; border-color: var(--rk-success) !important; }
+
+/* Amigos */
+#rk-home .rk-friends { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; scroll-snap-type: x proximity; }
+#rk-home .rk-friends > .rk-friend { scroll-snap-align: start; }
+/* Fila con flechas cuando hay más amigos a los lados */
+#rk-home .rk-scroller { position: relative; min-width: 0; }
+#rk-home .rk-scroller.rk-can-r > :first-child { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
+#rk-home .rk-scroller.rk-can-l > :first-child { -webkit-mask-image: linear-gradient(90deg, transparent, #000 56px); mask-image: linear-gradient(90deg, transparent, #000 56px); }
+#rk-home .rk-scroller.rk-can-l.rk-can-r > :first-child { -webkit-mask-image: linear-gradient(90deg, transparent, #000 56px, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, transparent, #000 56px, #000 calc(100% - 56px), transparent); }
+#rk-home .rk-arrow {
+  position: absolute; top: calc(50% - 2px); transform: translateY(-50%); z-index: 2; width: 32px; height: 32px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--rk-border); background: var(--rk-surface); color: var(--rk-text); box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+}
+#rk-home .rk-arrow:hover { border-color: var(--rk-accent); color: var(--rk-accent); }
+#rk-home .rk-arrow-l { left: -4px; }
+#rk-home .rk-arrow-r { right: -4px; }
+#rk-home .rk-arrow-l .rk-i { transform: rotate(180deg); }
+#rk-home .rk-scroller.rk-can-l .rk-arrow-l, #rk-home .rk-scroller.rk-can-r .rk-arrow-r { display: flex; }
+#rk-home .rk-friend {
+  flex: 0 0 252px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--rk-radius); background: var(--rk-panel-2); border: 1px solid var(--rk-border); min-width: 0;
+}
+#rk-home .rk-avatar { position: relative; width: 44px; height: 44px; flex: none; display: block; }
+#rk-home .rk-avatar img, #rk-home .rk-avatar-ph { width: 44px; height: 44px; border-radius: 50%; background: var(--rk-surface); object-fit: cover; display: block; }
+#rk-home .rk-avatar-ph { display: grid; place-items: center; color: var(--rk-muted); }
+#rk-home .rk-avatar-ph .rk-i { width: 20px; height: 20px; }
+#rk-home .rk-dot { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--rk-surface-2); background: #7a7f87; }
+#rk-home .rk-dot.rk-online { background: #3b82f6; } #rk-home .rk-dot.rk-ingame { background: #22c55e; } #rk-home .rk-dot.rk-studio { background: #f59e0b; }
+#rk-home .rk-friend-info { flex: 1; min-width: 0; }
+#rk-home .rk-friend-name { display: block; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rk-home a.rk-friend-name:hover { color: var(--rk-accent); }
+#rk-home .rk-friend-status { font-size: 12px; color: var(--rk-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+#rk-home .rk-friend-status span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+#rk-home .rk-friend-status i { width: 7px; height: 7px; border-radius: 50%; background: #7a7f87; flex: none; }
+#rk-home .rk-friend-status i.rk-ingame { background: #22c55e; } #rk-home .rk-friend-status i.rk-online { background: #3b82f6; } #rk-home .rk-friend-status i.rk-studio { background: #f59e0b; }
+#rk-home .rk-friend .rk-btn { height: 30px; padding: 0 14px; }
+#rk-home .rk-friend .rk-btn-mini { width: 30px; padding: 0; color: var(--rk-muted); }
+#rk-home .rk-friend .rk-btn-mini:hover { color: var(--rk-accent); border-color: var(--rk-accent); filter: none; }
+/* Tarjeta de amigos no muy ancha: dos filas de amigos para aprovechar el alto. */
+@container rk-card (max-width: 900px) {
+  #rk-home .rk-friends:has(> .rk-friend:nth-child(3)) { display: grid; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-auto-columns: 252px; }
+}
+
+/* Rejillas de juegos: --rk-cols lo pone home.js según el ancho de la tarjeta */
+#rk-home .rk-grid { display: grid; grid-template-columns: repeat(var(--rk-cols, 4), minmax(0, 1fr)); gap: 12px 10px; }
+#rk-home .rk-grid-pins { --rk-cols: 6; }
+#rk-home .rk-cut { display: none !important; }
+#rk-home .rk-tile { display: block; min-width: 0; position: relative; container: rk-tile / inline-size; }
+#rk-home .rk-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: var(--rk-thumb-radius, var(--rk-radius-sm)); overflow: hidden; background: var(--rk-surface-2); }
+#rk-home .rk-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .25s; }
+#rk-home .rk-thumb-ph, #rk-home .rk-row-ph, #rk-home .rk-coll-ph, .rk-mg-ph { display: grid; place-items: center; color: var(--rk-muted); background: var(--rk-surface-2); }
+#rk-home .rk-thumb-ph { position: absolute; inset: 0; }
+#rk-home .rk-thumb-ph .rk-i { width: 26px; height: 26px; opacity: .7; }
+html.rk-anim #rk-home .rk-tile:hover .rk-thumb img { transform: scale(1.05); }
+#rk-home .rk-thumb .rk-quickplay {
+  position: absolute; right: 8px; bottom: 8px; width: 34px; height: 34px; border-radius: 50%; border: 0; padding: 0; background: var(--rk-success); color: var(--rk-success-text);
+  display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(6px); transition: .15s; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.35);
+}
+#rk-home .rk-quickplay .rk-i { width: 15px; height: 15px; }
+#rk-home .rk-tile:hover .rk-quickplay, #rk-home .rk-tile:focus-visible .rk-quickplay, #rk-home .rk-quickplay:focus-visible { opacity: 1; transform: none; }
+#rk-home .rk-pill {
+  position: absolute; left: 8px; top: 8px; max-width: calc(100% - 16px); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px;
+  background: rgba(0,0,0,.62); color: #fff; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden;
+}
+#rk-home .rk-pill .rk-i { color: #facc15; width: 11px; height: 11px; }
+#rk-home .rk-pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Juegos muy estrechos (p. ej. con el Inicio "Compacto" del tema): solo la valoración y la estrella. */
+@container rk-tile (max-width: 118px) {
+  #rk-home .rk-tile .rk-meta span:nth-child(2) { display: none; }
+  #rk-home .rk-pill span { display: none; }
+  #rk-home .rk-pill { padding: 3px 5px; }
+  #rk-home .rk-thumb .rk-quickplay { width: 28px; height: 28px; right: 6px; bottom: 6px; }
+}
+#rk-home .rk-tile-name { margin-top: 8px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rk-home .rk-tile .rk-meta { margin-top: 3px; }
+/* Hueco con aviso o con "ver todos" al final de los fijados */
+#rk-home .rk-ghost {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; aspect-ratio: 16 / 9; min-width: 0; padding: 6px 8px;
+  border: 1.5px dashed var(--rk-border); border-radius: var(--rk-thumb-radius, var(--rk-radius-sm)); background: transparent; color: var(--rk-muted);
+  font-size: 12px; font-weight: 700; line-height: 1.25; text-align: center; cursor: pointer;
+}
+#rk-home .rk-ghost b { font-size: 20px; font-weight: 900; color: var(--rk-text); }
+#rk-home button.rk-ghost:hover { border-color: var(--rk-accent); color: var(--rk-accent); }
+#rk-home .rk-ghost-hint { cursor: default; opacity: .8; }
+#rk-home .rk-ghost .rk-i { width: 16px; height: 16px; }
+
+/* Pestañas y fichas */
+#rk-home .rk-tabs { display: inline-flex; gap: 4px; }
+#rk-home .rk-tab { border: 1px solid var(--rk-border); background: var(--rk-panel-2); color: var(--rk-muted); border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; cursor: pointer; line-height: 1.4; }
+#rk-home .rk-tab:hover { color: var(--rk-text); }
+#rk-home .rk-tab.rk-on { background: var(--rk-accent); border-color: var(--rk-accent); color: var(--rk-accent-text); }
+#rk-home .rk-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 12px; }
+#rk-home .rk-chip {
+  display: inline-flex; align-items: center; gap: 5px; flex: none; border: 1px solid var(--rk-border); background: var(--rk-panel-2); color: var(--rk-muted);
+  border-radius: 999px; padding: 4px 11px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; max-width: 200px;
+}
+#rk-home .rk-chip span { overflow: hidden; text-overflow: ellipsis; }
+#rk-home .rk-chip:hover { color: var(--rk-text); }
+#rk-home .rk-chip.rk-on { background: var(--rk-accent-soft); border-color: var(--rk-accent); color: var(--rk-accent); }
+
+/* Listas de recientes y recomendados */
+#rk-home .rk-note { display: flex; gap: 6px; font-size: 12px; color: var(--rk-muted); margin: -4px 0 10px; }
+#rk-home .rk-list { display: flex; flex-direction: column; gap: 4px; }
+/* En tarjetas anchas, las listas en dos columnas (de arriba abajo, para que el orden se lea igual). */
+@container rk-card (min-width: 720px) {
+  #rk-home .rk-list-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(var(--rk-half, 3), auto); grid-auto-flow: column; gap: 4px 28px; }
+}
+#rk-home .rk-row { display: flex; align-items: center; gap: 12px; padding: 6px; border-radius: var(--rk-radius-sm); min-width: 0; }
+#rk-home .rk-row:hover { background: var(--rk-hover); }
+#rk-home .rk-row img, #rk-home .rk-row-ph { width: 42px; height: 42px; border-radius: var(--rk-thumb-radius, var(--rk-radius-sm)); object-fit: cover; background: var(--rk-surface-2); flex: none; }
+#rk-home .rk-row-ph .rk-i { width: 18px; height: 18px; }
+#rk-home .rk-row-main { flex: 1; min-width: 0; }
+#rk-home .rk-row-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rk-home .rk-row-sub { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--rk-muted); white-space: nowrap; overflow: hidden; }
+#rk-home .rk-rank { width: 22px; text-align: center; font-size: 18px; font-weight: 800; color: var(--rk-muted); flex: none; font-variant-numeric: tabular-nums; }
+#rk-home .rk-bar { height: 4px; border-radius: 2px; background: var(--rk-surface-2); margin-top: 5px; overflow: hidden; }
+#rk-home .rk-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--rk-accent), var(--rk-accent-2)); }
+
+/* Destacado */
+#rk-home .rk-featured { padding: 0; min-height: 300px; flex-direction: row; }
+#rk-home .rk-featured-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+#rk-home .rk-featured-img { -webkit-mask-image: linear-gradient(0deg, transparent 4%, rgba(0,0,0,.55) 30%, #000 65%); mask-image: linear-gradient(0deg, transparent 4%, rgba(0,0,0,.55) 30%, #000 65%); }
+#rk-home .rk-featured-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, transparent 40%); }
+#rk-home .rk-featured-body { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; padding: 18px 20px 20px; width: 100%; min-width: 0; }
+#rk-home .rk-badge {
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; max-width: 100%; border: 1px solid rgba(255,255,255,.3); background: rgba(0,0,0,.45); color: #fff;
+  border-radius: 999px; padding: 4px 11px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+#rk-home .rk-badge .rk-i { color: #facc15; width: 12px; height: 12px; }
+#rk-home .rk-featured-bottom { min-width: 0; }
+#rk-home .rk-featured-title {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+  font-size: clamp(22px, 7cqi, 34px); font-weight: 900; line-height: 1.1; margin: 0 0 10px; color: var(--rk-text) !important; text-shadow: var(--rk-text-glow);
+}
+#rk-home .rk-featured-title:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+#rk-home .rk-featured-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* Colecciones: portadas si la tarjeta es ancha, lista si es estrecha */
+#rk-home .rk-collections { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; }
+#rk-home .rk-coll {
+  position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; max-height: 210px; padding: 0; margin: 0; border-radius: var(--rk-radius-sm); overflow: hidden;
+  background: var(--rk-surface-2); border: 1px solid var(--rk-border); color: #fff; text-align: left; font: inherit; cursor: pointer;
+}
+#rk-home .rk-coll > img, #rk-home .rk-coll-ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#rk-home .rk-coll-ph .rk-i { width: 24px; height: 24px; }
+#rk-home .rk-coll::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.82), transparent 62%); pointer-events: none; }
+#rk-home .rk-coll-main { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#rk-home .rk-coll-name { font-weight: 800; font-size: 12px; line-height: 1.2; overflow-wrap: anywhere; }
+#rk-home .rk-coll-sub { font-size: 11px; opacity: .8; }
+html.rk-anim #rk-home .rk-coll { transition: transform .15s, border-color .15s; }
+html.rk-anim #rk-home .rk-coll:hover { transform: translateY(-3px); border-color: var(--rk-accent); }
+@container rk-card (max-width: 340px) {
+  #rk-home .rk-collections { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  #rk-home .rk-coll { display: flex; align-items: center; gap: 12px; aspect-ratio: auto; max-height: none; padding: 6px; border: 0; background: transparent; color: var(--rk-text); }
+  html.rk-anim #rk-home .rk-coll:hover { transform: none; }
+  #rk-home .rk-coll:hover { background: var(--rk-hover); }
+  #rk-home .rk-coll::after { display: none; }
+  #rk-home .rk-coll > img, #rk-home .rk-coll-ph { position: static; width: 42px; height: 42px; flex: none; border-radius: var(--rk-thumb-radius, var(--rk-radius-sm)); }
+  #rk-home .rk-coll-main { position: static; flex: 1; }
+  #rk-home .rk-coll-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #rk-home .rk-coll-sub { font-size: 12px; color: var(--rk-muted); opacity: 1; }
+}
+
+/* Estados vacíos y esqueleto de carga */
+#rk-home .rk-empty { color: var(--rk-muted); font-size: 13px; padding: 10px 0; }
+#rk-home .rk-empty-state {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 104px; padding: 14px 12px;
+  text-align: center; color: var(--rk-muted); font-size: 12px; line-height: 1.35;
+}
+#rk-home .rk-es-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--rk-accent-soft); color: var(--rk-accent); margin-bottom: 2px; }
+#rk-home .rk-es-icon .rk-i { width: 19px; height: 19px; }
+#rk-home .rk-es-text { color: var(--rk-text); font-weight: 700; font-size: 13px; max-width: 40ch; }
+#rk-home .rk-es-sub { max-width: 44ch; }
+#rk-home .rk-skel { background: linear-gradient(90deg, var(--rk-surface-2), var(--rk-hover), var(--rk-surface-2)); background-size: 200% 100%; animation: rk-skel 1.2s linear infinite; border-radius: var(--rk-radius); }
+@keyframes rk-skel { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+/* Al cambiar un ajuste se repinta: sin volver a lanzar la animación de entrada del tema. */
+#rk-home.rk-live .rk-card { animation: none !important; }
+
+/* Pie */
+#rk-home .rk-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; padding: 2px 0; font-size: 12px; color: var(--rk-muted); }
+#rk-home .rk-foot-link { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 2px; color: var(--rk-accent); cursor: pointer; font-size: 12px; font-weight: 700; }
+#rk-home .rk-foot-link:hover { text-decoration: underline; }
+
+/* Retos de hoy (la tarjeta la crea fun.js) */
+#rk-home .rc-ch-tools { display: inline-flex; align-items: center; gap: 6px; }
+#rk-home .rc-ch-list { display: flex; flex-direction: column; gap: 10px; }
+#rk-home .rc-ch { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#rk-home .rc-ch > .rk-i { width: calc(18px * var(--rc-icon-scale, 1)); height: calc(18px * var(--rc-icon-scale, 1)); color: var(--rk-accent); flex: none; }
+#rk-home .rc-ch.rc-done > .rk-i { color: var(--rk-success); }
+#rk-home .rc-ch-main { flex: 1; min-width: 0; }
+#rk-home .rc-ch-text { font-size: 13px; font-weight: 600; line-height: 1.3; }
+#rk-home .rc-ch.rc-done .rc-ch-text { color: var(--rk-muted); }
+#rk-home .rc-ch.rc-done .rk-bar i { background: var(--rk-success); }
+#rk-home .rc-ch-num { font-size: 12px; color: var(--rk-muted); white-space: nowrap; font-weight: 700; }
+#rk-home .rc-streak { display: inline-flex; align-items: center; gap: 5px; background: var(--rk-accent-soft); color: var(--rk-accent); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+#rk-home .rc-medals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rk-border); }
+#rk-home .rc-medal { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--rk-panel-2); border: 1px solid var(--rk-border); color: var(--rk-muted); opacity: .45; }
+#rk-home .rc-medal.rc-got { opacity: 1; border-color: currentColor; }
+#rk-home .rc-medal .rk-i { width: calc(16px * var(--rc-icon-scale, 1)); height: calc(16px * var(--rc-icon-scale, 1)); }
+
+/* Tarjetas estrechas */
+@container rk-card (max-width: 560px) {
+  #rk-home .rk-hero-body { padding: 18px; }
+  #rk-home .rk-hero-actions .rk-btn-play { flex: 1; }
+}
+
+/* Pantallas estrechas: todas las tarjetas a lo ancho */
+@media (max-width: 900px) {
+  #rk-home > .rk-card { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 700px) {
+  html #rk-home .rk-card .rk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  #rk-home .rk-hero-img { inset: 0; opacity: .45; }
+}
+
+/* Ventana de una colección */
+.rk-modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px 12px; }
+.rk-mg-item { color: var(--rk-text) !important; text-decoration: none !important; min-width: 0; }
+.rk-mg-item img, .rk-mg-ph { width: 100%; aspect-ratio: 1; border-radius: var(--rk-radius-sm); object-fit: cover; background: var(--rk-surface-2); display: block; }
+.rk-mg-ph { display: grid; }
+.rk-mg-ph .rk-i { width: 26px; height: 26px; }
+.rk-mg-name { font-weight: 700; font-size: 13px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk-mg-item .rk-meta { display: flex; align-items: center; gap: 10px; color: var(--rk-muted); font-size: 12px; white-space: nowrap; overflow: hidden; margin-top: 2px; }
+.rk-mg-item .rk-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.rk-mg-item .rk-i { width: 13px; height: 13px; }

@@ -1,0 +1,135 @@
+/* RoCer0 · Estructura de los temas (generado). Cada opción es una clase rk-l-<opción>-<valor> en <html>.
+   Sin tema activo no hace nada. Lo que empieza por .rk-l- sin html.rk-theme también se ve en la vista previa de Ajustes. */
+
+/* ---------- Barra de arriba ---------- */
+html.rk-theme.rk-l-nav-floating :is(#header, .rbx-header) { top: 10px !important; left: 12px !important; right: 12px !important; width: auto !important; border: 1px solid var(--rk-border) !important; border-radius: calc(var(--rk-radius) + 4px) !important; box-shadow: var(--rk-shadow) !important; }
+html.rk-theme.rk-l-nav-floating :is(#navigation, .left-nav) { margin-top: 14px !important; }
+html.rk-theme.rk-l-nav-floating #container-main { margin-top: 14px !important; }
+html.rk-theme.rk-l-nav-minimal :is(#header, .rbx-header) { background: color-mix(in srgb, var(--rk-bg) 45%, transparent) !important; border-bottom-color: transparent !important; box-shadow: none !important; backdrop-filter: blur(18px) saturate(160%) !important; -webkit-backdrop-filter: blur(18px) saturate(160%) !important; }
+html.rk-theme.rk-l-nav-accent :is(#header, .rbx-header) { background: linear-gradient(90deg, var(--rk-accent), var(--rk-accent-2)) !important; border-bottom: 0 !important; box-shadow: var(--rk-glow), 0 4px 18px rgba(0,0,0,.25) !important; }
+html.rk-theme.rk-l-nav-accent :is(#header, .rbx-header) :is(.text-header, .nav-menu-title, .font-header-2, .rbx-navbar a, #nav-robux-amount, .nav-robux-amount, .text-robux, .age-bracket-label, .text-overflow) { color: var(--rk-accent-text) !important; }
+html.rk-theme.rk-l-nav-accent :is(#header, .rbx-header) :is([class^="icon-nav-"], [class*=" icon-nav-"], .icon-logo, .icon-logo-r, #nav-robux) { filter: var(--rk-nav-icon-filter, none); }
+html.rk-theme.rk-l-nav-autohide :is(#header, .rbx-header) { transition: transform .3s ease !important; }
+html.rk-theme.rk-l-nav-autohide.rk-nav-away :is(#header, .rbx-header) { transform: translateY(calc(-100% - 14px)) !important; }
+.rk-l-nav-floating .pv-header { margin: 8px 10px 0; border: 1px solid var(--rk-border); border-radius: calc(var(--rk-radius) + 2px); box-shadow: var(--rk-shadow); }
+.rk-l-nav-minimal .pv-header { background: transparent; border-bottom-color: transparent; }
+.rk-l-nav-accent .pv-header { background: linear-gradient(90deg, var(--rk-accent), var(--rk-accent-2)); color: var(--rk-accent-text); border-bottom: 0; }
+
+/* ---------- Menú lateral ---------- */
+html.rk-theme.rk-l-sidebar-floating :is(#navigation, .left-nav) { margin: 10px 0 10px 10px !important; border: 1px solid var(--rk-border) !important; border-radius: var(--rk-radius) !important; box-shadow: var(--rk-shadow) !important; }
+html.rk-theme.rk-l-sidebar-icons :is(#navigation, .left-nav) { width: 64px !important; min-width: 64px !important; overflow-x: hidden !important; transition: width .2s ease, box-shadow .2s ease; z-index: 1001; }
+html.rk-theme.rk-l-sidebar-icons :is(#navigation, .left-nav):hover { width: 240px !important; box-shadow: var(--rk-shadow) !important; }
+html.rk-theme.rk-l-sidebar-icons :is(#navigation, .left-nav):not(:hover) :is(.dynamic-ellipsis-item, .font-header-2, .text-label-small, .left-nav-label, .rbx-platform-event-container, #btr-blogfeed-container, .notification-blue) { opacity: 0 !important; }
+html.rk-theme.rk-l-sidebar-icons #wrap { --left-nav-reserved-width: 76px !important; }
+html.rk-theme.rk-l-sidebar-hidden :is(#navigation, .left-nav) { display: none !important; }
+html.rk-theme.rk-l-sidebar-hidden #wrap { --left-nav-reserved-width: 0px !important; }
+
+/* ---------- Ancho y tamaño ---------- */
+html.rk-theme.rk-l-width-wide :is(#container-main > .content, .container-main > .content) { max-width: none !important; width: auto !important; }
+html.rk-theme.rk-l-width-narrow :is(#container-main > .content, .container-main > .content) { max-width: 1000px !important; margin-left: auto !important; margin-right: auto !important; }
+html.rk-theme.rk-l-zoom :is(#container-main > .content, .container-main > .content) { zoom: var(--rk-zoom, 1); }
+html.rk-theme.rk-l-footer-hidden :is(#footer-container, footer.container-footer) { display: none !important; }
+
+/* ---------- Paneles ---------- */
+html.rk-theme.rk-l-cards-flat :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container, .rbx-tab-content, .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .rbx-friends-game-server-item, .card, .menu-vertical, .catalog-header, .search-options, .trade-row, .trades-list-detail, .item-details-info-content, .group-details, #settings-container .section-content) { border-color: transparent !important; box-shadow: none !important; }
+.rk-l-cards-flat :is(#rk-home .rk-card, .rx-panel) { border-color: transparent !important; box-shadow: none !important; }
+html.rk-theme.rk-l-cards-outlined :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container, .rbx-tab-content, .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .rbx-friends-game-server-item, .card, .menu-vertical, .catalog-header, .search-options, .trade-row, .trades-list-detail, .item-details-info-content, .group-details, #settings-container .section-content) { background: color-mix(in srgb, var(--rk-surface) 28%, transparent) !important; border: 1px solid var(--rk-border) !important; box-shadow: none !important; }
+.rk-l-cards-outlined :is(#rk-home .rk-card, .rx-panel) { background: color-mix(in srgb, var(--rk-surface) 28%, transparent) !important; border: 1px solid var(--rk-border) !important; box-shadow: none !important; }
+html.rk-theme.rk-l-cards-elevated :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container, .rbx-tab-content, .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .rbx-friends-game-server-item, .card, .menu-vertical, .catalog-header, .search-options, .trade-row, .trades-list-detail, .item-details-info-content, .group-details, #settings-container .section-content) { border-color: transparent !important; box-shadow: 0 14px 34px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.18) !important; }
+.rk-l-cards-elevated :is(#rk-home .rk-card, .rx-panel) { border-color: transparent !important; box-shadow: 0 14px 34px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.18) !important; }
+html.rk-theme.rk-l-cards-glass :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container, .rbx-tab-content, .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .rbx-friends-game-server-item, .card, .menu-vertical, .catalog-header, .search-options, .trade-row, .trades-list-detail, .item-details-info-content, .group-details, #settings-container .section-content) { background: color-mix(in srgb, var(--rk-surface) 50%, transparent) !important; border-color: color-mix(in srgb, var(--rk-text) 14%, transparent) !important; backdrop-filter: blur(16px) saturate(150%) !important; -webkit-backdrop-filter: blur(16px) saturate(150%) !important; }
+.rk-l-cards-glass :is(#rk-home .rk-card, .rx-panel) { background: color-mix(in srgb, var(--rk-surface) 50%, transparent) !important; border-color: color-mix(in srgb, var(--rk-text) 14%, transparent) !important; backdrop-filter: blur(16px) saturate(150%) !important; -webkit-backdrop-filter: blur(16px) saturate(150%) !important; }
+
+/* ---------- Tarjetas de juego y miniaturas ---------- */
+html.rk-theme.rk-l-gameCards-boxed :is(.game-card-container, [data-testid="game-tile"], .hover-game-tile) { background: var(--rk-panel) !important; border: 1px solid var(--rk-border) !important; border-radius: var(--rk-radius) !important; padding: 6px 6px 8px !important; }
+.rk-l-gameCards-boxed #rk-home .rk-tile { background: var(--rk-panel-2); border: 1px solid var(--rk-border); border-radius: var(--rk-radius-sm); padding: 6px 6px 8px; }
+html.rk-theme.rk-l-gameCards-minimal :is(.game-card-info, .game-card-native-ad, [class*="game-card-info"]) { display: none !important; }
+.rk-l-gameCards-minimal #rk-home .rk-tile .rk-meta { display: none !important; }
+.rk-l-gameCards-outline :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile):hover :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container, .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, #rk-home .rk-thumb) { box-shadow: 0 0 0 2px var(--rk-accent), 0 0 16px var(--rk-accent-glow) !important; }
+.rk-l-tiles-framed :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container, .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, #rk-home .rk-thumb) { box-shadow: 0 0 0 2px var(--rk-accent), 0 0 0 4px color-mix(in srgb, var(--rk-accent-2) 45%, transparent) !important; }
+
+/* ---------- Al pasar el ratón ---------- */
+.rk-l-hover-lift.rk-anim :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile) { transition: transform .15s ease; }
+.rk-l-hover-lift.rk-anim :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile):hover { transform: translateY(-3px); }
+.rk-l-hover-glow :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile):hover :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container, .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, #rk-home .rk-thumb) { box-shadow: 0 0 0 2px var(--rk-accent), 0 0 24px var(--rk-accent-glow) !important; }
+.rk-l-hover-zoom :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container, .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, #rk-home .rk-thumb) img { transition: transform .3s ease; }
+.rk-l-hover-zoom :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile):hover :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container, .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, #rk-home .rk-thumb) img { transform: scale(1.08); }
+.rk-l-hover-tilt.rk-anim :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile) { transition: transform .2s ease; }
+.rk-l-hover-tilt.rk-anim :is(.game-card-container, .grid-item-container, [data-testid="game-tile"], .list-item.game-card, .hover-game-tile, #rk-home .rk-tile):hover { transform: perspective(700px) rotateX(5deg) rotateY(-6deg) translateY(-2px); }
+.rk-l-hover-none #rk-home .rk-tile:hover .rk-thumb img { transform: none !important; }
+
+/* ---------- Botones ---------- */
+.rk-l-buttons-pill :is(.rx-btn, #rk-home .rk-btn, .rc-chip) { border-radius: 999px !important; }
+.rk-l-buttons-square :is(.rx-btn, #rk-home .rk-btn, .rc-chip) { border-radius: 2px !important; }
+html.rk-theme.rk-l-buttons-outline :is(.btn-primary-md, .btn-primary-sm, .btn-primary-lg, .btn-primary-xs, .btn-cta-md, .btn-cta-sm, .btn-cta-lg, .btn-cta-xs) { background: transparent !important; color: var(--rk-accent) !important; border: 2px solid var(--rk-accent) !important; box-shadow: none !important; }
+.rk-l-buttons-outline :is(.rx-btn.rx-primary, .rx-btn.rx-on, #rk-home .rk-btn-accent) { background: transparent !important; color: var(--rk-accent) !important; border: 2px solid var(--rk-accent) !important; box-shadow: none !important; }
+html.rk-theme.rk-l-buttons-outline :is(.btn-growth-md, .btn-growth-lg, .btn-growth-sm, .btn-growth-xs, [class*="btn-common-play-game"]) { background: transparent !important; color: var(--rk-success) !important; border: 2px solid var(--rk-success) !important; box-shadow: none !important; }
+.rk-l-buttons-outline :is(.rx-btn.rx-play, #rk-home .rk-btn-play) { background: transparent !important; color: var(--rk-success) !important; border: 2px solid var(--rk-success) !important; box-shadow: none !important; }
+html.rk-theme.rk-l-buttons-outline :is(.btn-secondary-md, .btn-secondary-sm, .btn-secondary-lg, .btn-secondary-xs, .btn-control-md, .btn-control-sm, .btn-control-xs, .btn-control-lg) { background: transparent !important; }
+html.rk-theme.rk-l-buttons-soft :is(.btn-primary-md, .btn-primary-sm, .btn-primary-lg, .btn-primary-xs, .btn-cta-md, .btn-cta-sm, .btn-cta-lg, .btn-cta-xs) { background: var(--rk-accent-soft) !important; color: var(--rk-accent) !important; border-color: transparent !important; box-shadow: none !important; }
+.rk-l-buttons-soft :is(.rx-btn.rx-primary, .rx-btn.rx-on, #rk-home .rk-btn-accent) { background: var(--rk-accent-soft) !important; color: var(--rk-accent) !important; border-color: transparent !important; box-shadow: none !important; }
+html.rk-theme.rk-l-buttons-soft :is(.btn-growth-md, .btn-growth-lg, .btn-growth-sm, .btn-growth-xs, [class*="btn-common-play-game"]) { background: color-mix(in srgb, var(--rk-success) 20%, transparent) !important; color: var(--rk-success) !important; border-color: transparent !important; box-shadow: none !important; }
+.rk-l-buttons-soft :is(.rx-btn.rx-play, #rk-home .rk-btn-play) { background: color-mix(in srgb, var(--rk-success) 20%, transparent) !important; color: var(--rk-success) !important; border-color: transparent !important; box-shadow: none !important; }
+html.rk-theme.rk-l-buttons-soft :is(.btn-secondary-md, .btn-secondary-sm, .btn-secondary-lg, .btn-secondary-xs, .btn-control-md, .btn-control-sm, .btn-control-xs, .btn-control-lg) { border-color: transparent !important; }
+
+/* ---------- Títulos ---------- */
+.rk-l-headings-big :is(.container-header h2, .container-header h3, .games-list-header h2, .game-sort-header-container h2, #rk-home .rk-head h2, .rx-panel-title) { font-size: 25px !important; font-weight: 900 !important; letter-spacing: -.02em !important; }
+.rk-l-headings-caps :is(.container-header h2, .container-header h3, .games-list-header h2, .game-sort-header-container h2, #rk-home .rk-head h2, .rx-panel-title) { text-transform: uppercase !important; letter-spacing: .14em !important; font-size: 14px !important; font-weight: 800 !important; }
+.rk-l-headings-accent :is(.container-header h2, .container-header h3, .games-list-header h2, .game-sort-header-container h2, #rk-home .rk-head h2, .rx-panel-title) { border-left: 4px solid var(--rk-accent) !important; padding-left: 10px !important; }
+.rk-l-headings-gradient :is(.container-header h2, .container-header h3, .games-list-header h2, .game-sort-header-container h2, #rk-home .rk-head h2, .rx-panel-title) { background: linear-gradient(90deg, var(--rk-accent), var(--rk-accent-2)) !important; -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent !important; width: fit-content; }
+
+/* ---------- Espaciado ---------- */
+.rk-l-density-compact #rk-home { --rk-gap: 9px !important; }
+.rk-l-density-compact #rk-home .rk-card { padding: 10px 12px !important; }
+html.rk-theme.rk-l-density-compact .section-content { padding: 9px !important; }
+.rk-l-density-spacious #rk-home { --rk-gap: 22px !important; }
+.rk-l-density-spacious #rk-home .rk-card { padding: 22px 26px !important; }
+html.rk-theme.rk-l-density-spacious .section-content { padding: 20px !important; }
+
+/* ---------- Inicio rediseñado ---------- */
+.rk-l-home-stacked #rk-home .rk-card { grid-column: 1 / -1 !important; }
+.rk-l-home-compact #rk-home .rk-hero { min-height: 118px !important; }
+.rk-l-home-compact #rk-home .rk-hero-title { font-size: 22px !important; }
+.rk-l-home-compact #rk-home .rk-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+.rk-l-home-compact #rk-home .rk-featured { min-height: 210px !important; }
+.rk-l-home-showcase #rk-home .rk-hero { min-height: 330px !important; }
+.rk-l-home-showcase #rk-home .rk-hero-img { inset: 0 !important; -webkit-mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,.65) 35%, #000 70%) !important; mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,.65) 35%, #000 70%) !important; }
+.rk-l-home-showcase #rk-home .rk-hero-title { font-size: 46px !important; text-shadow: 0 3px 18px rgba(0,0,0,.45) !important; }
+.rk-l-home-showcase #rk-home .rk-featured { min-height: 380px !important; }
+
+/* ---------- Avatares ---------- */
+.rk-l-avatars-rounded :is(.avatar-card-image, .avatar-headshot, .avatar .thumbnail-2d-container, .friends-carousel-tile .thumbnail-2d-container, .avatar-card-container .thumbnail-2d-container, .user-profile-header .radius-circle, .profile-avatar-thumb, #rk-home .rk-avatar img, #rk-home .rk-avatar > div:first-child, .rc-avatars img, .rx-acc-item img) { border-radius: var(--rk-radius-sm) !important; }
+.rk-l-avatars-square :is(.avatar-card-image, .avatar-headshot, .avatar .thumbnail-2d-container, .friends-carousel-tile .thumbnail-2d-container, .avatar-card-container .thumbnail-2d-container, .user-profile-header .radius-circle, .profile-avatar-thumb, #rk-home .rk-avatar img, #rk-home .rk-avatar > div:first-child, .rc-avatars img, .rx-acc-item img) { border-radius: 3px !important; }
+.rk-l-avatars-hex :is(.avatar-card-image, .avatar-headshot, .avatar .thumbnail-2d-container, .friends-carousel-tile .thumbnail-2d-container, .avatar-card-container .thumbnail-2d-container, .user-profile-header .radius-circle, .profile-avatar-thumb, #rk-home .rk-avatar img, #rk-home .rk-avatar > div:first-child, .rc-avatars img, .rx-acc-item img) { border-radius: 0 !important; clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%); }
+
+/* ---------- Cursor ---------- */
+html.rk-theme:is(.rk-l-cursor-accent, .rk-l-cursor-ring, .rk-l-cursor-dot), html.rk-theme:is(.rk-l-cursor-accent, .rk-l-cursor-ring, .rk-l-cursor-dot) body { cursor: var(--rk-cursor, auto); }
+html.rk-theme:is(.rk-l-cursor-accent, .rk-l-cursor-ring, .rk-l-cursor-dot) :is(a, button, [role="button"], label, select, summary, [class*="btn-"], .rk-tile, .rk-coll, .rc-chip, .rx-btn) { cursor: var(--rk-cursor-link, pointer) !important; }
+html.rk-theme:is(.rk-l-cursor-accent, .rk-l-cursor-ring, .rk-l-cursor-dot) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, [contenteditable="true"]) { cursor: text !important; }
+
+/* ---------- Barra de desplazamiento ---------- */
+html.rk-theme.rk-l-scrollbar-thin { scrollbar-width: thin; }
+html.rk-theme.rk-l-scrollbar-thin ::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
+html.rk-theme.rk-l-scrollbar-accent { scrollbar-color: var(--rk-accent) transparent; }
+html.rk-theme.rk-l-scrollbar-accent ::-webkit-scrollbar-thumb { background: var(--rk-accent) !important; }
+html.rk-theme.rk-l-scrollbar-hidden, html.rk-theme.rk-l-scrollbar-hidden body { scrollbar-width: none; }
+html.rk-theme.rk-l-scrollbar-hidden ::-webkit-scrollbar { display: none !important; }
+
+/* ---------- Animación al abrir una página ---------- */
+@keyframes rk-in-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rk-in-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes rk-in-pop { 0% { opacity: 0; transform: scale(.94); } 60% { opacity: 1; transform: scale(1.015); } 100% { opacity: 1; transform: none; } }
+html.rk-theme.rk-anim.rk-l-animIn-fade :is(#container-main > .content, .container-main > .content) { animation: rk-in-fade .4s ease both; }
+.rk-anim.rk-l-animIn-fade :is(#rk-home .rk-card, .section-content, .container-list) { animation: rk-in-fade .5s ease both; }
+html.rk-theme.rk-anim.rk-l-animIn-rise :is(#container-main > .content, .container-main > .content) { animation: rk-in-fade .4s ease both; }
+.rk-anim.rk-l-animIn-rise :is(#rk-home .rk-card, .section-content, .container-list) { animation: rk-in-rise .5s cubic-bezier(.2,.8,.2,1) both; }
+html.rk-theme.rk-anim.rk-l-animIn-pop :is(#container-main > .content, .container-main > .content) { animation: rk-in-fade .4s ease both; }
+.rk-anim.rk-l-animIn-pop :is(#rk-home .rk-card, .section-content, .container-list) { animation: rk-in-pop .45s cubic-bezier(.2,.9,.3,1.2) both; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(2) { animation-delay: 45ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(3) { animation-delay: 90ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(4) { animation-delay: 135ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(5) { animation-delay: 180ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(6) { animation-delay: 225ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(7) { animation-delay: 270ms; }
+.rk-anim[class*="rk-l-animIn-"] #rk-home .rk-card:nth-child(8) { animation-delay: 315ms; }
+@media (prefers-reduced-motion: reduce) { [class*="rk-l-animIn-"] * { animation-duration: .01ms !important; animation-delay: 0s !important; } }

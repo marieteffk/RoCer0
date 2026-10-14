@@ -1,0 +1,11 @@
+/* Fondo de vídeo o pase de imágenes de un tema de RoCer0 (va detrás de la web de Roblox). */
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+.m { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: center / cover no-repeat; opacity: 0; transition: opacity 1.4s ease, transform 1.4s ease; }
+.m.contain { object-fit: contain; background-size: contain; }
+.m.on { opacity: 1; }
+.fx-slide .m { transform: translateX(6%); }
+.fx-slide .m.on { transform: none; }
+.fx-slide .m.out { transform: translateX(-6%); }
+.fx-zoom .m.on { animation: kb var(--dur, 20s) linear both; }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.12) translate(-1.5%, -1%); } }
+@media (prefers-reduced-motion: reduce) { .m { transition: none; } .fx-zoom .m.on { animation: none; } }

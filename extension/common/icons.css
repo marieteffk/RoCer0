@@ -1,0 +1,13 @@
+/* Iconos propios de RoCer0 (common/icons.js). Funcionan en Roblox, en el popup y en Ajustes. */
+svg.rk-i, .rk-i.rc-i-img, .rk-i.rc-i-mask {
+  width: calc(1em * var(--rc-icon-scale, 1)); height: calc(1em * var(--rc-icon-scale, 1)); flex: none; vertical-align: -0.15em; display: inline-block;
+}
+svg.rk-i { fill: none; stroke: currentColor; stroke-width: var(--rc-icon-w, 1.8); stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+svg.rk-i .rc-f { fill: currentColor; stroke: none; }
+svg.rk-i .rc-d { fill: none; }
+html.rc-ic-fina { --rc-icon-w: 1.4; }
+html.rc-ic-gruesa { --rc-icon-w: 2.4; }
+html.rc-ic-duotono svg.rk-i .rc-d { fill: var(--rk-accent, currentColor); fill-opacity: .28; }
+.rk-i.rc-i-img { object-fit: contain; }
+.rk-i.rc-i-mask { background: currentColor; -webkit-mask: var(--rc-mask) center / contain no-repeat; mask: var(--rc-mask) center / contain no-repeat; }
+html.rc-ic-colored svg.rk-i:not([style*="color"]), html.rc-ic-colored .rk-i.rc-i-mask:not([style*="color"]) { color: var(--rc-icon-color); }

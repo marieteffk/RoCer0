@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>RoCer0</title>
+  <link rel="stylesheet" href="../common/icons.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="page-bg"></div>
+  <header class="top">
+    <div class="brand"><span class="logo" id="logo"></span><b>RoCer0</b></div>
+    <nav class="top-actions">
+      <button id="roulette" class="icon-btn" title="Ruleta de juegos" aria-label="Ruleta de juegos" data-icon="roulette" hidden></button>
+      <button id="search" class="icon-btn" title="PowerSearch" aria-label="PowerSearch" data-icon="search" hidden></button>
+      <button id="options" class="icon-btn" title="Ajustes de RoCer0" aria-label="Ajustes de RoCer0" data-icon="gear"></button>
+    </nav>
+  </header>
+  <div id="perm" class="warn" hidden>
+    <span data-icon="alert"></span>
+    <span class="grow">Falta el permiso para entrar en Roblox.</span>
+    <button id="grant" class="btn btn-accent btn-sm">Dar permiso</button>
+  </div>
+  <main id="cards"></main>
+
+  <script src="../common/defaults.js"></script>
+  <script src="../common/themes.js"></script>
+  <script src="../common/icons.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

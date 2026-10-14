@@ -1,0 +1,169 @@
+/* ============================================================
+   RoCer0 · Tema para roblox.com
+   Todo depende de la clase html.rk-theme y de las variables --rk-*
+   que pone theme-boot.js. Sin tema activo, este archivo no hace nada.
+   ============================================================ */
+
+/* ---------- Fondo de la página ---------- */
+html.rk-theme { background: var(--rk-bg) !important; color-scheme: var(--rk-scheme); scrollbar-color: var(--rk-scroll) transparent; }
+html.rk-theme::before {
+  content: ""; position: fixed; inset: -60px; z-index: -1; pointer-events: none;
+  background: var(--rk-bg-layer, none); filter: var(--rk-bg-filter, none);
+  animation: var(--rk-bg-anim, none);
+}
+html.rk-theme.rk-parallax::before, html.rk-theme.rk-parallax #rk-bg-media {
+  transform: translate3d(calc(var(--rk-mx, 0) * var(--rk-parallax, 0) * -1px), calc(var(--rk-my, 0) * var(--rk-parallax, 0) * -1px), 0);
+  transition: transform .25s ease-out;
+}
+/* Capa encima del fondo (oscurecer, viñeta, tinte, grano…). Va por encima de las partículas de fondo. */
+html.rk-theme::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--rk-overlay, none); }
+/* Vídeo o pase de imágenes (marco de la extensión) y partículas. */
+#rk-bg-media { position: fixed; top: -60px; left: -60px; width: calc(100vw + 120px); height: calc(100vh + 120px); border: 0; margin: 0; max-width: none; z-index: -1; pointer-events: none; filter: var(--rk-bg-filter, none); background: transparent; color-scheme: normal; }
+#rk-particles-back, #rk-particles-front { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; }
+#rk-particles-back { z-index: -1; }
+#rk-particles-front { z-index: 2147482000; }
+html.rk-theme:not(.rk-anim)::before { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { html.rk-theme::before { animation: none !important; } }
+
+@keyframes rk-bg-aurora { from { background-position: 0% 50%, 0 0; } to { background-position: 100% 50%, 0 0; } }
+@keyframes rk-bg-stars {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 260px 520px, 260px 520px, 260px 520px, 260px 520px, 260px 520px, 260px 520px, 0 0, 0 0, 0 0; }
+}
+@keyframes rk-bg-grid { from { background-position: 0 0, 0 0, 0 0, 0 0; } to { background-position: 0 56px, 0 0, 0 0, 0 0; } }
+@keyframes rk-bg-scan { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 400px, 0 0, 0 0; } }
+@keyframes rk-bg-snow { from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; } to { background-position: 220px 660px, 220px 660px, -330px 990px, -330px 990px, 440px 1320px, 440px 1320px, 0 0, 0 0; } }
+
+html.rk-theme body, html.rk-theme #rbx-body, html.rk-theme .rbx-body {
+  background: transparent !important; color: var(--rk-text) !important;
+}
+html.rk-theme.rk-font body, html.rk-theme.rk-font body *:not([class*="icon"]):not(i):not(.rk-keep-font) { font-family: var(--rk-font) !important; }
+
+/* Contenedores que Roblox pinta de color sólido: los dejamos ver el fondo. */
+html.rk-theme :is(#container-main, .container-main, #container-main > .content, .container-main > .content, #HomeContainer, .home-container,
+  #wrap, .page-content, #game-detail-page, .game-detail-page, .profile-container, #catalog-react-container, .catalog-container,
+  #avatar-web-app, .avatar-container, #trades-container, .trades-container, .people-list-container, #friends-web-app, #inventory-container,
+  #groups-page, .groups-page, #group-container, #settings-container, #messages-web-app, .messages-container, #notification-stream-app,
+  #develop-web-app, #rbx-body > .container-main, main) { background-color: transparent !important; }
+
+/* Variables de diseño de Roblox (si su web las usa, se recolorean solas). */
+html.rk-theme, html.rk-theme body, html.rk-theme .dark-theme, html.rk-theme .light-theme {
+  --color-surface-0: var(--rk-bg); --color-surface-100: var(--rk-surface); --color-surface-200: var(--rk-surface-2); --color-surface-300: var(--rk-border);
+  --color-shift-100: var(--rk-hover); --color-shift-200: var(--rk-hover); --color-shift-300: var(--rk-hover);
+  --color-content-emphasis: var(--rk-text); --color-content-default: var(--rk-text); --color-content-muted: var(--rk-muted);
+  --color-stroke-default: var(--rk-border); --color-stroke-emphasis: var(--rk-border); --color-stroke-muted: var(--rk-border);
+  --color-action-emphasis-background: var(--rk-accent); --color-action-emphasis-foreground: var(--rk-accent-text);
+  --color-action-standard-background: var(--rk-surface-2); --color-action-standard-foreground: var(--rk-text);
+  --color-system-success: var(--rk-success); --color-system-alert: var(--rk-danger); --color-selection-start: var(--rk-accent);
+}
+
+/* ---------- Cabecera y menú lateral ---------- */
+html.rk-theme :is(#header, .rbx-header, #header.navbar-fixed-top, .navbar-fixed-top.rbx-header) {
+  background: var(--rk-panel) !important; border-bottom: 1px solid var(--rk-border) !important; box-shadow: none !important;
+  backdrop-filter: var(--rk-backdrop); -webkit-backdrop-filter: var(--rk-backdrop);
+}
+html.rk-theme :is(#header, .rbx-header) :is(.nav-menu-title, .font-header-2, .text-header, a.font-header-2, .navbar-header .nav-menu-title, .rbx-navbar a, #nav-robux-amount, .nav-robux-amount, .age-bracket-label, .text-overflow) { color: var(--rk-text) !important; }
+html.rk-theme :is(#navigation, .rbx-left-col, #navigation.rbx-left-col) {
+  background: var(--rk-panel) !important; border-right: 1px solid var(--rk-border) !important;
+  backdrop-filter: var(--rk-backdrop); -webkit-backdrop-filter: var(--rk-backdrop);
+}
+html.rk-theme :is(#navigation, .rbx-left-col) :is(.text-nav, .font-header-2, .left-col-list a, li a) { color: var(--rk-text) !important; }
+html.rk-theme :is(#navigation, .rbx-left-col) :is(li a:hover, .left-col-list li:hover) { background: var(--rk-hover) !important; border-radius: var(--rk-radius-sm); }
+html.rk-theme :is(#navbar-search-input, .navbar-search input, .navbar-search .input-field, input.navbar-search-input) {
+  background: var(--rk-surface-2) !important; color: var(--rk-text) !important; border: 1px solid var(--rk-border) !important; border-radius: 999px !important;
+}
+html.rk-theme :is(.navbar-search .dropdown-menu, #navbar-universal-search .dropdown-menu, .navbar-search-option) { background: var(--rk-panel) !important; color: var(--rk-text) !important; }
+
+/* ---------- Texto ---------- */
+html.rk-theme :is(h1, h2, h3, h4, h5, .text-emphasis, .font-header-1, .font-header-2, .font-title, .font-subheader-1, .text-name, .text-lead,
+  .game-card-name, .item-card-name, .container-header h2, .container-header h3, .profile-name, .game-name, .item-name-container h1, .text-default) { color: var(--rk-text) !important; }
+html.rk-theme.rk-glow :is(h1, .container-header h2, .rk-glow-text) { text-shadow: var(--rk-text-glow); }
+html.rk-theme :is(.text-secondary, .text-label, .font-caption-body, .font-caption-header, .text-description, .game-card-info, .item-card-caption,
+  .item-card-creator, .text-date-hint, .small.text, .xsmall, .text-footer, .game-card-info span, .playing-counts-label, .vote-percentage-label) { color: var(--rk-muted) !important; }
+html.rk-theme :is(.text-link, a.text-link, .see-all-link-icon, .btn-text, a.see-all, .container-header .btn-more) { color: var(--rk-accent) !important; }
+html.rk-theme ::selection { background: var(--rk-accent); color: var(--rk-accent-text); }
+
+/* ---------- Tarjetas y paneles ---------- */
+html.rk-theme :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container,
+  .rbx-tab-content, .tab-content .section-content, .modal-content, .modal-dialog .modal-content, .popover, .popover-content, .dropdown-menu,
+  .rbx-popover-content, #settings-popover-menu, .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .rbx-friends-game-server-item,
+  .card, .alert-info, .alert-system-feedback, .menu-vertical, .rbx-menu-item, .catalog-header, .search-options, .notification-stream-base,
+  .trade-row, .trades-list-detail, .item-details-info-content, .border-bottom.section, .group-details, .groups-list .list-item .section-content,
+  .avatar-back .section, .stack .section-content, .chat-container .chat-main, .dialog-container, .accordion-section) {
+  background: var(--rk-panel) !important; color: var(--rk-text) !important; border-color: var(--rk-border) !important;
+  backdrop-filter: var(--rk-backdrop); -webkit-backdrop-filter: var(--rk-backdrop);
+}
+html.rk-theme :is(.section-content, .profile-header, .game-main-content, .game-about-container, .modal-content, .popover, .dropdown-menu,
+  .rbx-game-server-item, .game-server-item, .rbx-public-game-server-item, .card, .trade-row, .item-details-info-content, .menu-vertical) {
+  border-radius: var(--rk-radius) !important;
+}
+html.rk-theme :is(.section-content, .game-main-content, .profile-header, .modal-content) { border: 1px solid var(--rk-border) !important; box-shadow: none !important; }
+html.rk-theme :is(.dropdown-menu, .popover) { box-shadow: var(--rk-shadow) !important; border: 1px solid var(--rk-border) !important; }
+html.rk-theme :is(.dropdown-menu li a, .menu-vertical .menu-option, .rbx-menu-item):hover { background: var(--rk-hover) !important; }
+html.rk-theme :is(.border-bottom, .border-top, hr, .rbx-divider, .divider-top, .divider-bottom) { border-color: var(--rk-border) !important; }
+html.rk-theme .rbx-divider { background-color: var(--rk-border) !important; }
+
+/* ---------- Tarjetas de juego y de objeto ---------- */
+html.rk-theme :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container,
+  .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, .hero-unit .thumbnail-2d-container) {
+  border-radius: var(--rk-thumb-radius, var(--rk-radius-sm)) !important; overflow: hidden; background-color: var(--rk-surface-2) !important;
+}
+html.rk-theme :is(.game-card-container, .item-card-container, .catalog-item-container, .list-item.game-card) { transition: transform .15s ease; }
+html.rk-theme :is(.avatar-card-image, .avatar-headshot, .avatar .thumbnail-2d-container, .friends-carousel-tile .thumbnail-2d-container) { border-radius: 50% !important; }
+html.rk-theme :is(.avatar-status, .game-card-friend-info) { border-color: var(--rk-bg) !important; }
+
+/* ---------- Pestañas ---------- */
+html.rk-theme :is(.rbx-tabs-horizontal, .rbx-tabs-vertical, .nav-tabs) { background: transparent !important; border-color: var(--rk-border) !important; }
+html.rk-theme :is(.rbx-tab, .rbx-tabs-horizontal .rbx-tab, .nav-tabs > li > a) { background: transparent !important; border-color: var(--rk-border) !important; }
+html.rk-theme :is(.rbx-tab .text-lead, .rbx-tab a, .nav-tabs > li > a) { color: var(--rk-muted) !important; }
+html.rk-theme :is(.rbx-tab.active, .nav-tabs > li.active) :is(.text-lead, a, span) { color: var(--rk-text) !important; }
+html.rk-theme :is(.rbx-tab.active, .nav-tabs > li.active > a) { box-shadow: inset 0 -3px 0 var(--rk-accent) !important; }
+html.rk-theme .rbx-tab-heading:hover { background: var(--rk-hover) !important; }
+
+/* ---------- Botones ---------- */
+html.rk-theme :is(.btn-primary-md, .btn-primary-sm, .btn-primary-lg, .btn-primary-xs, .btn-cta-md, .btn-cta-sm, .btn-cta-lg, .btn-cta-xs) {
+  background: var(--rk-accent) !important; border-color: var(--rk-accent) !important; color: var(--rk-accent-text) !important;
+  border-radius: var(--rk-btn-radius, var(--rk-radius-sm)) !important; box-shadow: var(--rk-glow) !important;
+}
+html.rk-theme :is(.btn-growth-md, .btn-growth-lg, .btn-growth-sm, .btn-growth-xs, .btn-common-play-game-lg, .btn-common-play-game-md, .btn-common-play-game-sm, [class*="btn-common-play-game"]) {
+  background: var(--rk-success) !important; border-color: var(--rk-success) !important; color: var(--rk-success-text) !important;
+  border-radius: var(--rk-btn-radius, var(--rk-radius-sm)) !important; box-shadow: var(--rk-glow) !important;
+}
+html.rk-theme :is([class*="btn-common-play-game"]) .icon-common-play { filter: none; }
+html.rk-theme :is(.btn-secondary-md, .btn-secondary-sm, .btn-secondary-lg, .btn-secondary-xs, .btn-control-md, .btn-control-sm, .btn-control-xs, .btn-control-lg, .btn-generic-more-sm, .btn-more) {
+  background: var(--rk-panel-2) !important; border-color: var(--rk-border) !important; color: var(--rk-text) !important; border-radius: var(--rk-btn-radius, var(--rk-radius-sm)) !important;
+}
+html.rk-theme :is(.btn-alert-md, .btn-alert-sm, .btn-alert-xs) { background: var(--rk-danger) !important; border-color: var(--rk-danger) !important; color: #fff !important; border-radius: var(--rk-radius-sm) !important; }
+html.rk-theme :is(.btn-primary-md, .btn-cta-md, .btn-growth-md, .btn-secondary-md, .btn-control-md, [class*="btn-common-play-game"]):hover { filter: brightness(1.1); }
+
+/* ---------- Formularios ---------- */
+html.rk-theme :is(input.form-control, textarea.form-control, .input-field, select.input-field, .rbx-select, .form-control, .input-group input,
+  .input-group .form-control, .rbx-input-field, .search-input, .rbx-select-group select) {
+  background: var(--rk-panel-2) !important; color: var(--rk-text) !important; border: 1px solid var(--rk-border) !important; border-radius: var(--rk-radius-sm) !important;
+}
+html.rk-theme :is(input, textarea)::placeholder { color: var(--rk-muted) !important; opacity: 1; }
+html.rk-theme :is(input.form-control, textarea.form-control, .input-field):focus { border-color: var(--rk-accent) !important; box-shadow: 0 0 0 3px var(--rk-accent-soft) !important; }
+html.rk-theme .rbx-select-group .rbx-select { background-color: var(--rk-panel-2) !important; }
+html.rk-theme :is(.toggle-switch, .btn-toggle).on { background: var(--rk-accent) !important; }
+
+/* ---------- Páginas concretas ---------- */
+html.rk-theme :is(.game-calls-to-action, .game-title-container, .game-details-carousel-container) { background: transparent !important; }
+html.rk-theme :is(.game-stat .text-lead, .game-stat-container .text-lead) { color: var(--rk-text) !important; }
+html.rk-theme :is(.rbx-running-games-footer, .rbx-public-running-games-footer) .btn-full-width { background: var(--rk-panel-2) !important; color: var(--rk-text) !important; border-color: var(--rk-border) !important; }
+html.rk-theme :is(.text-robux, .text-robux-tile, .text-robux-lg, .icon-robux-container .text-robux) { color: var(--rk-text) !important; }
+html.rk-theme :is(.profile-header .header-title h1, .profile-header .header-title h2) { color: var(--rk-text) !important; }
+html.rk-theme :is(.chat-container .chat-main, .chat-windows-container .chat-window, .dialog-container .dialog-header) { background: var(--rk-panel) !important; color: var(--rk-text) !important; }
+html.rk-theme :is(.dialog-message-container .dialog-message.message-inbound) { background: var(--rk-panel-2) !important; color: var(--rk-text) !important; }
+html.rk-theme :is(.dialog-message-container .dialog-message.message-outbound) { background: var(--rk-accent) !important; color: var(--rk-accent-text) !important; }
+html.rk-theme :is(footer.container-footer, #footer-container, .container-footer) { background: transparent !important; border-top: 1px solid var(--rk-border) !important; }
+html.rk-theme :is(footer.container-footer, .container-footer) :is(a, .text-footer, p, span) { color: var(--rk-muted) !important; }
+html.rk-theme :is(.alert-success, .alert-warning, .alert-danger) { border-radius: var(--rk-radius-sm) !important; }
+
+/* ---------- Barras de desplazamiento ---------- */
+html.rk-theme ::-webkit-scrollbar { width: 10px; height: 10px; }
+html.rk-theme ::-webkit-scrollbar-track { background: transparent; }
+html.rk-theme ::-webkit-scrollbar-thumb { background: var(--rk-scroll); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+
+/* ---------- Inicio original oculto mientras se monta el rediseño ---------- */
+html.rk-home-pending :is(#HomeContainer, .home-container, #home-page-container) { visibility: hidden !important; }
+.rk-home-hidden { display: none !important; }

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RoCer0 · Ajustes</title>
+  <link rel="stylesheet" href="../common/icons.css">
+  <link rel="stylesheet" href="../content/home.css">
+  <link rel="stylesheet" href="../content/layout.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="page-ov"></div>
+
+  <aside id="side" class="side">
+    <div class="brand">
+      <span class="logo" data-icon="logo"></span>
+      <div><b>RoCer0</b><small id="version"></small></div>
+      <button id="side-close" class="btn btn-icon btn-ghost side-close" title="Cerrar el menú" data-icon="x"></button>
+    </div>
+    <label class="side-search" title="Buscar en todos los ajustes (tecla /)">
+      <span class="side-search-ic" data-icon="search"></span>
+      <input id="q" type="search" placeholder="Buscar ajustes" autocomplete="off" spellcheck="false">
+      <kbd>/</kbd>
+    </label>
+    <nav id="nav" aria-label="Secciones"></nav>
+    <div class="side-foot">
+      <button id="open-in-roblox" class="btn btn-small btn-ghost" data-icon="external" hidden>Abrir dentro de Roblox</button>
+    </div>
+  </aside>
+  <div id="side-shade" class="side-shade"></div>
+
+  <div class="main-wrap">
+    <div class="topbar">
+      <button id="side-open" class="btn btn-icon btn-ghost" title="Secciones" data-icon="menu"></button>
+      <span class="topbar-title" id="topbar-title"></span>
+    </div>
+    <div id="perm-warning" class="warning" hidden>
+      <span data-icon="alert"></span>
+      <span>El navegador todavía no ha dado permiso para acceder a Roblox. Sin él la extensión no funciona.</span>
+      <button id="perm-grant" class="btn btn-accent">Dar permiso</button>
+    </div>
+    <main id="main">
+      <div id="pages"></div>
+      <section id="search-page" class="page search-page" hidden>
+        <header class="page-head">
+          <span class="page-ic" data-icon="search"></span>
+          <div class="page-titles"><h1 id="search-title">Buscar</h1><p class="page-desc" id="search-count"></p></div>
+        </header>
+        <div id="search-results"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Paneles fijos: la página los coloca en su sección (ver RX_SECTIONS en common/defaults.js) -->
+  <div id="panels" hidden>
+
+    <!-- ===== Temas ===== -->
+    <div class="panel" id="panel-theme-gallery" data-title="Galería" data-icon="layers" data-bare="1">
+      <div class="chips" id="theme-filters"></div>
+      <div id="theme-gallery" class="gallery"></div>
+    </div>
+
+    <div class="panel" id="panel-theme-editor" data-title="Editor del tema" data-icon="brush" data-bare="1">
+      <div class="editor">
+        <div class="card editor-controls">
+          <div class="editor-title">
+            <h2>Personalizar <span id="ed-name"></span></h2>
+            <span class="muted" id="ed-desc"></span>
+          </div>
+          <div class="seg" id="ed-tabs">
+            <button data-pane="colors" class="on" data-icon="palette">Colores</button>
+            <button data-pane="bg" data-icon="image">Fondo</button>
+            <button data-pane="layout" data-icon="grid">Estructura</button>
+            <button data-pane="style" data-icon="sparkles">Letra y efectos</button>
+          </div>
+
+          <div class="pane" data-pane="colors">
+            <h3>Color de acento</h3>
+            <div id="ed-accents" class="swatches"></div>
+            <h3>Colores</h3>
+            <div id="ed-colors" class="color-grid"></div>
+          </div>
+
+          <div class="pane" data-pane="bg" hidden>
+            <div class="row"><label for="ed-bg">Tipo de fondo</label><select id="ed-bg"></select></div>
+            <div class="bg-block" data-show="color"><div class="row"><label>Color</label><input id="ed-bgcolor" type="color"></div></div>
+            <div class="bg-block" data-show="custom">
+              <div class="row"><label>Forma</label><select id="ed-gkind"><option value="linear">Lineal</option><option value="radial">Radial (desde el centro)</option><option value="conic">Cónico (en círculo)</option></select></div>
+              <div class="row"><label>Ángulo</label><span class="range"><input id="ed-gangle" type="range" min="0" max="360"><output></output></span></div>
+              <div id="ed-gstops" class="stops"></div>
+              <div class="row"><button id="ed-gadd" class="btn" data-icon="plus">Añadir color</button><label class="check"><input id="ed-ganim" type="checkbox"> Que se mueva</label></div>
+              <div id="ed-gbar" class="gbar"></div>
+            </div>
+            <div class="bg-block" data-show="url"><div class="row"><label>URL de la imagen</label><input id="ed-url" type="url" placeholder="https://…/fondo.jpg"></div></div>
+            <div class="bg-block" data-show="upload"><div class="row"><label>Imagen</label><span><button id="ed-upload" class="btn" data-icon="upload">Elegir imagen…</button> <span class="muted" id="ed-upload-info"></span></span><input type="file" id="ed-file" accept="image/*" hidden></div></div>
+            <div class="bg-block" data-show="slideshow">
+              <div class="slides" id="ed-slides"></div>
+              <div class="row"><button id="ed-slide-add" class="btn" data-icon="plus">Añadir imágenes de tu PC…</button><input type="file" id="ed-slide-file" accept="image/*" multiple hidden></div>
+              <label class="field"><span>Y/o imágenes de internet (una URL por línea, https)</span><textarea id="ed-slide-urls" rows="3" placeholder="https://…/1.jpg"></textarea></label>
+              <div class="row"><label>Cambiar cada</label><span class="range"><input id="ed-slide-sec" type="range" min="3" max="120"><output></output></span></div>
+              <div class="row"><label>Transición</label><select id="ed-slide-fx"><option value="fade">Fundido</option><option value="slide">Deslizar</option><option value="zoom">Zoom lento (Ken Burns)</option></select></div>
+            </div>
+            <div class="bg-block" data-show="video">
+              <div class="row"><label>Vídeo de tu PC</label><span><button id="ed-video" class="btn" data-icon="video">Elegir vídeo…</button> <span class="muted" id="ed-video-info"></span></span><input type="file" id="ed-video-file" accept="video/mp4,video/webm,video/ogg" hidden></div>
+              <div class="row"><label>O un vídeo de internet</label><input id="ed-video-url" type="url" placeholder="https://…/fondo.mp4"></div>
+              <div class="row"><label>Velocidad</label><span class="range"><input id="ed-video-rate" type="range" min="25" max="200" step="5"><output></output></span></div>
+              <p class="muted small">Vídeos MP4 o WebM de hasta 30 MB. Va sin sonido, en bucle, y se para cuando no miras la pestaña.</p>
+            </div>
+            <div class="bg-block" data-show="upload url slideshow video">
+              <div class="row"><label>Ajuste</label><select id="ed-fit"><option value="cover">Llenar la pantalla</option><option value="contain">Verla entera</option><option value="tile">Repetir en mosaico</option><option value="stretch">Estirar</option></select></div>
+              <div class="row" data-only="upload url"><label>Posición</label><select id="ed-pos"><option value="center">Centro</option><option value="top">Arriba</option><option value="bottom">Abajo</option><option value="left">Izquierda</option><option value="right">Derecha</option></select></div>
+            </div>
+
+            <h3>Filtros del fondo</h3>
+            <div class="row"><label>Desenfoque</label><span class="range"><input id="ed-bgblur" type="range" min="0" max="40"><output></output></span></div>
+            <div class="row"><label>Oscurecer</label><span class="range"><input id="ed-bgdim" type="range" min="0" max="90"><output></output></span></div>
+            <div class="row"><label>Brillo</label><span class="range"><input id="ed-bright" type="range" min="30" max="170"><output></output></span></div>
+            <div class="row"><label>Contraste</label><span class="range"><input id="ed-contrast" type="range" min="40" max="170"><output></output></span></div>
+            <div class="row"><label>Saturación</label><span class="range"><input id="ed-sat" type="range" min="0" max="250"><output></output></span></div>
+            <div class="row"><label>Cambiar tono</label><span class="range"><input id="ed-hue" type="range" min="0" max="360"><output></output></span></div>
+            <div class="row"><label>Blanco y negro</label><span class="range"><input id="ed-gray" type="range" min="0" max="100"><output></output></span></div>
+            <div class="row"><label>Sepia</label><span class="range"><input id="ed-sepia" type="range" min="0" max="100"><output></output></span></div>
+            <div class="row"><label>Se mueve con el ratón</label><span class="range"><input id="ed-parallax" type="range" min="0" max="40"><output></output></span></div>
+
+            <h3>Capa por encima</h3>
+            <div class="row"><label>Efecto</label><select id="ed-overlay"></select></div>
+            <div class="row"><label>Color del efecto</label><span><input id="ed-ovcolor" type="color"> <button id="ed-ovcolor-reset" class="btn btn-small">Automático</button></span></div>
+            <div class="row"><label>Intensidad</label><span class="range"><input id="ed-ovstrength" type="range" min="0" max="100"><output></output></span></div>
+            <div class="row"><label>Grano de película</label><span class="range"><input id="ed-grain" type="range" min="0" max="100"><output></output></span></div>
+
+            <h3>Partículas</h3>
+            <div class="row"><label>Tipo</label><select id="ed-particles"></select></div>
+            <div class="part-opts">
+              <div class="row"><label>Dónde</label><select id="ed-player"><option value="back">Detrás del contenido</option><option value="front">Delante (como si nevara sobre la web)</option></select></div>
+              <div class="row"><label>Cantidad</label><span class="range"><input id="ed-pdensity" type="range" min="1" max="100"><output></output></span></div>
+              <div class="row"><label>Velocidad</label><span class="range"><input id="ed-pspeed" type="range" min="1" max="100"><output></output></span></div>
+              <div class="row"><label>Tamaño</label><span class="range"><input id="ed-psize" type="range" min="1" max="100"><output></output></span></div>
+              <div class="row"><label>Opacidad</label><span class="range"><input id="ed-popacity" type="range" min="5" max="100"><output></output></span></div>
+              <div class="row"><label>Color</label><span><input id="ed-pcolor" type="color"> <button id="ed-pcolor-reset" class="btn btn-small">Automático</button></span></div>
+            </div>
+            <div class="pane-actions"><button id="ed-bg-reset" class="btn" data-icon="refresh">Volver al fondo del tema</button></div>
+          </div>
+
+          <div class="pane" data-pane="layout" hidden>
+            <p class="muted small">Cambia cómo está montada la web de Roblox con este tema. Si algo no encaja en alguna página, ponlo en "Normal".</p>
+            <div id="ed-layout"></div>
+            <div class="pane-actions"><button id="ed-layout-reset" class="btn" data-icon="refresh">Volver a la estructura del tema</button></div>
+          </div>
+
+          <div class="pane" data-pane="style" hidden>
+            <h3>Paneles</h3>
+            <div class="row"><label>Transparencia</label><span class="range"><input id="ed-glass" type="range" min="0" max="90"><output></output></span></div>
+            <div class="row"><label>Desenfoque tras los paneles</label><span class="range"><input id="ed-pblur" type="range" min="0" max="30"><output></output></span></div>
+            <div class="row"><label>Redondeo de esquinas</label><span class="range"><input id="ed-radius" type="range" min="0" max="28"><output></output></span></div>
+            <div class="row"><label>Sombras</label><span class="range"><input id="ed-shadow" type="range" min="0" max="100" step="5"><output></output></span></div>
+            <div class="row"><label>Brillo neón</label><input id="ed-glow" type="checkbox"></div>
+            <div class="row"><label>Fuerza del brillo</label><span class="range"><input id="ed-glowsize" type="range" min="10" max="100" step="5"><output></output></span></div>
+            <h3>Letra</h3>
+            <div class="row"><label>Fuente</label><select id="ed-font"></select></div>
+            <div class="row" id="ed-fontc-row"><label>Nombre de la fuente</label><input id="ed-fontc" type="text" placeholder="Por ejemplo: Poppins"></div>
+          </div>
+
+          <div class="editor-actions">
+            <button id="ed-reset" class="btn" data-icon="refresh">Restablecer este tema</button>
+            <button id="ed-saveas" class="btn btn-accent" data-icon="save">Guardar como tema nuevo</button>
+            <button id="ed-export" class="btn" data-icon="download">Exportar</button>
+            <button id="ed-import" class="btn" data-icon="upload">Importar</button>
+            <input type="file" id="ed-import-file" accept="application/json,.json" hidden>
+            <button id="ed-rename" class="btn" data-icon="edit" hidden>Renombrar</button>
+            <button id="ed-delete" class="btn btn-danger" data-icon="trash" hidden>Borrar tema</button>
+          </div>
+        </div>
+
+        <div class="editor-preview">
+          <div class="preview-label muted">Vista previa del Inicio</div>
+          <div id="preview" class="preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-theme-auto" data-title="Tema automático" data-icon="clock">
+      <div class="rows">
+        <div class="row">
+          <div class="row-text"><div class="row-label">Cambiar de tema solo</div><div class="row-help" id="auto-now"></div></div>
+          <div class="row-ctl">
+            <select id="auto-mode">
+              <option value="off">No, usar siempre el elegido</option>
+              <option value="daynight">Uno de día y otro de noche</option>
+              <option value="seasonal">De temporada (Halloween, Navidad)</option>
+              <option value="both">Las dos cosas</option>
+            </select>
+          </div>
+        </div>
+        <div class="row sub auto-dn"><div class="row-text"><div class="row-label">Tema de día</div></div><div class="row-ctl"><select id="auto-day"></select><input id="auto-day-start" type="time" title="Empieza a las"></div></div>
+        <div class="row sub auto-dn"><div class="row-text"><div class="row-label">Tema de noche</div></div><div class="row-ctl"><select id="auto-night"></select><input id="auto-night-start" type="time" title="Empieza a las"></div></div>
+      </div>
+    </div>
+
+    <!-- ===== Iconos ===== -->
+    <div class="panel" id="panel-icons-style" data-title="Estilo" data-icon="brush">
+      <div class="rows">
+        <div class="row"><div class="row-text"><div class="row-label">Trazo</div></div><div class="row-ctl"><select id="ic-style"></select></div></div>
+        <div class="row"><div class="row-text"><div class="row-label">Tamaño</div></div><div class="row-ctl"><span class="range"><input id="ic-scale" type="range" min="70" max="160" step="5"><output></output></span></div></div>
+        <div class="row"><div class="row-text"><div class="row-label">Color propio</div><div class="row-help">Si lo apagas, los iconos usan los colores del tema.</div></div><div class="row-ctl"><input id="ic-color" type="color"><input id="ic-color-on" type="checkbox" class="switch"></div></div>
+        <div class="row"><div class="row-text"><div class="row-label">Cambiar también los iconos de roblox.com</div><div class="row-help">Los de la barra de arriba y el menú lateral.</div></div><div class="row-ctl"><input id="ic-roblox" type="checkbox" class="switch"></div></div>
+      </div>
+    </div>
+    <div class="panel" id="panel-icons-grid" data-title="Iconos de RoCer0" data-icon="grid">
+      <div class="panel-actions"><input id="ic-filter" type="search" placeholder="Buscar un icono"></div>
+      <p class="muted small panel-note">Pulsa un icono para cambiarlo por una imagen de tu PC (PNG, JPG, GIF, WebP o SVG).</p>
+      <div id="ic-grid" class="icon-grid"></div>
+    </div>
+    <div class="panel" id="panel-icons-rbx" data-title="Iconos de la web de Roblox" data-icon="layers">
+      <p class="muted small panel-note">Se cambian en la barra de arriba y en el menú lateral de roblox.com.</p>
+      <div id="ic-rbx" class="icon-grid"></div>
+    </div>
+    <div class="panel" id="panel-icons-io" data-title="Tus imágenes" data-icon="image">
+      <div class="btn-row">
+        <button id="ic-export" class="btn" data-icon="download">Exportar</button>
+        <button id="ic-import" class="btn" data-icon="upload">Importar</button>
+        <button id="ic-clear" class="btn btn-danger" data-icon="trash">Quitar todas</button>
+      </div>
+      <input type="file" id="ic-import-file" accept="application/json,.json" hidden>
+      <input type="file" id="ic-file" accept="image/*,.svg" hidden>
+    </div>
+
+    <!-- ===== Fijados ===== -->
+    <div class="panel" id="panel-pin-folders" data-title="Carpetas" data-icon="folder">
+      <div id="folder-list" class="list"></div>
+      <div class="row-inline"><input id="folder-name" type="text" maxlength="30" placeholder="Nombre de una carpeta nueva"><button id="folder-add" class="btn btn-accent" data-icon="plus">Crear</button></div>
+    </div>
+    <div class="panel" id="panel-pin-list" data-title="Tus fijados" data-icon="pin">
+      <div id="pin-list" class="list"></div>
+    </div>
+
+    <!-- ===== Notas y ocultos ===== -->
+    <div class="panel" id="panel-notes" data-title="Tus notas" data-icon="note">
+      <div class="panel-actions"><input id="note-filter" type="search" placeholder="Buscar en las notas"></div>
+      <div class="chips" id="note-tags"></div>
+      <div id="note-list" class="list"></div>
+    </div>
+    <div class="panel" id="panel-hidden-games" data-title="Juegos ocultos" data-icon="eyeOff">
+      <div id="hidden-games" class="list"></div>
+    </div>
+    <div class="panel" id="panel-hidden-creators" data-title="Creadores ocultos" data-icon="ban">
+      <div id="hidden-creators" class="list"></div>
+    </div>
+
+    <!-- ===== Cuentas ===== -->
+    <div class="panel" id="panel-accounts" data-title="Cuentas guardadas" data-icon="key">
+      <div id="acc-list" class="list"></div>
+      <div class="btn-row">
+        <button id="acc-save" class="btn btn-accent" data-icon="save">Guardar la cuenta actual</button>
+        <button id="acc-add" class="btn" data-icon="plus">Añadir otra cuenta</button>
+      </div>
+      <div id="acc-msg" class="muted small"></div>
+      <details class="fine">
+        <summary>Cómo funciona</summary>
+        <p>Para añadir otra cuenta: pulsa "Añadir otra cuenta", entra con ella en la página que se abre y luego pulsa "Guardar la cuenta actual".</p>
+        <p>Las sesiones se guardan solo en este navegador, dentro de la extensión, y solo se envían a roblox.com. Cualquiera con acceso a este navegador podría usarlas: no guardes cuentas en un ordenador compartido.</p>
+        <p>No uses "Cerrar sesión" de Roblox en una cuenta guardada: eso invalida su sesión y tendrías que guardarla otra vez.</p>
+      </details>
+    </div>
+
+    <!-- ===== Lista de deseos ===== -->
+    <div class="panel" id="panel-wishlist" data-title="Siguiendo" data-icon="bookmark">
+      <div class="panel-actions"><button id="wish-check" class="btn btn-small" data-icon="refresh">Comprobar ahora</button></div>
+      <div id="wish-list" class="list"></div>
+    </div>
+
+    <!-- ===== Calculadora ===== -->
+    <div class="panel" id="panel-calc" data-title="Calculadora de intercambios" data-icon="calculator">
+      <div class="panel-actions"><button id="calc-refresh" class="btn btn-small" data-icon="refresh">Actualizar valores</button></div>
+      <p class="muted small panel-note" id="calc-source">Cargando valores de Rolimons…</p>
+      <div class="calc">
+        <div class="calc-side" data-side="give">
+          <h4>Das</h4>
+          <input list="calc-items" placeholder="Nombre, acrónimo o ID del objeto">
+          <div class="calc-list"></div>
+          <label class="calc-robux">Robux <input type="number" id="robux-give" value="0" min="0"></label>
+          <div class="calc-total"></div>
+        </div>
+        <div class="calc-side" data-side="get">
+          <h4>Recibes</h4>
+          <input list="calc-items" placeholder="Nombre, acrónimo o ID del objeto">
+          <div class="calc-list"></div>
+          <label class="calc-robux">Robux <input type="number" id="robux-get" value="0" min="0"></label>
+          <div class="calc-total"></div>
+        </div>
+      </div>
+      <datalist id="calc-items"></datalist>
+      <div class="calc-foot">
+        <div id="calc-result"></div>
+        <button id="calc-clear" class="btn btn-small btn-ghost" data-icon="trash">Vaciar</button>
+      </div>
+      <p class="muted small">De los Robux que te dan, Roblox se queda el 30 %: la calculadora ya lo descuenta.</p>
+    </div>
+
+    <!-- ===== Retos ===== -->
+    <div class="panel" id="panel-ch-today" data-title="Hoy" data-icon="target" data-bare="1">
+      <div class="ch-top">
+        <div class="card ch-today-card">
+          <div class="ch-head"><b>Retos de hoy</b><span id="ch-streak" class="pill"></span></div>
+          <div id="ch-today" class="list"></div>
+        </div>
+        <div id="ch-stats" class="stats"></div>
+      </div>
+    </div>
+    <div class="panel" id="panel-ch-medals" data-title="Medallas" data-icon="medal" data-bare="1">
+      <div id="ch-medals" class="medals"></div>
+    </div>
+    <div class="panel" id="panel-ch-calendar" data-title="Últimas semanas" data-icon="calendar">
+      <div id="ch-calendar" class="heat"></div>
+      <p class="muted small">Cada cuadrito es un día: más color, más retos completados.</p>
+    </div>
+
+    <!-- ===== Wrapped ===== -->
+    <div class="panel" id="panel-wrapped-head" data-bare="1">
+      <div class="wr-head">
+        <select id="wr-month" title="Mes"></select>
+        <button id="wr-download" class="btn btn-accent" data-icon="download">Descargar la tarjeta</button>
+        <button id="wr-copy" class="btn" data-icon="copy">Copiar la imagen</button>
+      </div>
+    </div>
+    <div class="panel" id="panel-wrapped-card" data-title="Tarjeta para compartir" data-icon="share" data-bare="1">
+      <div class="wr-canvas-box"><canvas id="wr-canvas" width="1200" height="630"></canvas></div>
+    </div>
+    <div class="panel" id="panel-wrapped-body" data-title="Tu mes" data-icon="calendar" data-bare="1">
+      <div id="wr-body"></div>
+    </div>
+
+    <!-- ===== Estadísticas ===== -->
+    <div class="panel" id="panel-stats-time" data-title="Tiempo en roblox.com" data-icon="clock">
+      <div id="time-chart" class="bars"></div>
+      <div id="time-summary" class="muted small"></div>
+    </div>
+    <div class="panel" id="panel-stats-robux" data-title="Tu saldo de Robux" data-icon="robux">
+      <div class="panel-actions"><button id="robux-now" class="btn btn-small" data-icon="refresh">Actualizar</button></div>
+      <div id="robux-chart" class="linechart"></div>
+      <div id="robux-summary" class="muted small"></div>
+    </div>
+    <div class="panel" id="panel-stats-games" data-title="Tu tiempo de juego" data-icon="gamepad">
+      <div id="my-games"></div>
+    </div>
+    <div class="panel" id="panel-stats-friends" data-title="A qué juegan tus amigos" data-icon="users">
+      <div class="panel-actions"><button id="poll-now" class="btn btn-small" data-icon="refresh">Consultar ahora</button></div>
+      <div id="friend-games"></div>
+    </div>
+    <div class="panel" id="panel-stats-seen" data-title="Última conexión de tus amigos" data-icon="history">
+      <div id="last-seen"></div>
+    </div>
+
+    <!-- ===== General ===== -->
+    <div class="panel" id="panel-about" data-title="Acerca de RoCer0" data-icon="logo">
+      <div class="about">
+        <div class="about-head"><span class="logo" data-icon="logo"></span><div><b>RoCer0 <span id="about-version"></span></b><span class="muted small">Extensión para personalizar Roblox. Tus datos se quedan en este navegador.</span></div></div>
+        <h4>Novedades de la 1.0</h4>
+        <ul class="news">
+          <li>Ajustes por secciones, con buscador y menú lateral.</li>
+          <li>Cada función tiene sus propias opciones: tarjetas del Inicio, columnas de servidores, retos, Wrapped, popup y mucho más.</li>
+          <li>Horario de silencio, amigos favoritos y avisos más finos.</li>
+          <li>Wrapped en formato horizontal, cuadrado o de historia, con tus colores.</li>
+          <li>Funciona en Firefox, Chrome, Brave, Edge y Opera.</li>
+        </ul>
+        <h4>Atajos</h4>
+        <ul class="keys">
+          <li><kbd>/</kbd> buscar en estos ajustes</li>
+          <li><kbd>Ctrl</kbd> + <kbd>K</kbd> PowerSearch en roblox.com (se puede cambiar)</li>
+          <li><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> abrir el popup de RoCer0</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== Permisos y datos ===== -->
+    <div class="panel" id="panel-perms" data-title="Permisos" data-icon="shield">
+      <p id="perm-status"></p>
+      <p class="muted small">RoCer0 no tiene servidor propio. Solo habla con Roblox, con Rolimons (valores de objetos), con ipinfo.io (solo la IP de servidores de juego, para saber su región) y con open.er-api.com (cambio de moneda; no se envía nada tuyo).</p>
+    </div>
+    <div class="panel" id="panel-backup" data-title="Copia de seguridad" data-icon="save">
+      <div class="btn-row">
+        <button id="export" class="btn" data-icon="download">Exportar ajustes</button>
+        <button id="import" class="btn" data-icon="upload">Importar ajustes</button>
+        <button id="reset" class="btn btn-danger" data-icon="refresh">Restablecer todo</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" hidden>
+      <p class="muted small">La copia incluye tus ajustes y tus temas propios. Las imágenes y vídeos subidos, los fijados, las notas y las cuentas no van en ella.</p>
+    </div>
+    <div class="panel" id="panel-erase" data-title="Borrar datos" data-icon="trash">
+      <div class="btn-row">
+        <button id="clear-stats" class="btn" data-icon="trash">Borrar estadísticas y registros</button>
+        <button id="clear-accounts" class="btn btn-danger" data-icon="trash">Borrar cuentas guardadas</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" role="status"></div>
+
+  <script src="../common/defaults.js"></script>
+  <script src="../common/themes.js"></script>
+  <script src="../common/icons.js"></script>
+  <script src="../common/bgfx.js"></script>
+  <script src="../common/confetti.js"></script>
+  <script src="options.js"></script>
+  <script src="themes-ui.js"></script>
+  <script src="icons-ui.js"></script>
+  <script src="extras.js"></script>
+  <script src="start.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+{
+  "manifest_version": 3,
+  "name": "RoCer0 – Roblox a tu medida",
+  "short_name": "RoCer0",
+  "version": "1.0.0",
+  "description": "Extensión de Roblox totalmente configurable: temas, Inicio rediseñado, PowerSearch, fijados con carpetas, filtros de servidores por región, server hop, trades con valores, lista de deseos, ruleta, retos diarios y mucho más.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "notifications",
+    "cookies"
+  ],
+  "host_permissions": [
+    "*://*.roblox.com/*",
+    "*://*.rbxcdn.com/*",
+    "https://www.rolimons.com/*",
+    "https://ipinfo.io/*",
+    "https://open.er-api.com/*"
+  ],
+  "background": {
+    "scripts": [
+      "common/defaults.js",
+      "common/rbxm.js",
+      "background.js"
+    ],
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.roblox.com/*"
+      ],
+      "js": [
+        "common/defaults.js",
+        "common/themes.js",
+        "common/icons.js",
+        "common/bgfx.js",
+        "content/theme-boot.js"
+      ],
+      "css": [
+        "common/icons.css",
+        "content/theme.css",
+        "content/layout.css",
+        "content/rx.css",
+        "content/home.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "*://*.roblox.com/*"
+      ],
+      "js": [
+        "content/util.js",
+        "content/ui.js",
+        "content/search.js",
+        "content/servers.js",
+        "content/items.js",
+        "content/social.js",
+        "content/pages.js",
+        "common/confetti.js",
+        "content/fun.js",
+        "content/home.js",
+        "content/settings-tab.js",
+        "content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "page/launcher.js",
+        "page/bgmedia.html",
+        "options/options.html"
+      ],
+      "matches": [
+        "*://*.roblox.com/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "RoCer0",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+R"
+      },
+      "description": "Abrir el panel de RoCer0"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "rocer0@cero.extension",
+      "strict_min_version": "121.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  }
+}
