@@ -8,7 +8,7 @@
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
-- **Versión:** 1.1.1
+- **Versión:** 1.1.2
 - **Navegadores:** Firefox 121 o posterior y los basados en Firefox (Zen, LibreWolf, Floorp, Waterfox), y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
@@ -28,12 +28,12 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 | Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.1.zip) |
-| Firefox, Zen, LibreWolf, Floorp y Waterfox | [rocer0-firefox-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.1.zip) |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.2.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.2.zip) |
+| Firefox, Zen, LibreWolf, Floorp y Waterfox | [rocer0-firefox-1.1.2.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.2.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
-1. Descomprime `rocer0-chromium-1.1.1.zip` en una carpeta que no vayas a borrar.
+1. Descomprime `rocer0-chromium-1.1.2.zip` en una carpeta que no vayas a borrar.
 2. Abre la página de extensiones de tu navegador:
    - Chrome: `chrome://extensions`
    - Brave: `brave://extensions`
@@ -50,7 +50,7 @@ La extensión se queda instalada aunque cierres el navegador. Si algún día lo 
 Zen, LibreWolf, Floorp y Waterfox son Firefox por dentro: usan el zip de Firefox, no el de Chrome.
 
 1. Abre `about:debugging#/runtime/this-firefox`.
-2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.1.zip`.
+2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.2.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
 
@@ -61,6 +61,15 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 ### Actualizar
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
+
+### Novedades de la 1.1.2
+
+Daniel, otra vez a partir de lo que se veía en el Roblox de verdad:
+
+- **El menú lateral cambia esté hecho como esté.** Daniel lo reconoce por sus enlaces (Inicio, Perfil, Mensajes, Amigos…) y no por sus clases ni por si usa listas, así que sirve para el menú de 2026 y para los que vengan. También cubre la tienda oficial, que ahora es un botón sin enlace, el recuadro nuevo de Roblox Plus y las cajas con fondo propio que tapaban el panel negro.
+- **Amigos con el estilo de Daniel.** El carrusel de amigos de Roblox (en los perfiles y en el Inicio de Roblox, si lo enseñas), la página de amigos y cualquier lista de gente: caras en marcos cuadrados blancos y girados, nombres en negrita inclinada, la línea de debajo en rojo, tarjetas como hojas negras con sombra roja y el desplegable de cada amigo como los demás menús. Los amigos en común de los perfiles llevan el mismo marco. Nada cambia de sitio ni de tamaño.
+- **Probado en Zen.** Además de en Chrome, las pruebas de Daniel pasan ahora en Zen (el motor de Firefox), con una copia de roblox.com que pide la sesión y el token como la de verdad.
+- **Diagnóstico más completo.** Dice si tus amigos cargan (y, si no, qué respondió Roblox) y qué listas de gente ha encontrado Daniel.
 
 ### Novedades de la 1.1.1
 
@@ -116,6 +125,7 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 - **Colores y fondo:** rojo, negro y blanco planos, con un panel rojo cortado en diagonal y estrellas de cinco puntas detrás de todo, que dan una vuelta corta al entrar en cada página.
 - **Letras recortadas:** los títulos y el menú lateral se escriben como una nota de rescate, cada letra con su recorte, su tipo de letra y su inclinación. El texto de verdad sigue ahí para los lectores de pantalla.
 - **Menú de comandos:** al pasar el ratón por el menú lateral salta un rayo azul con una punta roja, y la página en la que estás queda marcada.
+- **Amigos:** en el carrusel de amigos, la página de amigos y cualquier lista de gente, cada cara va en un marco cuadrado blanco y girado, los nombres en negrita inclinada y las tarjetas como hojas negras con sombra roja.
 - **Animaciones:** las tarjetas entran de golpe al abrir una página, una cortina roja y negra cruza la pantalla al cambiar de página y cada clic en un botón deja un golpe rojo y negro. Si tu sistema pide reducir el movimiento, no hay animaciones y se quedan las letras recortadas.
 - **Ajustes y popup** con el mismo estilo.
 
@@ -127,6 +137,8 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 | El Inicio con Daniel, con el ratón sobre una entrada del menú | El catálogo con Daniel |
 | ![Los ajustes con el tema Daniel](capturas/daniel-ajustes.png) | ![El popup con el tema Daniel](capturas/daniel-popup.png) |
 | Los ajustes con Daniel: lo que no se puede tocar lleva un candado | El popup con Daniel |
+| ![La página de amigos con el tema Daniel](capturas/daniel-amigos.png) | ![Un perfil con el tema Daniel](capturas/daniel-perfil.png) |
+| La página de amigos con Daniel | Un perfil con Daniel: sus amigos y los amigos en común |
 
 <sub>Daniel está dibujado entero para RoCer0: no usa imágenes, logos, sonidos ni tipos de letra de los juegos de Persona, y RoCer0 no tiene ninguna relación con ATLUS ni con SEGA. Sus letras son fuentes libres (SIL Open Font License) recortadas y con otro nombre; las licencias están en [`extension/fonts/LICENCIAS.txt`](extension/fonts/LICENCIAS.txt).</sub>
 

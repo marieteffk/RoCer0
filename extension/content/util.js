@@ -416,11 +416,20 @@ var RX = (function () {
     var main = document.querySelector('#container-main, main, [role="main"]') || document.body;
     L.push('Contenido:');
     outline(main, 5, 70, L);
+    // El menú lateral: el que haya marcado Daniel, uno conocido o el que Daniel encuentre por sus enlaces.
+    var finder = RX.features.filter(function (f) { return f.id === 'daniel'; })[0];
     var nav = document.querySelector('[data-p5-nav], #navigation, .rbx-left-col, .left-nav');
+    if (!nav && finder) { try { nav = finder.navs()[0]; } catch (e) { /* sin menú */ } }
     if (nav) {
       var n0 = L.length;
       L.push('Menú lateral:');
-      outline(nav, 5, n0 + 28, L);
+      outline(nav, 6, n0 + 34, L);
+    } else {
+      // Sin menú: dónde están los enlaces del menú de Roblox (Avatar, Amigos, Mensajes), de dentro afuera.
+      var a = document.querySelector('a[href*="/my/avatar"], a[href*="/users/friends"], a[href*="/my/messages"], a[href*="/users/connections"]');
+      var chain2 = [];
+      for (var k = a; k && k !== document.body && chain2.length < 10; k = k.parentElement) chain2.push(diagName(k));
+      L.push('Menú lateral: no encontrado' + (a ? ' · un enlace del menú está en: ' + chain2.join(' < ') : ' · no hay enlaces del menú en la página'));
     }
     var h1 = document.querySelector('#container-main h1, main h1');
     if (h1) {

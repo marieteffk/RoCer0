@@ -297,7 +297,8 @@
         ' · modo ' + (this.mode || '—') + ' · ancla ' + (a ? RX.diagName(a) + (a.isConnected ? '' : ' (quitada)') : '—') +
         ' · puesto: ' + (r && r.isConnected ? 'sí, dentro de ' + RX.diagName(r.parentElement) : 'no') +
         ' · repuesto ' + Math.max(0, this.moves - 1) + ' veces · ocultos ' + document.querySelectorAll('[data-rk-home-hidden]').length +
-        ' · tarjetas ' + (r ? r.querySelectorAll(':scope > .rk-card').length : 0);
+        ' · tarjetas ' + (r ? r.querySelectorAll(':scope > .rk-card').length : 0) +
+        ' · amigos ' + (!this.friendData ? '—' : this.friendData.error ? 'no cargan (' + (this.friendErr || '?') + ')' : (this.friendData.ids.length ? 'cargados' : 'ninguno'));
     },
 
     // ---------- Qué tarjetas y dónde ----------
@@ -456,7 +457,11 @@
             (pr.userPresences || []).forEach(function (p) { pres[p.userId] = p; });
           }
           return { ids: ids, pres: pres };
-        })().then(function (d) { self.friendData = d; }, function () { self.friendData = { ids: [], pres: {}, error: true }; });
+        })().then(function (d) { self.friendData = d; }, function (e) {
+          // Para el diagnóstico: el código de la respuesta, sin nada más.
+          self.friendErr = e && e.status ? 'respuesta ' + e.status : 'sin respuesta';
+          self.friendData = { ids: [], pres: {}, error: true };
+        });
       }
       return this.friendsP;
     },
