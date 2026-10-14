@@ -30,6 +30,8 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .logo { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: var(--rk-radius-sm); color: var(--rk-accent-text);
   background: linear-gradient(135deg, var(--rk-accent), var(--rk-accent-2)); box-shadow: var(--rk-glow); }
 .logo .rk-i { font-size: 20px; }
+.logo:has(> img.rc-logo) { background: none; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
+.logo > img.rc-logo { width: 100%; height: 100%; border-radius: inherit; display: block; }
 .top-actions { display: flex; gap: 2px; }
 .icon-btn { width: 30px; height: 30px; display: inline-grid; place-items: center; padding: 0; font-size: 16px; cursor: pointer;
   border: 1px solid transparent; border-radius: var(--rk-btn-radius, var(--rk-radius-sm)); background: transparent; color: var(--rk-text); }

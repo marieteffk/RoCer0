@@ -49,6 +49,9 @@ kbd { display: inline-block; min-width: 20px; padding: 0 5px; border: 1px solid 
 .brand small { color: var(--rk-muted); font-size: 11px; }
 .logo { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; color: var(--rk-accent-text); background: linear-gradient(135deg, var(--rk-accent), var(--rk-accent-2)); box-shadow: var(--rk-glow); font-size: 23px; flex: none; }
 .logo .ui-i { color: var(--rk-accent-text); }
+/* El logo de RoCer0 es una imagen: ocupa toda la caja, sin el degradado del acento. */
+:is(.logo, .pv-logo):has(> img.rc-logo) { background: none; box-shadow: 0 2px 10px rgba(0, 0, 0, .35); }
+:is(.logo, .pv-logo) > img.rc-logo { width: 100%; height: 100%; border-radius: inherit; display: block; }
 .brand .side-close { display: none; }
 .side-search { display: flex; align-items: center; gap: 8px; margin: 2px 4px 0; padding: 0 8px 0 10px; height: 36px; border-radius: 10px; background: var(--rk-panel-2); border: 1px solid var(--rk-border); cursor: text; }
 .side-search:focus-within { border-color: var(--rk-accent); box-shadow: 0 0 0 3px var(--rk-accent-soft); }
@@ -359,7 +362,8 @@ details.fine p { margin: 6px 0; }
 .pv-side-item.on { background: var(--rk-accent-soft); }
 .pv-main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; padding: 0 14px; zoom: calc(.7 * var(--rk-zoom, 1)); scrollbar-width: thin; }
 .pv-footer { text-align: center; color: var(--rk-muted); font-size: 11px; padding: 6px 0 18px; }
-.preview #rk-home { margin-top: 14px; }
+/* La vista previa enseña siempre el mosaico: no se adapta al ancho como el Inicio de verdad. */
+.preview #rk-home { margin-top: 14px; container-type: normal; }
 .preview.rk-l-nav-autohide .pv-header { opacity: .55; }
 .preview.rk-l-sidebar-floating .pv-side { margin: 10px 0 10px 10px; border: 1px solid var(--rk-border); border-radius: var(--rk-radius); box-shadow: var(--rk-shadow); }
 .preview.rk-l-sidebar-icons .pv-side { width: 46px; }

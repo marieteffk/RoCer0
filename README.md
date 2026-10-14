@@ -1,3 +1,5 @@
+<p align="center"><img src="extension/icons/logo.png" width="128" alt="Logo de RoCer0"></p>
+
 # RoCer0
 
 **Roblox a tu medida.** RoCer0 es una extensión para Firefox, Chrome, Brave, Edge y Opera que cambia el aspecto de roblox.com y le añade decenas de herramientas. Cada función tiene su interruptor y sus opciones, así que puedes dejar solo lo que te guste.
@@ -6,7 +8,7 @@
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
-- **Versión:** 1.0.0
+- **Versión:** 1.0.1
 - **Navegadores:** Firefox 121 o posterior, y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
@@ -26,12 +28,12 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 | Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.0.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.0.0.zip) |
-| Firefox | [rocer0-firefox-1.0.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.0.0.zip) |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.0.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.0.1.zip) |
+| Firefox | [rocer0-firefox-1.0.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.0.1.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
-1. Descomprime `rocer0-chromium-1.0.0.zip` en una carpeta que no vayas a borrar.
+1. Descomprime `rocer0-chromium-1.0.1.zip` en una carpeta que no vayas a borrar.
 2. Abre la página de extensiones de tu navegador:
    - Chrome: `chrome://extensions`
    - Brave: `brave://extensions`
@@ -46,7 +48,7 @@ La extensión se queda instalada aunque cierres el navegador. Si algún día lo 
 ### Firefox
 
 1. Abre `about:debugging#/runtime/this-firefox`.
-2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.0.0.zip`.
+2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.0.1.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
 
@@ -55,6 +57,11 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 ### Actualizar
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
+
+### Novedades de la 1.0.1
+
+- **El Inicio ocupa toda la pantalla en el PC.** En la web nueva de Roblox, el Inicio de RoCer0 se quedaba en una columna estrecha en el centro, como en el móvil. Ahora llena todo el hueco al lado del menú, y si la ventana es estrecha, las tarjetas se ponen una debajo de otra.
+- **Logo nuevo:** el cero plateado sobre fondo negro, en el icono de la extensión, la barra del navegador, los ajustes, el popup, la pestaña de RoCer0 dentro de Roblox y el Wrapped.
 
 ### Novedades de la 1.0
 
@@ -232,4 +239,10 @@ node herramientas/empaquetar.mjs extension dist
 
 ```sh
 python3 herramientas/estructura.py extension/content/layout.css
+```
+
+Los iconos de la extensión (`icons/icon-16.png` a `icon-128.png`) y el logo grande (`icons/logo.png`) salen del logo original, [`herramientas/logo-original.png`](herramientas/logo-original.png). Para rehacerlos hace falta Python con Pillow y NumPy:
+
+```sh
+python3 herramientas/logo.py herramientas/logo-original.png extension/icons
 ```

@@ -259,6 +259,7 @@ html.rx-hide-native-badges #game-badges-container { display: none !important; }
 .rc-settings-fail { padding: 14px 4px; color: var(--rk-text); }
 .rc-settings-fail[hidden] { display: none; }
 .rc-menu-item .rc-menu-logo, .rc-gear-item .rc-gear-logo, .rc-settings-bar .rc-menu-logo { color: var(--rk-accent); width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+img.rc-logo.rc-menu-logo, img.rc-logo.rc-gear-logo { width: 1.35em; height: 1.35em; vertical-align: -0.3em; }
 .rc-menu-item a, .rc-gear-item a { cursor: pointer; }
 .rc-settings-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .rc-settings-bar-title { display: flex; align-items: center; gap: 8px; font-size: 16px; }

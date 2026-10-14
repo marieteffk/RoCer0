@@ -153,13 +153,23 @@ var RC_ICON_CUSTOM = {};
 
 function rcSetCustomIcons(map) { RC_ICON_CUSTOM = map || {}; }
 
+// El logo de RoCer0 es una imagen (el diseño de Cero), no un icono dibujado.
+function rcLogoUrl() {
+  try { return (typeof browser !== 'undefined' && browser.runtime ? browser : chrome).runtime.getURL('icons/logo.png'); } catch (e) { return ''; }
+}
+
 function rcIcon(name, opts) {
   opts = opts || {};
   var doc = opts.doc || document;
   var cls = 'rk-i rc-i-' + name + (opts.cls ? ' ' + opts.cls : '');
   var custom = RC_ICON_CUSTOM[name];
   var node;
-  if (custom && custom.src) {
+  if (name === 'logo' && !(custom && custom.src) && rcLogoUrl()) {
+    node = doc.createElement('img');
+    node.className = cls + ' rc-i-img rc-logo';
+    node.src = rcLogoUrl();
+    node.alt = '';
+  } else if (custom && custom.src) {
     if (custom.tint) {
       node = doc.createElement('span');
       node.className = cls + ' rc-i-mask';

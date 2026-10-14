@@ -1,6 +1,11 @@
 /* Inicio rediseñado de RoCer0. Las tarjetas van en una rejilla de 12 columnas; home.js pone a cada una
    su ancho (grid-column: span N) según la colocación elegida. También lo usa la vista previa de los temas. */
-#rk-home { --rk-gap: 14px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--rk-gap); margin: 12px 0 24px; color: var(--rk-text); font-size: 14px; line-height: 1.4; }
+/* Ocupa todo el ancho de su contenedor aunque Roblox lo centre o lo ajuste a lo que lleva dentro (en el PC
+   se quedaba en una columna estrecha, como en el móvil). Es contenedor para que las tarjetas se adapten a su ancho. */
+#rk-home {
+  --rk-gap: 14px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--rk-gap); margin: 12px 0 24px; color: var(--rk-text); font-size: 14px; line-height: 1.4;
+  box-sizing: border-box; width: 100%; max-width: none; min-width: 0; align-self: stretch; justify-self: stretch; float: none; container: rk-home / inline-size;
+}
 #rk-home * { box-sizing: border-box; }
 #rk-home a { color: inherit; text-decoration: none; }
 #rk-home button { font-family: inherit; }
@@ -275,11 +280,18 @@ html.rk-anim #rk-home .rk-coll:hover { transform: translateY(-3px); border-color
   #rk-home .rk-hero-actions .rk-btn-play { flex: 1; }
 }
 
-/* Pantallas estrechas: todas las tarjetas a lo ancho */
+/* Inicio estrecho (ventana pequeña o poco hueco al lado del menú): todas las tarjetas a lo ancho */
 @media (max-width: 900px) {
   #rk-home > .rk-card { grid-column: 1 / -1 !important; }
 }
+@container rk-home (max-width: 760px) {
+  #rk-home > .rk-card { grid-column: 1 / -1 !important; }
+}
 @media (max-width: 700px) {
+  html #rk-home .rk-card .rk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  #rk-home .rk-hero-img { inset: 0; opacity: .45; }
+}
+@container rk-home (max-width: 520px) {
   html #rk-home .rk-card .rk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   #rk-home .rk-hero-img { inset: 0; opacity: .45; }
 }

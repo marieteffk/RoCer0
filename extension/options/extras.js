@@ -467,12 +467,13 @@
       return await createImageBitmap(await r.blob());
     } catch (e) { return null; }
   }
-  function svgImage(svgText) {
+  function loadImage(src) {
     return new Promise(resolve => {
+      if (!src) return resolve(null);
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = () => resolve(null);
-      img.src = 'data:image/svg+xml,' + encodeURIComponent(svgText);
+      img.src = src;
     });
   }
   function roundRect(ctx, x, y, w, hh, r) {
@@ -549,7 +550,7 @@
     const font = getComputedStyle(document.body).fontFamily || 'system-ui, sans-serif';
     const topN = Math.max(0, Math.min(5, Number(settings['wrapped.topGames']) || 0));
     const top = s.top.slice(0, topN);
-    const logo = await svgImage(rcIconSvgText('logo', 'normal').replace(/stroke="#000"/, 'stroke="#ffffff"').replace(/fill="#000"/g, 'fill="#ffffff"'));
+    const logo = await loadImage((RC_ICON_CUSTOM.logo && RC_ICON_CUSTOM.logo.src) || rcLogoUrl());
     const icons = [];
     for (const g of top) icons.push(s.icons && s.icons[g.universeId] ? await loadBitmap(s.icons[g.universeId]) : null);
     const who = await meCard();

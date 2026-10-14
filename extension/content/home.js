@@ -86,6 +86,9 @@
       await this.loaded;
       if (!this.listening) {
         this.listening = true;
+        // Al cambiar el tamaño de la ventana, Roblox puede cambiar cómo coloca el Inicio.
+        var wt = null;
+        window.addEventListener('resize', function () { clearTimeout(wt); wt = setTimeout(function () { self.widen(); }, 250); });
         // Fijados, carpetas u ocultos cambiados en otra pestaña o en los ajustes: se repinta.
         RX.B.storage.onChanged.addListener(function (ch, area) {
           if (area !== 'local' || !self.store) return;
@@ -141,6 +144,29 @@
         else a.parentNode.insertBefore(this.root, a);
       }
       a.classList.toggle('rk-home-hidden', this.canHide && !!this.s['home.hideOriginal'] && !this.ui.showOriginal);
+      this.widen();
+    },
+
+    // En el PC, la web nueva de Roblox centra el Inicio y lo encoge al ancho de lo que lleva dentro: el de
+    // RoCer0 se quedaba en una columna estrecha, como en el móvil. home.css ya le da todo el ancho de su
+    // contenedor; si aun así no lo llena, o el contenedor solo crece cuando crece el Inicio, se sube un nivel
+    // (sin salir del contenido de la página) hasta dar con un contenedor que tenga el ancho de verdad.
+    widen: function () {
+      var r = this.root;
+      if (!r || !r.isConnected) return;
+      for (var i = 0; i < 4; i++) {
+        var p = r.parentElement, up = p && p.parentElement;
+        if (!up || p === document.body || p.id === 'container-main' || p.matches('main, #wrap')) return;
+        if (up.querySelector('#navigation, .rbx-left-col, #header, .rbx-header')) return;
+        var cs = getComputedStyle(p);
+        var inner = p.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+        var before = p.getBoundingClientRect().width;
+        r.style.width = Math.ceil(before + 400) + 'px';
+        var grows = p.getBoundingClientRect().width > before + 200;
+        r.style.width = '';
+        if (!grows && r.getBoundingClientRect().width >= inner - 40) return;
+        up.insertBefore(r, p);
+      }
     },
 
     // ---------- Qué tarjetas y dónde ----------
