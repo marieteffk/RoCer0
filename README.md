@@ -8,7 +8,7 @@
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
-- **Versión:** 1.0.1
+- **Versión:** 1.1.0
 - **Navegadores:** Firefox 121 o posterior, y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
@@ -28,12 +28,12 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 | Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.0.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.0.1.zip) |
-| Firefox | [rocer0-firefox-1.0.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.0.1.zip) |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.0.zip) |
+| Firefox | [rocer0-firefox-1.1.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.0.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
-1. Descomprime `rocer0-chromium-1.0.1.zip` en una carpeta que no vayas a borrar.
+1. Descomprime `rocer0-chromium-1.1.0.zip` en una carpeta que no vayas a borrar.
 2. Abre la página de extensiones de tu navegador:
    - Chrome: `chrome://extensions`
    - Brave: `brave://extensions`
@@ -48,7 +48,7 @@ La extensión se queda instalada aunque cierres el navegador. Si algún día lo 
 ### Firefox
 
 1. Abre `about:debugging#/runtime/this-firefox`.
-2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.0.1.zip`.
+2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.0.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
 
@@ -57,6 +57,11 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 ### Actualizar
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
+
+### Novedades de la 1.1
+
+- **Tema Daniel**, al estilo de los menús de Persona 5: rojo, negro y blanco, estrellas que giran detrás de todo, el menú lateral convertido en un menú de comandos con rayos azules, títulos con letras recortadas como una nota de rescate, una cortina al cambiar de página y un golpe rojo y negro al hacer clic. También cambia los ajustes y el popup.
+- **Es un tema fijo:** mientras está puesto no vale ninguna personalización. Lo que tengas guardado no se borra y vuelve en cuanto eliges otro tema.
 
 ### Novedades de la 1.0.1
 
@@ -77,7 +82,7 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 
 ### Apariencia
 
-**Temas.** 27 temas inspirados en los de BetterDiscord: oscuros, claros, transparentes, animados, neón, pastel, de espacio, de naturaleza y dos de temporada (Halloween y Navidad, que se ponen solos en sus fechas). Un tema no cambia solo los colores, también la forma de la web. El editor deja tocarlo todo y se ve al momento en una vista previa:
+**Temas.** 28 temas inspirados en los de BetterDiscord: oscuros, claros, transparentes, animados, neón, pastel, de espacio, de naturaleza, dos de temporada (Halloween y Navidad, que se ponen solos en sus fechas) y Daniel, un tema fijo al estilo de Persona 5. Un tema no cambia solo los colores, también la forma de la web. El editor deja tocarlo todo y se ve al momento en una vista previa:
 
 - **Colores:** el acento y los 10 colores del tema por separado.
 - **Fondo:** color, degradado propio de hasta 6 colores, 25 fondos dibujados, una imagen o varias que van cambiando, o un vídeo de tu PC. Tiene filtros (desenfoque, brillo, contraste, saturación…), capas por encima (viñeta, tinte, líneas de monitor…) y 10 tipos de partículas como nieve, estrellas o pétalos.
@@ -90,6 +95,25 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 |---|---|
 | ![Un vídeo de tu PC de fondo, nieve por delante y el menú lateral solo con iconos](capturas/fondo-video-nieve.png) | ![Una imagen de tu PC de fondo con el tema Sakura](capturas/fondo-imagen-de-tu-pc.png) |
 | Vídeo de tu PC de fondo, nieve y el menú lateral solo con iconos | Una imagen de tu PC de fondo con el tema Sakura |
+
+**Daniel, el tema fijo.** Está inspirado en los menús de Persona 5 y cambia toda la web:
+
+- **Colores y fondo:** rojo, negro y blanco planos, con un panel rojo cortado en diagonal y estrellas de cinco puntas que giran despacio detrás de todo.
+- **Letras recortadas:** los títulos y el menú lateral se escriben como una nota de rescate, cada letra con su recorte, su tipo de letra y su inclinación. El texto de verdad sigue ahí para los lectores de pantalla.
+- **Menú de comandos:** al pasar el ratón por el menú lateral salta un rayo azul con una punta roja, y la página en la que estás queda marcada.
+- **Animaciones:** las tarjetas entran de golpe al abrir una página, una cortina roja y negra cruza la pantalla al cambiar de página y cada clic en un botón deja un golpe rojo y negro. Si tu sistema pide reducir el movimiento, no hay animaciones y se quedan las letras recortadas.
+- **Ajustes y popup** con el mismo estilo.
+
+Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni colores, ni fondo, ni letra, ni iconos, ni estructura, ni los retoques de Interfaz, ni el tamaño del popup, y el tema automático tampoco. En los ajustes esas opciones salen con un candado. Lo que tengas guardado no se borra: vuelve en cuanto eliges otro tema en la galería. Las funciones y las tarjetas del Inicio se siguen eligiendo como siempre.
+
+| | |
+|---|---|
+| ![El Inicio de Roblox con el tema Daniel](capturas/daniel-inicio.png) | ![El catálogo con el tema Daniel](capturas/daniel-catalogo.png) |
+| El Inicio con Daniel, con el ratón sobre una entrada del menú | El catálogo con Daniel |
+| ![Los ajustes con el tema Daniel](capturas/daniel-ajustes.png) | ![El popup con el tema Daniel](capturas/daniel-popup.png) |
+| Los ajustes con Daniel: lo que no se puede tocar lleva un candado | El popup con Daniel |
+
+<sub>Daniel está dibujado entero para RoCer0: no usa imágenes, logos, sonidos ni tipos de letra de los juegos de Persona, y RoCer0 no tiene ninguna relación con ATLUS ni con SEGA. Sus letras son fuentes libres (SIL Open Font License) recortadas y con otro nombre; las licencias están en [`extension/fonts/LICENCIAS.txt`](extension/fonts/LICENCIAS.txt).</sub>
 
 **Iconos.** Más de cien iconos dibujados para RoCer0, sin emojis. Puedes cambiar su trazo, tamaño y color, y cambiar cualquiera (también los de la barra y el menú de Roblox) por una imagen de tu PC.
 
@@ -226,6 +250,7 @@ RoCer0 está hecha en JavaScript sin dependencias ni paso de compilación. El c�
 | `options/` | La página de ajustes, que se genera a partir de las secciones de `defaults.js` |
 | `popup/` | El panel del botón de la barra |
 | `page/` | Piezas que se cargan dentro de Roblox (vídeo de fondo y lanzador de juegos) |
+| `fonts/` | Las letras del tema Daniel, fuentes libres con sus licencias en `LICENCIAS.txt` |
 
 Para probarla sin empaquetar, carga la carpeta `extension/` como extensión descomprimida en Chromium o su `manifest.json` como complemento temporal en Firefox.
 

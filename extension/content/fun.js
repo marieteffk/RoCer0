@@ -232,7 +232,7 @@ RX.rc = {
     var list = el('div', { class: 'rc-ch-list' }, [el('div', { class: 'rk-empty', text: 'Cargando retos…' })]);
     var medals = el('div', { class: 'rc-medals' });
     var card = el('section', { class: 'rk-card rc-ch-card' }, [
-      el('div', { class: 'rk-head' }, [el('h2', {}, [RX.icon('target'), ' Retos de hoy']), el('div', { class: 'rc-ch-tools' }, [reroll, streak])]),
+      el('div', { class: 'rk-head' }, [el('h2', {}, [RX.icon('target'), el('span', { class: 'rk-h-text', text: 'Retos de hoy' })]), el('div', { class: 'rc-ch-tools' }, [reroll, streak])]),
       list, medals
     ]);
     var paint = function (st) {

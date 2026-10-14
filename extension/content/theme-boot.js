@@ -14,6 +14,9 @@
   var scheme = null;
   var pendingTimer = null;
 
+  // Los marcos (iframes) no llevan las animaciones de página entera del tema Daniel.
+  if (!isTop) root.classList.add('rk-frame');
+
   function adapt(payload) {
     if (!payload || fullSite) return payload;
     return { vars: payload.vars, classes: ['rk-vars'], scheme: payload.scheme };
@@ -32,6 +35,10 @@
     if (!text) { if (st) st.remove(); return; }
     if (!st) { st = document.createElement('style'); st.id = id; (document.head || root).appendChild(st); }
     if (st.textContent !== text) st.textContent = text;
+  }
+  // Fuentes de las letras recortadas del tema Daniel: solo mientras está puesto.
+  function danielFonts(on) {
+    setStyle('rocer0-daniel-fonts', on && fullSite ? rkDanielFontCss(function (p) { return B.runtime.getURL(p); }) : '');
   }
   function paintIcons(ic) {
     if (!ic) return;
@@ -65,6 +72,7 @@
     if (cached && cached.on) {
       rkApply(root, adapt(cached.payload));
       scheme = cached.syncRoblox ? cached.payload.scheme : null;
+      danielFonts(cached.payload.classes.indexOf('rk-t-daniel') >= 0);
     }
     if (cached && cached.home && isTop && fullSite && HOME_RE.test(location.pathname)) setPending(true);
   } catch (e) { /* sin caché */ }
@@ -137,7 +145,10 @@
   var activeId = null, autoTimer = null;
   async function refresh() {
     var r = await B.storage.local.get(['settings', 'iconImages']);
-    var s = rxMergeSettings(r.settings);
+    // Con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+    var raw = rxMergeSettings(r.settings);
+    var s = rkLookLock(raw);
+    var locked = rkLockedTheme(s);
     var pc = rxPageClasses(s);
     var pcList = Object.keys(pc).filter(function (k) { return pc[k]; });
     var pcBlur = pc['rx-streamer'] ? rxStreamerBlur(s) : 0;
@@ -147,14 +158,15 @@
       else localStorage.removeItem(PAGE_KEY);
     } catch (e) { /* lleno o bloqueado */ }
     var homeOn = s['home.enabled'] && s['home.hideOriginal'];
-    var custom = r.iconImages || {};
+    var custom = locked ? {} : (r.iconImages || {});
     rcSetCustomIcons(custom);
     // Tema automático (día/noche o de temporada): se vuelve a mirar cada minuto.
     clearInterval(autoTimer);
-    if (s['theme.enabled'] && s['theme.auto'] && s['theme.auto'] !== 'off' && isTop) {
-      autoTimer = setInterval(function () { if (rkActiveThemeId(s) !== activeId) refresh(); }, 60000);
+    // Se mira con los ajustes tal cual (Daniel puede ser el tema de noche y tiene que irse por la mañana).
+    if (raw['theme.enabled'] && raw['theme.auto'] && raw['theme.auto'] !== 'off' && isTop) {
+      autoTimer = setInterval(function () { if (rkActiveThemeId(raw) !== activeId) refresh(); }, 60000);
     }
-    activeId = rkActiveThemeId(s);
+    activeId = rkActiveThemeId(raw);
     var t = s['theme.enabled'] ? rkEffectiveTheme(s) : null;
     var ic = iconState(s, t, custom);
     paintIcons(ic);
@@ -162,6 +174,7 @@
       if (ic.css.length > 150000) ic.css = '';   // imágenes muy grandes: sin caché, se pintan al cargar
       localStorage.setItem(ICON_KEY, JSON.stringify(ic));
     } catch (e) { /* lleno o bloqueado */ }
+    danielFonts(!!(t && t.locked && t.id === 'daniel'));
     if (!t) {
       rkApply(root, null);
       scheme = null;

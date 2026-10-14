@@ -6,6 +6,12 @@ var RK_THEMES = [
   { id: 'medianoche', name: 'Medianoche', desc: 'Azul noche con tarjetas suaves, como tu captura.', tags: ['oscuro', 'azul'], scheme: 'dark',
     c: { bg: '#0a0d16', surface: '#10141f', surface2: '#181e2d', border: '#222a3c', text: '#eaf0fa', muted: '#8c95a8', accent: '#3b82f6', accent2: '#8b5cf6', success: '#22c55e', danger: '#ef4444' },
     bg: 'none', radius: 14 },
+  // Tema fijo: no se puede retocar y, mientras está puesto, decide todo el aspecto (ver RK_LOOK_LOCK).
+  // Sus formas y animaciones están en content/daniel.css y content/daniel.js.
+  { id: 'daniel', name: 'Daniel', desc: 'Inspirado en los menús de Persona 5: rojo, negro y blanco, letras recortadas como una nota de rescate, estrellas que giran y animaciones por toda la web. Es un tema fijo: mientras lo tengas puesto no vale ninguna personalización. No tiene relación con ATLUS ni con SEGA.',
+    tags: ['fijo', 'oscuro', 'rojo', 'animado'], scheme: 'dark', locked: true,
+    c: { bg: '#0f0f0f', surface: '#0f0f0f', surface2: '#1c1c1c', border: '#7a7a7a', text: '#fdfdfd', muted: '#c8c8c8', accent: '#e5191c', accent2: '#1cfeff', success: '#1cfeff', danger: '#ff3d3d' },
+    bg: 'daniel', radius: 0 },
   { id: 'amoled', name: 'AMOLED', desc: 'Negro puro para pantallas OLED y máximo contraste.', tags: ['oscuro', 'negro', 'plano'], scheme: 'dark',
     c: { bg: '#000000', surface: '#0a0a0a', surface2: '#141414', border: '#232323', text: '#f5f5f5', muted: '#9a9a9a', accent: '#00a2ff', accent2: '#7c5cff', success: '#1fd660', danger: '#ff4d4d' },
     bg: 'none', radius: 12 },
@@ -100,6 +106,8 @@ function rkClock(hhmm, fallback) {
 }
 
 function rkActiveThemeId(settings, now) {
+  // Un tema fijo elegido en la galería manda sobre el tema automático.
+  if (rkFixedTheme(settings['theme.id'])) return settings['theme.id'];
   var mode = settings['theme.auto'] || 'off';
   var d = now || new Date();
   if (mode === 'seasonal' || mode === 'both') {
@@ -113,6 +121,36 @@ function rkActiveThemeId(settings, now) {
     return day ? settings['theme.dayTheme'] : settings['theme.nightTheme'];
   }
   return settings['theme.id'];
+}
+
+// ---------- Temas fijos ----------
+// Un tema fijo (Daniel) no se puede retocar y, mientras está puesto, decide todo el aspecto.
+function rkFixedTheme(id) {
+  for (var i = 0; i < RK_THEMES.length; i++) if (RK_THEMES[i].id === id) return RK_THEMES[i].locked ? RK_THEMES[i] : null;
+  return null;
+}
+// El tema fijo que manda ahora mismo, o null.
+function rkLockedTheme(settings) {
+  if (!settings || settings['theme.enabled'] === false) return null;
+  return rkFixedTheme(rkActiveThemeId(settings));
+}
+// Ajustes de aspecto que decide el tema fijo. No se borran: se ignoran mientras está puesto y vuelven al cambiar de tema.
+var RK_LOOK_LOCK = {
+  'theme.extension': true, 'theme.animations': true, 'theme.syncRoblox': true,
+  'icons.style': 'theme', 'icons.scale': 100, 'icons.color': '', 'icons.roblox': true,
+  'home.enabled': true, 'home.hideOriginal': true, 'home.layout': 'auto',
+  'ui.enabled': false, 'ui.wideLayout': false, 'ui.compactCards': false, 'ui.hide': [], 'ui.hideSide': [], 'ui.customCss': '',
+  'popup.width': 'normal', 'popup.compact': false, 'opts.density': 'comfortable'
+};
+// Los ajustes tal como se aplican: con un tema fijo puesto, los de aspecto valen lo que diga RK_LOOK_LOCK.
+function rkLookLock(settings) {
+  var t = rkLockedTheme(settings);
+  if (!t) return settings;
+  var s = {}, k;
+  for (k in settings) s[k] = settings[k];
+  for (k in RK_LOOK_LOCK) s[k] = JSON.parse(JSON.stringify(RK_LOOK_LOCK[k]));
+  s['theme.id'] = t.id;
+  return s;
 }
 
 var RK_THEME_BASE = {
@@ -158,6 +196,7 @@ var RK_LAYOUT_BASE = { nav: 'normal', sidebar: 'normal', width: 'normal', cards:
 // La estructura que trae cada tema (cada uno se ve distinto, no solo de color).
 var RK_THEME_LAYOUTS = {
   medianoche: { nav: 'floating', buttons: 'pill', animIn: 'fade' },
+  daniel: { iconStyle: 'gruesa', hover: 'none' },
   amoled: { nav: 'minimal', cards: 'flat', tiles: 'square', density: 'compact', hover: 'zoom' },
   vidrio: { nav: 'floating', sidebar: 'floating', cards: 'glass', buttons: 'pill', hover: 'glow', animIn: 'rise', iconStyle: 'fina' },
   nebulosa: { nav: 'floating', cards: 'glass', headings: 'gradient', hover: 'glow', iconStyle: 'duotono' },
@@ -261,7 +300,7 @@ function rkFindTheme(id, custom) {
 function rkEffectiveTheme(settings, themeId) {
   var id = themeId || rkActiveThemeId(settings);
   var preset = rkFindTheme(id, settings['theme.custom']);
-  var ov = (settings['theme.overrides'] || {})[preset.id] || {};
+  var ov = preset.locked ? {} : (settings['theme.overrides'] || {})[preset.id] || {};
   var t = {};
   var k;
   for (k in RK_THEME_BASE) t[k] = RK_THEME_BASE[k];
@@ -303,6 +342,32 @@ function rkCustomGradient(t) {
   return t.gradAnim ? { layer: g + ' 0 0 / 300% 300%', anim: 'rk-bg-aurora 22s ease-in-out infinite alternate' } : { layer: g };
 }
 
+// Fondo de Daniel: grupos de estrellas de cinco puntas, una dentro de otra, en negro y blanco (cada anillo 1,25 veces
+// el de dentro), repartidos al azar por un círculo (siempre salen igual). Dibujo propio en SVG; se hace una sola vez.
+var rkP5StarsUrl = null;
+function rkP5Stars() {
+  if (rkP5StarsUrl) return rkP5StarsUrl;
+  var pts = [], ring = '', groups = [], step = 118, seed = 20260514, i, k;
+  for (i = 0; i < 10; i++) {
+    var ang = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 47 : 100;
+    pts.push((r * Math.cos(ang)).toFixed(1) + ' ' + (r * Math.sin(ang)).toFixed(1));
+  }
+  for (k = 9; k >= 0; k--) ring += "<use href='#s' transform='scale(" + Math.pow(1.25, k - 9).toFixed(3) + ")' fill='" + ((9 - k) % 2 ? '#ececec' : '#0f0f0f') + "'/>";
+  var rnd = function () { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 100003) / 100003; };
+  for (var y = 60; y <= 940; y += step * 0.86) {
+    for (var x = 60 + (Math.round((y - 60) / (step * 0.86)) % 2) * step / 2; x <= 940; x += step) {
+      var jx = x + (rnd() - 0.5) * step * 0.7, jy = y + (rnd() - 0.5) * step * 0.7;
+      if (Math.sqrt((jx - 500) * (jx - 500) + (jy - 500) * (jy - 500)) > 430) continue;
+      groups.push([jx, jy, 0.8 + rnd() * 0.75, rnd() * 72]);
+    }
+  }
+  for (i = groups.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)), tmp = groups[i]; groups[i] = groups[j]; groups[j] = tmp; }
+  var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><defs><path id='s' d='M" + pts.join('L') + "Z'/><g id='c'>" + ring + '</g></defs>' +
+    groups.map(function (g) { return "<use href='#c' transform='translate(" + g[0].toFixed(0) + ' ' + g[1].toFixed(0) + ') rotate(' + g[3].toFixed(0) + ') scale(' + g[2].toFixed(2) + ")'/>"; }).join('') + '</svg>';
+  rkP5StarsUrl = 'url("data:image/svg+xml,' + svg.replace(/#/g, '%23').replace(/</g, '%3C').replace(/>/g, '%3E') + '")';
+  return rkP5StarsUrl;
+}
+
 function rkBackground(t, image) {
   var c = t.c, a = c.accent, b = c.accent2, bg = c.bg;
   switch (t.bg) {
@@ -329,6 +394,9 @@ function rkBackground(t, image) {
         ', radial-gradient(ellipse at 50% 120%, ' + rkA(b, 0.30) + ', transparent 60%), ' + bg, anim: 'rk-bg-snow 40s linear infinite' };
     }
     case 'spooky': return { layer: 'radial-gradient(circle at 84% 14%, rgba(255,214,150,.85) 0 34px, rgba(255,170,80,.28) 36px, transparent 130px), radial-gradient(ellipse at 50% 125%, ' + rkA(b, 0.38) + ', transparent 60%), radial-gradient(ellipse at 0% 0%, ' + rkA(a, 0.20) + ', transparent 50%), ' + bg };
+    // Rojo a la izquierda y las estrellas oscurecidas a la derecha (en roblox.com, daniel.css pinta su propio fondo que gira).
+    case 'daniel': return { layer: 'linear-gradient(112deg, ' + a + ' 0 34%, #000 34% 35.8%, #fdfdfd 35.8% 36.6%, transparent 36.6%), ' +
+      'linear-gradient(rgba(7,7,7,.46), rgba(7,7,7,.46)), var(--p5-stars) 70% 45% / auto 260% no-repeat, #070707' };
     case 'color': return { layer: 'linear-gradient(' + (rkHex(t.bgColor) || bg) + ', ' + (rkHex(t.bgColor) || bg) + ')' };
     case 'custom': return rkCustomGradient(t);
     case 'mesh': return { layer: 'radial-gradient(at 0% 0%, ' + rkA(a, 0.38) + ' 0, transparent 52%), radial-gradient(at 100% 0%, ' + rkA(b, 0.32) + ' 0, transparent 50%), radial-gradient(at 100% 100%, ' + rkA(c.success, 0.22) + ' 0, transparent 52%), radial-gradient(at 0% 100%, ' + rkA(b, 0.26) + ' 0, transparent 50%), radial-gradient(at 50% 50%, ' + rkA(a, 0.10) + ' 0, transparent 60%), ' + bg };
@@ -436,6 +504,7 @@ function rkThemeVars(t, opts) {
     '--rk-nav-icon-filter': rkOn(c.accent) === '#ffffff' ? 'brightness(0) invert(1)' : 'brightness(0)'
   };
   if (L.cursor && L.cursor !== 'normal') { var cv = rkCursorVars(L.cursor, c.accent); for (var cvk in cv) vars[cvk] = cv[cvk]; }
+  if (t.bg === 'daniel') vars['--p5-stars'] = rkP5Stars();
   var classes = ['rk-vars', 'rk-theme', dark ? 'rk-dark' : 'rk-light'];
   if (t.glow) classes.push('rk-glow');
   if (glass > 0) classes.push('rk-glass');
@@ -451,25 +520,140 @@ function rkThemeVars(t, opts) {
     if (v && v !== 'normal' && !(k === 'avatars' && v === 'circle') && !(k === 'animIn' && v === 'none')) classes.push('rk-l-' + k + '-' + v);
   }
   if (Number(L.zoom) && Number(L.zoom) !== 100) classes.push('rk-l-zoom');
+  // Tema fijo: rk-locked y rk-t-<id> (las reglas de Daniel cuelgan de html.rk-t-daniel).
+  if (t.locked) classes.push('rk-locked', 'rk-t-' + t.id);
   return { vars: vars, classes: classes, scheme: dark ? 'dark' : 'light', needsImage: t.bg === 'upload', media: !!bgx.media };
 }
 
-var RK_ALL_CLASSES = ['rk-vars', 'rk-theme', 'rk-dark', 'rk-light', 'rk-glow', 'rk-glass', 'rk-font', 'rk-bgimg', 'rk-anim', 'rk-media', 'rk-parallax'];
+var RK_ALL_CLASSES = ['rk-vars', 'rk-theme', 'rk-dark', 'rk-light', 'rk-glow', 'rk-glass', 'rk-font', 'rk-bgimg', 'rk-anim', 'rk-media', 'rk-parallax', 'rk-locked'];
 
 function rkApply(el, payload) {
   RK_ALL_CLASSES.forEach(function (k) { el.classList.remove(k); });
-  Array.prototype.slice.call(el.classList).forEach(function (k) { if (k.indexOf('rk-l-') === 0) el.classList.remove(k); });
+  Array.prototype.slice.call(el.classList).forEach(function (k) { if (k.indexOf('rk-l-') === 0 || k.indexOf('rk-t-') === 0) el.classList.remove(k); });
   for (var i = el.style.length - 1; i >= 0; i--) { var p = el.style[i]; if (p.indexOf('--rk-') === 0) el.style.removeProperty(p); }
   if (!payload) return;
   for (var k in payload.vars) el.style.setProperty(k, payload.vars[k]);
   payload.classes.forEach(function (cl) { el.classList.add(cl); });
 }
 
+// ---------- Tema Daniel: letras recortadas ----------
+// Cada letra con otra fuente, otro tamaño, otro giro y otro recorte, como una nota de rescate de Persona 5.
+// Sale siempre igual para el mismo texto (no baila al repintar). Las fuentes van en fonts/ (licencia OFL).
+var RK_RANSOM_FONTS = ['"RC P5 Titulo", Impact, "Arial Narrow", sans-serif', '"RC P5 Didona", "Bodoni MT Black", Georgia, serif', '"RC P5 Losa", Rockwell, "Courier New", serif',
+  '"RC P5 Negra", "Arial Black", sans-serif', '"RC P5 Comic", "Comic Sans MS", sans-serif', '"RC P5 Plantilla", Stencil, Impact, sans-serif', '"RC P5 Redonda", "Arial Black", sans-serif'];
+// Fuentes del tema Daniel: [familia, archivo en fonts/]. Son versiones recortadas y renombradas de fuentes con licencia OFL (ver fonts/LICENCIAS.txt).
+var RK_DANIEL_FONTS = [['RC P5 Titulo', 'titulo'], ['RC P5 Didona', 'didona'], ['RC P5 Losa', 'losa'], ['RC P5 Negra', 'negra'], ['RC P5 Comic', 'comic'],
+  ['RC P5 Plantilla', 'plantilla'], ['RC P5 Redonda', 'redonda'], ['RC P5 Etiqueta', 'etiqueta']];
+// @font-face con las direcciones de la extensión (en roblox.com las pone theme-boot.js; en los ajustes y el popup, la propia página).
+function rkDanielFontCss(urlOf) {
+  return RK_DANIEL_FONTS.map(function (f) {
+    return '@font-face { font-family: "' + f[0] + '"; src: url("' + urlOf('fonts/' + f[1] + '.woff2') + '") format("woff2"); font-display: swap; }';
+  }).join('\n');
+}
+// Letras recortadas del tema Daniel: cada letra en su caja, con otra fuente, otro tamaño y otro giro.
+// Salen siempre igual para el mismo texto (la suerte sale del propio texto), así no bailan cuando la página se redibuja.
+// opts.mode 'list' (menú): casi todas blancas con borde negro. Si no, título: casi todas blancas en caja negra,
+// la primera más grande en caja negra con otra roja dentro. En los dos, una letra del medio de cada palabra
+// al revés (negra en caja blanca) y más o menos una de cada cinco en rojo.
+function rkRansom(doc, text, opts) {
+  opts = opts || {};
+  var list = opts.mode === 'list';
+  var box = doc.createElement('span');
+  box.className = 'p5-ransom' + (list ? ' p5-list' : '') + (opts.cls ? ' ' + opts.cls : '');
+  box.setAttribute('aria-hidden', 'true');
+  var h = 2166136261;
+  for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+  h = h || 1;
+  var rnd = function () { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 10007) / 10007; };
+  var n = 0;
+  // Cada palabra va junta (si no cabe, baja la palabra entera, no media).
+  text.split(/\s+/).forEach(function (word) {
+    if (!word) return;
+    var w = doc.createElement('span');
+    w.className = 'p5-w';
+    box.appendChild(w);
+    var chars = Array.from(word);
+    var inv = chars.length > 2 && (!list || (chars.length > 3 && rnd() < 0.6)) ? 1 + Math.floor(rnd() * (chars.length - 2)) : -1;
+    chars.forEach(function (ch, j) {
+      var l = doc.createElement('span');
+      var r = rnd(), st;
+      if (n === 0) st = list ? 0 : 5;
+      else if (j === inv) st = 1;
+      else if (list) st = r < 0.16 ? 4 : r < 0.24 ? 2 : 0;
+      else st = r < 0.2 ? 3 : 2;
+      l.className = 'p5-l p5-s' + st + (n === 0 ? ' p5-first' : '');
+      l.textContent = n === 0 || rnd() < 0.75 ? ch.toUpperCase() : ch.toLowerCase();
+      var tilt = list ? 2 + rnd() * 4 : 3 + rnd() * 6;
+      l.style.setProperty('--r', (rnd() < 0.5 ? -tilt : tilt).toFixed(1) + 'deg');
+      l.style.setProperty('--y', ((rnd() * 2 - 1) * 0.08).toFixed(3) + 'em');
+      l.style.setProperty('--z', (n === 0 ? 1 : 0.82 + rnd() * 0.18).toFixed(2));
+      l.style.setProperty('--f', RK_RANSOM_FONTS[Math.floor(rnd() * RK_RANSOM_FONTS.length)]);
+      w.appendChild(l);
+      n++;
+    });
+  });
+  return box;
+}
+
+// Pone las letras recortadas dentro de un elemento con texto (o las quita si ya no sirven). El texto original
+// se queda para los lectores de pantalla y como enlace, a tamaño 0 por CSS (.p5-host). Si dentro hay iconos u
+// otras cosas, o el texto pasa de «max» letras, el elemento se deja como está.
+function rkRansomTarget(el) {
+  var n = el;
+  for (var i = 0; i < 4; i++) {
+    var kids = Array.prototype.filter.call(n.childNodes, function (c) {
+      if (c.nodeType === 1) return !c.classList.contains('p5-ransom');
+      return c.nodeType === 3 && c.nodeValue.trim() !== '';
+    });
+    if (kids.length === 1 && kids[0].nodeType === 1) {
+      if (kids[0].matches('svg, img, i, [class*="icon"]')) return null;
+      n = kids[0];
+      continue;
+    }
+    if (kids.length && kids.every(function (c) { return c.nodeType === 3; })) return n;
+    return null;
+  }
+  return null;
+}
+function rkRansomHost(el, max, mode) {
+  if (el.closest('.p5-ransom')) return false;
+  var host = rkRansomTarget(el);
+  if (!host) return false;
+  var text = '';
+  host.childNodes.forEach(function (c) { if (c.nodeType === 3) text += c.nodeValue; });
+  text = text.replace(/\s+/g, ' ').trim();
+  var copy = host.querySelector(':scope > .p5-ransom');
+  if (!text || text.length > max) {
+    if (copy) copy.remove();
+    host.classList.remove('p5-host');
+    delete host.dataset.p5;
+    return false;
+  }
+  if (copy && host.dataset.p5 === text && host.lastElementChild === copy) return true;
+  if (copy) copy.remove();
+  host.dataset.p5 = text;
+  host.classList.add('p5-host');
+  host.appendChild(rkRansom(host.ownerDocument, text, { mode: mode }));
+  return true;
+}
+function rkUnransom(root) {
+  root.querySelectorAll('.p5-ransom').forEach(function (n) { n.remove(); });
+  root.querySelectorAll('.p5-host').forEach(function (n) { n.classList.remove('p5-host'); delete n.dataset.p5; });
+}
+// Fuentes de Daniel en las páginas de la extensión (ajustes y popup). Solo se descargan si algo las usa.
+function rkDanielFonts(doc, urlOf) {
+  if (doc.getElementById('rocer0-daniel-fonts')) return;
+  var el = doc.createElement('style');
+  el.id = 'rocer0-daniel-fonts';
+  el.textContent = rkDanielFontCss(urlOf || function (p) { return '../' + p; });
+  (doc.head || doc.documentElement).appendChild(el);
+}
+
 // Pequeña maqueta de la web de Roblox pintada con un tema (galería y vista previa).
 function rkMiniPreview(doc, t) {
   var p = rkThemeVars(t, { animations: false });
   var box = doc.createElement('div');
-  box.className = 'rk-mini';
+  box.className = 'rk-mini' + (t.locked ? ' rk-locked rk-t-' + t.id : '');
   for (var k in p.vars) box.style.setProperty(k, p.vars[k]);
   var add = function (parent, tag, cls) { var n = doc.createElement(tag); if (cls) n.className = cls; parent.appendChild(n); return n; };
   add(box, 'div', 'rk-mini-bg');

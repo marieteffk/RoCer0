@@ -185,3 +185,62 @@ html[data-compact] .toggle { padding: 4px 6px; }
 html[data-compact] .link { padding: 5px 4px; }
 
 .card.empty { display: flex; flex-direction: column; align-items: flex-start; padding: var(--pp-pad); }
+
+/* Interruptor que decide un tema fijo puesto (Daniel): se ve, pero no se puede tocar. */
+.toggle.locked { opacity: .5; cursor: not-allowed; }
+.toggle.locked input.switch { cursor: not-allowed; }
+
+/* ---------- Tema Daniel (html.rk-ui-daniel; sus colores y formas vienen de content/daniel.css) ---------- */
+html.rk-ui-daniel body { padding: 12px 14px 16px 10px; }
+html.rk-ui-daniel .brand b { font-family: var(--p5-title); font-weight: 400; font-style: italic; font-size: 20px; letter-spacing: .02em; text-shadow: 2px 2px 0 var(--p5-red); }
+html.rk-ui-daniel .brand b .p5-ransom { font-size: 20px; }
+html.rk-ui-daniel .logo { border-radius: 0; transform: rotate(-6deg); box-shadow: 3px 3px 0 var(--p5-red); }
+html.rk-ui-daniel .icon-btn { border-radius: 0; transition: transform .14s var(--p5-snap), background .1s; }
+html.rk-ui-daniel .icon-btn:hover { background: var(--p5-red); border-color: #000; color: #fff; transform: skewX(-8deg) scale(1.1); }
+html.rk-ui-daniel #cards { gap: 18px; }
+html.rk-ui-daniel :is(.card, .link) { background: var(--p5-black); border: 2px solid var(--p5-white); border-radius: 0; box-shadow: 5px 5px 0 var(--p5-red); }
+html.rk-ui-daniel #cards > .card { animation: rk-p5-slam .26s var(--p5-out) backwards; }
+html.rk-ui-daniel #cards > .card:nth-child(2) { animation-delay: .035s; }
+html.rk-ui-daniel #cards > .card:nth-child(3) { animation-delay: .07s; }
+html.rk-ui-daniel #cards > .card:nth-child(4) { animation-delay: .105s; }
+html.rk-ui-daniel #cards > .card:nth-child(n+5) { animation-delay: .14s; }
+html.rk-ui-daniel .card-head h2 { font-family: var(--p5-title); font-weight: 400; font-style: italic; text-transform: uppercase; font-size: 17px; letter-spacing: .02em; overflow: visible; }
+html.rk-ui-daniel .card-head h2 .p5-ransom { font-size: 17px; }
+/* El título sube encima del borde de la tarjeta, como en el Inicio. */
+html.rk-ui-daniel .card-head:has(.p5-ransom) { margin-top: -20px; }
+html.rk-ui-daniel .card-head:has(.p5-ransom) > .rk-i { display: none; }
+html.rk-ui-daniel .card-head:has(.p5-ransom) .card-actions { margin-top: 18px; }
+html.rk-ui-daniel .card-head > .rk-i { color: var(--p5-red); }
+html.rk-ui-daniel .mini-btn { border-radius: 0; }
+html.rk-ui-daniel .mini-btn:hover { background: var(--p5-red); color: #fff; }
+html.rk-ui-daniel .btn { border: 2px solid var(--p5-white); border-radius: 0; background: #000; color: #fff; font-family: var(--p5-label); font-weight: 400; font-style: italic; text-transform: uppercase;
+  letter-spacing: .02em; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--p5-red); transition: transform .14s var(--p5-snap), background .1s, box-shadow .1s, color .1s; }
+html.rk-ui-daniel .btn:hover { background: var(--p5-red); border-color: #000; transform: skewX(-8deg) translate(-2px, -2px); box-shadow: 5px 5px 0 var(--p5-white); }
+html.rk-ui-daniel .btn-accent { background: var(--p5-red); border-color: #000; box-shadow: 3px 3px 0 var(--p5-white); }
+html.rk-ui-daniel .btn-accent:hover { background: var(--p5-white); color: #000; }
+html.rk-ui-daniel :is(select, input[type=text]) { background: var(--p5-white); color: #000; border: 2px solid #000; border-radius: 0; font-weight: 600; }
+html.rk-ui-daniel :is(select, input[type=text]):focus { box-shadow: 3px 3px 0 var(--p5-red); }
+html.rk-ui-daniel input[type=text]::placeholder { color: #666; }
+html.rk-ui-daniel select option, html.rk-ui-daniel select optgroup { background: #fff; color: #000; }
+html.rk-ui-daniel input.switch { border-radius: 0; transform: skewX(-12deg); border: 2px solid var(--p5-white); background: #000; }
+html.rk-ui-daniel input.switch::after { border-radius: 0; top: 1px; left: 1px; background: var(--p5-white); }
+html.rk-ui-daniel input.switch:checked { background: var(--p5-red); border-color: var(--p5-white); }
+html.rk-ui-daniel input.switch:checked::after { background: #fff; }
+html.rk-ui-daniel :is(.pill, .tag, .confirm, .item, .item-main, .outfit-btn, .outfit-btn img, .outfit-btn .ph, .look-mark, .swatch, .bar, .bar i, .toggle) { border-radius: 0; }
+html.rk-ui-daniel :is(.pill, .tag) { transform: skewX(-10deg); }
+html.rk-ui-daniel .pill { background: var(--p5-red); color: #fff; }
+html.rk-ui-daniel .pill .rk-i { color: #fff; }
+html.rk-ui-daniel .tag { background: #000; color: var(--p5-cyan); border: 1px solid var(--p5-cyan); }
+html.rk-ui-daniel .bar { background: #222; }
+html.rk-ui-daniel .bar i { background: var(--p5-red); }
+html.rk-ui-daniel .ch.done .bar i { background: var(--p5-cyan); }
+html.rk-ui-daniel :is(.item, .toggle, .outfit-btn):hover { background: var(--p5-red); color: #fff; }
+html.rk-ui-daniel :is(.item, .toggle):hover :is(.sub, .rk-i) { color: #fff; }
+html.rk-ui-daniel .thumb { border-radius: 0; border: 2px solid var(--p5-white); }
+html.rk-ui-daniel .thumb.round { border-radius: 0; }
+html.rk-ui-daniel .folder { color: #fff; font-family: var(--p5-label); font-weight: 400; font-style: italic; }
+html.rk-ui-daniel .more { color: #fff; background: var(--p5-red); padding: 1px 8px; transform: skewX(-10deg); }
+html.rk-ui-daniel .link { font-weight: 800; font-style: italic; transition: transform .14s var(--p5-snap); }
+html.rk-ui-daniel .link:hover { background: var(--p5-red); border-color: var(--p5-white); transform: rotate(-2deg) scale(1.05); }
+html.rk-ui-daniel .link:hover .rk-i { color: #fff; }
+html.rk-ui-daniel .link .rk-i { color: var(--p5-red); }

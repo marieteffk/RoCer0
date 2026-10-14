@@ -2,7 +2,7 @@
 // y vista previa en vivo con la estructura, las partículas y el vídeo del tema.
 (function () {
   const FILTERS = [['all', 'Todos'], ['oscuro', 'Oscuros'], ['claro', 'Claros'], ['transparente', 'Transparentes'], ['animado', 'Animados'],
-    ['neón', 'Neón'], ['pastel', 'Pastel'], ['espacio', 'Espacio'], ['naturaleza', 'Naturaleza'], ['temporada', 'De temporada'], ['mine', 'Mis temas']];
+    ['neón', 'Neón'], ['pastel', 'Pastel'], ['espacio', 'Espacio'], ['naturaleza', 'Naturaleza'], ['temporada', 'De temporada'], ['fijo', 'Fijos'], ['mine', 'Mis temas']];
   const BG_KEYS = ['bg', 'bgUrl', 'bgColor', 'gradKind', 'gradAngle', 'gradStops', 'gradAnim', 'bgFit', 'bgPos', 'parallax', 'bgBlur', 'bgDim', 'bgBright', 'bgContrast',
     'bgSat', 'bgHue', 'bgGray', 'bgSepia', 'overlay', 'overlayColor', 'overlayStrength', 'grain', 'particles', 'pLayer', 'pDensity', 'pSpeed', 'pSize', 'pColor',
     'pOpacity', 'slideSeconds', 'slideFx', 'slideUrls', 'videoUrl', 'videoRate', 'mediaFit'];
@@ -52,7 +52,12 @@
     $('#auto-night-start').value = settings['theme.nightStart'] || '20:00';
     const now = $('#auto-now');
     now.textContent = '';
-    if (mode === 'off') now.append('Se usa siempre el tema que elijas en la galería.');
+    const fixed = rkFixedTheme(settings['theme.id']);
+    const panel = $('#panel-theme-auto');
+    panel.classList.toggle('locked', !!fixed);
+    $$('#panel-theme-auto .row-ctl').forEach(n => { n.inert = !!fixed; });
+    if (fixed) now.append(ic('lock'), ' Con ' + fixed.name + ' puesto, el tema automático no se usa: ' + fixed.name + ' es un tema fijo.');
+    else if (mode === 'off') now.append('Se usa siempre el tema que elijas en la galería.');
     else {
       now.append(ic('clock'), ' Ahora mismo se usa ', h('b', { text: rkFindTheme(rkActiveThemeId(settings), customs()).name }), '.');
       if (mode !== 'daynight') now.append(h('br'), 'Halloween: del 20 de octubre al 2 de noviembre. Navidad: del 15 de diciembre al 6 de enero.');
@@ -91,17 +96,21 @@
       const card = h('div', { class: 'tcard' + (t.id === cur ? ' on' : ''), title: t.desc || '', tabindex: '0', role: 'button' }, [
         rkMiniPreview(document, e),
         isCustom(t.id) ? h('span', { class: 'tmine', text: 'MÍO' }) : null,
+        t.locked ? h('span', { class: 'tmine tfixed', title: 'Tema fijo: con él puesto no vale ninguna personalización' }, [ic('lock'), 'FIJO']) : null,
         badges.length ? h('span', { class: 'tbadges' }, badges) : null,
         h('div', { class: 'tname' }, [h('span', { text: t.name }),
           t.id === cur ? h('span', { class: 'tcheck', text: 'Elegido' }) : (t.id === active ? h('span', { class: 'tnow', text: 'Ahora' }) : null)]),
         h('div', { class: 'ttags', text: (t.tags || []).join(' · ') })
       ]);
-      const choose = () => {
+      const choose = async () => {
+        if (t.locked && t.id !== currentId() && !await uiConfirm('¿Poner ' + t.name + '?', t.name + ' es un tema fijo: mientras lo tengas puesto no vale ninguna personalización. ' +
+          'Ni colores, ni fondo, ni letra, ni iconos, ni estructura, ni los retoques de Interfaz, y el tema automático tampoco. ' +
+          'Lo que tengas guardado no se borra: vuelve en cuanto elijas otro tema.', { okText: 'Poner ' + t.name, icon: 'lock' })) return;
         settings['theme.id'] = t.id;
         commit();
         drawEditor();
         const mode = settings['theme.auto'] || 'off';
-        if (mode === 'daynight' || mode === 'both') toast('Tienes el tema automático activado: cámbialo arriba si quieres usar siempre este.', 4500);
+        if (!t.locked && (mode === 'daynight' || mode === 'both')) toast('Tienes el tema automático activado: cámbialo arriba si quieres usar siempre este.', 4500);
       };
       card.addEventListener('click', choose);
       card.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); choose(); } });
@@ -222,8 +231,32 @@
 
   function setVal(sel, v) { const n = $(sel); if (n) n.value = v; }
 
+  // Tema fijo: en lugar de los controles, qué decide el tema y cómo volver a personalizar.
+  function drawLocked(preset) {
+    const box = $('.editor-controls');
+    box.classList.toggle('is-locked', !!preset.locked);
+    let note = $('#ed-locked');
+    if (!preset.locked) { if (note) note.remove(); return; }
+    if (!note) { note = h('div', { id: 'ed-locked', class: 'ed-locked' }); box.prepend(note); }
+    note.replaceChildren(
+      h('div', { class: 'ed-locked-head' }, [ic('lock'), h('h2', { text: preset.name + ' es un tema fijo' })]),
+      h('p', { text: preset.desc || '' }),
+      h('ul', { class: 'ed-locked-list' }, [
+        'Colores, fondo, letra, efectos y estructura: los del tema, sin retoques.',
+        'Iconos: los del tema, sin tus imágenes ni tu color.',
+        'Inicio: siempre el rediseñado y colocado a su manera. Qué tarjetas salen y en qué orden lo sigues eligiendo tú.',
+        'Interfaz: no se aplica nada (ni el ancho, ni las partes ocultas, ni tu CSS).',
+        'Animaciones: siempre puestas, salvo que tu sistema pida reducir el movimiento.',
+        'Tema automático: no se usa.'
+      ].map(x => h('li', { text: x }))),
+      h('p', { class: 'muted small', text: 'Lo que tenías guardado no se borra: vuelve en cuanto elijas otro tema en la galería.' }),
+      h('div', { class: 'btn-row' }, [ibtn('layers', 'Elegir otro tema', { class: 'btn btn-accent', onclick: () => goTo('themes', '[data-panel="panel-theme-gallery"]') })])
+    );
+  }
+
   function drawEditor() {
     const id = currentId(), t = eff(id), preset = rkFindTheme(id, customs());
+    drawLocked(preset);
     $('#ed-name').textContent = '"' + t.name + '"';
     $('#ed-desc').textContent = preset.desc || '';
     $('#ed-rename').hidden = $('#ed-delete').hidden = !isCustom(id);
@@ -699,9 +732,9 @@
     if (seq !== pvSeq) return;
     const anim = settings['theme.animations'] !== false;
     const p = rkThemeVars(t, { animations: anim, image });
-    for (let i = box.style.length - 1; i >= 0; i--) { const k = box.style[i]; if (k.startsWith('--rk-')) box.style.removeProperty(k); }
+    for (let i = box.style.length - 1; i >= 0; i--) { const k = box.style[i]; if (k.startsWith('--rk-') || k.startsWith('--p5-')) box.style.removeProperty(k); }
     for (const k in p.vars) box.style.setProperty(k, p.vars[k]);
-    box.className = 'preview ' + p.classes.filter(c => c.startsWith('rk-l-') || ['rk-anim', 'rk-glow', 'rk-glass', 'rk-font', 'rk-parallax', 'rk-dark', 'rk-light'].includes(c)).join(' ');
+    box.className = 'preview ' + p.classes.filter(c => c.startsWith('rk-l-') || c.startsWith('rk-t-') || ['rk-anim', 'rk-glow', 'rk-glass', 'rk-font', 'rk-parallax', 'rk-dark', 'rk-light', 'rk-locked'].includes(c)).join(' ');
     if (!box.querySelector('.preview-inner')) {
       box.textContent = '';
       box.append(h('div', { class: 'preview-bg' }), h('div', { class: 'pv-fx' }), h('div', { class: 'preview-ov' }), h('div', { class: 'preview-inner' }));
@@ -716,6 +749,12 @@
       inner.textContent = '';
       inner.append(...buildInner());
       inner.dataset.tid = t.id;
+      // Daniel: letras recortadas en el menú y en los títulos, como en roblox.com.
+      if (t.locked && t.id === 'daniel') {
+        rkDanielFonts(document);
+        inner.querySelectorAll('.pv-side-item > span').forEach(n => rkRansomHost(n, 18, 'list'));
+        inner.querySelectorAll('#rk-home .rk-head h2, #rk-home .rk-hero-title').forEach(n => rkRansomHost(n, 30, 'title'));
+      }
     }
     if (typeof RkFx !== 'undefined') {
       if (!fxMount) fxMount = new RkFx.Mount({ doc: document, root: box.querySelector('.pv-fx'), box, mediaUrl: cfg => B.runtime.getURL('page/bgmedia.html') + '#' + encodeURIComponent(JSON.stringify(cfg)) });

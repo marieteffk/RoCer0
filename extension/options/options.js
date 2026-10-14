@@ -204,6 +204,53 @@ function refreshVisibility() {
     const rows = g.querySelectorAll(':scope > .card.rows > .row');
     if (rows.length) g.classList.toggle('all-hidden', Array.from(rows).every(r => r.hidden));
   });
+  refreshLock();
+}
+
+// ---------- Tema fijo (Daniel) ----------
+// Mientras está puesto, lo que decide el tema (RK_LOOK_LOCK) se queda con candado: se ve lo que tenías guardado,
+// pero no se puede tocar ni se aplica. Al cambiar de tema vuelve a funcionar tal cual.
+const LOCK_PANELS = ['panel-icons-style', 'panel-icons-grid', 'panel-icons-rbx', 'panel-icons-io'];
+const LOCK_TEXT = {
+  themes: 'es un tema fijo: no se puede retocar. Para volver a personalizar, elige otro tema en la galería.',
+  icons: 'decide los iconos: lo que pongas aquí se guarda, pero no se aplica mientras lo tengas puesto.',
+  home: 'decide cómo se ve el Inicio: lo que tiene candado no se aplica. Qué tarjetas salen y en qué orden sí lo eliges tú.',
+  ui: 'decide cómo se ve roblox.com: nada de esta sección se aplica mientras lo tengas puesto.',
+  popup: 'decide cómo se ve el popup: el ancho y las tarjetas compactas no se aplican mientras lo tengas puesto.',
+  general: 'decide cómo se ven estos ajustes: la densidad no se aplica mientras lo tengas puesto.'
+};
+function lockChip(name) { return h('span', { class: 'lock-chip', title: 'Fijo con el tema ' + name }, [ic('lock'), h('span', { text: 'Fijo con ' + name })]); }
+function refreshLock() {
+  const fixed = rkLockedTheme(settings);
+  document.documentElement.classList.toggle('look-locked', !!fixed);
+  $$('#pages [data-key], #search-results [data-key]').forEach(el => {
+    const on = !!fixed && el.dataset.key in RK_LOOK_LOCK;
+    if (el.classList.contains('locked') === on && (!on || el.dataset.lockName === fixed.name)) return;
+    el.classList.toggle('locked', on);
+    const ctl = el.querySelector('.row-ctl') || el;
+    ctl.inert = on;
+    el.querySelectorAll(':scope > .row-text > .lock-chip').forEach(n => n.remove());
+    if (on) {
+      el.dataset.lockName = fixed.name;
+      const txt = el.querySelector(':scope > .row-text');
+      if (txt) txt.append(lockChip(fixed.name));
+    } else delete el.dataset.lockName;
+  });
+  LOCK_PANELS.forEach(id => {
+    const g = $('#pages [data-panel="' + id + '"]');
+    if (!g) return;
+    g.classList.toggle('locked', !!fixed);
+    g.inert = !!fixed;
+  });
+  $$('#pages .page').forEach(page => {
+    const note = page.querySelector(':scope > .page-locked');
+    const on = !!fixed && !!note && (page.dataset.section !== 'themes' || !!rkFixedTheme(settings['theme.id']));
+    page.classList.toggle('is-locked', on);
+    if (note) {
+      note.hidden = !on;
+      if (on) note.querySelector('.page-locked-text').replaceChildren(h('b', { text: fixed.name }), ' ' + LOCK_TEXT[page.dataset.section]);
+    }
+  });
 }
 
 function setValue(key, value, src) {
@@ -630,7 +677,7 @@ function buildPage(sec) {
     const id = 'm-' + sec.id;
     const sw = CTL.bool(master, id);
     sw.classList.add('switch-lg');
-    head = h('label', { class: 'page-master', for: id, title: master.label }, [h('span', { class: 'page-master-text' }), sw]);
+    head = h('label', { class: 'page-master', for: id, title: master.label, 'data-key': sec.master }, [h('span', { class: 'page-master-text' }), sw]);
   }
   const page = h('section', { class: 'page', 'data-section': sec.id, hidden: true }, [
     h('header', { class: 'page-head' }, [
@@ -638,6 +685,8 @@ function buildPage(sec) {
       h('div', { class: 'page-titles' }, [h('h1', { text: sec.title }), h('p', { class: 'page-desc', text: sec.desc || '' })]),
       head || null
     ]),
+    LOCK_TEXT[sec.id] ? h('div', { class: 'page-locked', hidden: true }, [ic('lock'), h('span', { class: 'page-locked-text' }),
+      sec.id === 'themes' ? null : h('button', { class: 'btn btn-small', type: 'button', text: 'Cambiar de tema', onclick: () => goTo('themes', '[data-panel="panel-theme-gallery"]') })]) : null,
     master ? h('div', { class: 'page-off' }, [ic('info'), h('span', { text: 'Enciende el interruptor de arriba para usar «' + master.label + '».' }),
       h('button', { class: 'btn btn-accent btn-small', type: 'button', text: 'Encender', onclick: () => setValue(sec.master, true) })]) : null
   ]);
@@ -687,7 +736,7 @@ function refreshSections() {
   });
 }
 
-function applyDensity() { document.documentElement.classList.toggle('dense', settings['opts.density'] === 'compact'); }
+function applyDensity() { document.documentElement.classList.toggle('dense', rkLookLock(settings)['opts.density'] === 'compact'); }
 
 // ---------- Secciones (navegación) ----------
 const TAB_LOADERS = {};
@@ -1263,19 +1312,40 @@ async function themeImage(id) {
 }
 
 let pageThemeSeq = 0;
+// Iconos cambiados por imágenes tuyas (con un tema fijo puesto no se usan).
+let iconImagesAll = {};
+let iconsLocked = null;
+function applyCustomIcons() {
+  const locked = !!rkLockedTheme(settings);
+  rcSetCustomIcons(locked ? {} : iconImagesAll);
+  if (iconsLocked !== null && iconsLocked !== locked) rcRefreshIcons(document);
+  iconsLocked = locked;
+}
+
 async function applyPageTheme() {
   const seq = ++pageThemeSeq;
-  const t = settings['theme.extension'] ? rkEffectiveTheme(settings) : rkEffectiveTheme(rxMergeSettings({}), 'medianoche');
+  // Con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+  const eff = rkLookLock(settings);
+  applyCustomIcons();
+  refreshLock();
+  const t = eff['theme.extension'] ? rkEffectiveTheme(eff) : rkEffectiveTheme(rxMergeSettings({}), 'medianoche');
   const image = t.bg === 'upload' ? await themeImage(t.id) : null;
   if (seq !== pageThemeSeq) return;
-  const p = rkThemeVars(t, { animations: settings['theme.animations'], image });
+  const p = rkThemeVars(t, { animations: eff['theme.animations'], image });
   // La estructura del tema se ve en la vista previa; aquí solo el cursor y la barra de desplazamiento.
-  p.classes = p.classes.filter(c => !c.startsWith('rk-l-') || /^rk-l-(cursor|scrollbar)-/.test(c));
+  // Un tema fijo pone rk-ui-<id> en estos ajustes (rk-t-<id> es para roblox.com y la vista previa).
+  p.classes = p.classes.filter(c => !c.startsWith('rk-l-') || /^rk-l-(cursor|scrollbar)-/.test(c)).map(c => c.startsWith('rk-t-') ? 'rk-ui-' + c.slice(5) : c);
   const root = document.documentElement;
+  Array.from(root.classList).forEach(c => { if (c.startsWith('rk-ui-')) root.classList.remove(c); });
   rkApply(root, p);
-  rcApplyIconStyle(root, rcIconStyleOf(settings, t));
-  root.style.setProperty('--rc-icon-scale', String(Math.max(50, Math.min(200, Number(settings['icons.scale']) || 100)) / 100));
-  const col = rkHex(settings['icons.color'] || '');
+  // Daniel: títulos de cada sección con letras recortadas.
+  if (t.locked && t.id === 'daniel') {
+    rkDanielFonts(document);
+    $$('#pages .page-head h1').forEach(n => rkRansomHost(n, 26, 'title'));
+  } else $$('#pages .page-head').forEach(n => rkUnransom(n));
+  rcApplyIconStyle(root, rcIconStyleOf(eff, t));
+  root.style.setProperty('--rc-icon-scale', String(Math.max(50, Math.min(200, Number(eff['icons.scale']) || 100)) / 100));
+  const col = rkHex(eff['icons.color'] || '');
   if (col) { root.style.setProperty('--rc-icon-color', col); root.classList.add('rc-ic-colored'); }
   else { root.style.removeProperty('--rc-icon-color'); root.classList.remove('rc-ic-colored'); }
 }
@@ -1288,7 +1358,8 @@ $('#open-in-roblox').addEventListener('click', () => send('openSettings', { tab:
 B.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return;
   if (changes.iconImages) {
-    rcSetCustomIcons(changes.iconImages.newValue || {});
+    iconImagesAll = changes.iconImages.newValue || {};
+    applyCustomIcons();
     rcRefreshIcons(document);
   }
   if (changes.themeImages || Object.keys(changes).some(k => k.startsWith('rkImg:'))) { imageCache.clear(); applyPageTheme(); }
@@ -1319,7 +1390,8 @@ async function startOptions() {
   settings = rxMergeSettings(stored.settings);
   rememberSaved();
   if (stored.optsLastSection && SECTION_BY_ID[stored.optsLastSection]) lastSection = stored.optsLastSection;
-  rcSetCustomIcons(stored.iconImages || {});
+  iconImagesAll = stored.iconImages || {};
+  applyCustomIcons();
   const version = 'v' + B.runtime.getManifest().version;
   $('#version').textContent = version;
   $('#about-version').textContent = version;

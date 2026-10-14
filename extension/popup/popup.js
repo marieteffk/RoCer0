@@ -111,19 +111,33 @@ try {
 
 async function paintTheme(settings) {
   const root = document.documentElement;
+  // Con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+  settings = rkLookLock(settings);
   const t = settings['theme.extension'] ? rkEffectiveTheme(settings) : rkEffectiveTheme(rxMergeSettings({}), 'medianoche');
   let image = null;
   if (t.bg === 'upload') {
     const r = await B.storage.local.get(['rkImg:' + t.id, 'themeImages']);
     image = r['rkImg:' + t.id] || (r.themeImages || {})[t.id] || null;
   }
-  rkApply(root, rkThemeVars(t, { animations: false, image }));
+  // Un tema fijo pone rk-ui-<id> aquí (rk-t-<id> es para roblox.com).
+  const p = rkThemeVars(t, { animations: false, image });
+  p.classes = p.classes.map(c => c.startsWith('rk-t-') ? 'rk-ui-' + c.slice(5) : c);
+  Array.from(root.classList).forEach(c => { if (c.startsWith('rk-ui-')) root.classList.remove(c); });
+  rkApply(root, p);
+  danielLook();
   rcApplyIconStyle(root, rcIconStyleOf(settings, t));
   // Tamaño y color de los iconos, como en los ajustes.
   root.style.setProperty('--rc-icon-scale', String(Math.max(50, Math.min(200, Number(settings['icons.scale']) || 100)) / 100));
   const col = rkHex(settings['icons.color'] || '');
   if (col) { root.style.setProperty('--rc-icon-color', col); root.classList.add('rc-ic-colored'); }
   else { root.style.removeProperty('--rc-icon-color'); root.classList.remove('rc-ic-colored'); }
+}
+
+// Tema Daniel: letras recortadas en el nombre y en los títulos de las tarjetas.
+function danielLook() {
+  if (!document.documentElement.classList.contains('rk-ui-daniel')) { rkUnransom(document); return; }
+  rkDanielFonts(document);
+  document.querySelectorAll('.brand b, .card-head h2').forEach(n => rkRansomHost(n, 22, 'title'));
 }
 
 // Miniaturas de juegos: las que no tienen imagen guardada se piden todas juntas al final.
@@ -327,8 +341,11 @@ const CARDS = {
       const active = rkEffectiveTheme(cur);
       const auto = cur['theme.auto'] && cur['theme.auto'] !== 'off';
       const text = auto ? 'Tema automático: ahora se usa ' + active.name + '.' : !cur['theme.enabled'] ? 'Apagado en roblox.com. Elige un tema para encenderlo.' : '';
-      note.hidden = !text;
-      note.textContent = text;
+      const fixed = rkLockedTheme(cur);
+      const text2 = fixed ? fixed.name + ' es un tema fijo: con él puesto no se puede cambiar ningún color ni nada del aspecto.' : text;
+      note.hidden = !text2;
+      note.textContent = text2;
+      sw.hidden = !!fixed;
       sw.replaceChildren(...RK_ACCENTS.slice(0, count).map(col => h('button', {
         class: 'swatch' + (String(active.c.accent).toLowerCase() === col ? ' on' : ''), title: 'Acento ' + col, 'aria-label': 'Color de acento ' + col, style: 'background:' + col,
         onclick: async () => {
@@ -361,7 +378,10 @@ const CARDS = {
       const input = h('input', { type: 'checkbox', class: 'switch', role: 'switch', 'data-quick': id });
       input.checked = !!s[key];
       input.addEventListener('change', () => saveSettings(c => { c[key] = input.checked; }));
-      return h('label', { class: 'toggle', title: label }, [icon(ic), h('span', { class: 'toggle-label', text: label }), input]);
+      // Lo que decide el tema fijo no se puede cambiar mientras está puesto.
+      const fixed = rkLockedTheme(s) && key in RK_LOOK_LOCK;
+      input.disabled = !!fixed;
+      return h('label', { class: 'toggle' + (fixed ? ' locked' : ''), title: fixed ? label + ': fijo con el tema ' + rkLockedTheme(s).name : label }, [icon(ic), h('span', { class: 'toggle-label', text: label }), input]);
     }))]);
   },
 
@@ -441,8 +461,8 @@ async function copyServer(msg) {
 
 async function init() {
   const store = await B.storage.local.get(['settings', 'pinned', 'pinFolders', 'myRecent', 'myJoins', 'lastGame', 'iconImages']);
-  rcSetCustomIcons(store.iconImages);
-  const s = rxMergeSettings(store.settings);
+  const s = rkLookLock(rxMergeSettings(store.settings));
+  rcSetCustomIcons(rkLockedTheme(s) ? {} : store.iconImages);
   applyLayout(s['popup.width'], s['popup.compact']);
   try { localStorage.setItem(LAYOUT_KEY, JSON.stringify({ width: s['popup.width'], compact: !!s['popup.compact'] })); } catch (e) { /* sin almacenamiento local */ }
   paintTheme(s);
@@ -468,6 +488,7 @@ async function init() {
       h('div', { class: 'btn-row' }, [btn('sliders', 'Elegir tarjetas', { onclick: () => openSettings('popup') })])
     ]));
   }
+  danielLook();
   fillThumbs();
 }
 
