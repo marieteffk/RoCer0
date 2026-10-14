@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "RoCer0 – Roblox a tu medida",
   "short_name": "RoCer0",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Extensión de Roblox totalmente configurable: temas, Inicio rediseñado, PowerSearch, fijados con carpetas, filtros de servidores por región, server hop, trades con valores, lista de deseos, ruleta, retos diarios y mucho más.",
   "icons": {
     "16": "icons/icon-16.png",

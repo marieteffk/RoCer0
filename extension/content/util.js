@@ -17,8 +17,42 @@ var RX = (function () {
     });
   }
 
+  // Las peticiones a Roblox las hace el fondo de la extensión con las cookies normales del navegador. Si la pestaña va
+  // con otra sesión (contenedores de Firefox, ventana privada) el fondo no la ve: entonces se piden desde la propia
+  // página, con su sesión. Solo a roblox.com.
+  var viaPage = false, pageCsrf = null;
+  async function fromPage(url, opts) {
+    if (!/^https:\/\/([a-z0-9-]+\.)*roblox\.com\//i.test(url)) return null;
+    opts = opts || {};
+    var init = { method: opts.method || 'GET', credentials: 'include', headers: Object.assign({}, opts.headers || {}) };
+    if (opts.body !== undefined) {
+      init.body = typeof opts.body === 'string' ? opts.body : JSON.stringify(opts.body);
+      if (!init.headers['Content-Type']) init.headers['Content-Type'] = 'application/json';
+    }
+    if (init.method !== 'GET') {
+      var meta = document.querySelector('meta[name="csrf-token"]');
+      pageCsrf = pageCsrf || (meta && meta.getAttribute('data-token')) || null;
+      if (pageCsrf) init.headers['x-csrf-token'] = pageCsrf;
+    }
+    try {
+      var res = await fetch(url, init);
+      if (res.status === 403 && res.headers.get('x-csrf-token')) {
+        pageCsrf = init.headers['x-csrf-token'] = res.headers.get('x-csrf-token');
+        res = await fetch(url, init);
+      }
+      var text = await res.text(), data = text;
+      try { data = JSON.parse(text); } catch (e) { /* texto plano */ }
+      return { ok: res.ok, status: res.status, data: data };
+    } catch (e) { return null; }
+  }
+
   async function api(url, opts) {
-    var r = await send('api', Object.assign({ url: url }, opts || {}));
+    var r = viaPage ? await fromPage(url, opts) : null;
+    if (!r) r = await send('api', Object.assign({ url: url }, opts || {}));
+    if (r.status === 401 && !viaPage && pageUser()) {
+      var again = await fromPage(url, opts);
+      if (again && again.ok) { viaPage = true; r = again; }
+    }
     if (!r.ok) {
       var m = r.data && r.data.errors && r.data.errors[0] && r.data.errors[0].message;
       var e = new Error(m || ('Error ' + r.status));
@@ -116,10 +150,28 @@ var RX = (function () {
     return node;
   }
 
+  // Tu cuenta. Si Roblox no contesta a la extensión (o la pestaña va con otra sesión, como en los contenedores de
+  // Firefox), vale la que dice la propia página.
+  var meStatus = 'sin comprobar';
   async function me() {
     if (meCache) return meCache;
-    try { meCache = await api('https://users.roblox.com/v1/users/authenticated'); } catch (e) { meCache = null; }
+    var fromApi = null, err = '';
+    try { fromApi = await api('https://users.roblox.com/v1/users/authenticated'); } catch (e) { err = e.status ? 'error ' + e.status : 'sin respuesta'; }
+    var page = pageUser();
+    // La extensión ve otra cuenta que la pestaña: manda la de la pestaña y se le pide todo a Roblox desde la página.
+    if (fromApi && fromApi.id && page && Number(fromApi.id) !== page.id) viaPage = true;
+    meCache = page && (viaPage || !(fromApi && fromApi.id)) ? page : fromApi;
+    meStatus = 'API ' + (fromApi && fromApi.id ? 'bien' : err || 'vacía') + ' · página ' + (page ? 'con usuario' : 'sin usuario') +
+      (fromApi && fromApi.id && page ? ' · misma cuenta: ' + (Number(fromApi.id) === page.id ? 'sí' : 'no') : '') +
+      (viaPage ? ' · pide los datos desde la página' : '');
     return meCache;
+  }
+  function pageUser() {
+    var m = document.querySelector('meta[name="user-data"]');
+    var id = m && Number(m.getAttribute('data-userid'));
+    if (!id) return null;
+    var name = m.getAttribute('data-name') || '';
+    return { id: id, name: name, displayName: m.getAttribute('data-displayname') || name };
   }
 
   async function thumbs(kind, ids, size) {
@@ -192,7 +244,8 @@ var RX = (function () {
   }
 
   var LOCALE = /^\/(?:en|es|de|fr|pt|pt-br|ja|ko|zh-cn|zh-tw|zh-cjv|it|id|th|tr|vi|pl|ru|ar)(?=\/)/i;
-  function path() { return location.pathname.replace(LOCALE, ''); }
+  function stripLocale(p) { return String(p).replace(LOCALE, ''); }
+  function path() { return stripLocale(location.pathname); }
   function isHome() { return /^\/home\/?$/i.test(path()); }
 
   // Iconos propios (common/icons.js). Se pueden cambiar por imágenes tuyas en Ajustes.
@@ -316,6 +369,68 @@ var RX = (function () {
   }
   function setLocal(obj) { return B.storage.local.set(obj); }
 
+  // ---------- Diagnóstico ----------
+  // Resumen de cómo está hecha la página, para arreglar fallos del Roblox de verdad sin poder abrirlo. Solo lleva
+  // etiquetas, ids, clases y tamaños: ningún texto, nombre ni enlace, y los números se cambian por #. No se envía
+  // a ningún sitio: se copia al portapapeles para que lo pegues tú.
+  var diagInfo = {};
+  function mask(v) { return String(v).replace(/\d+/g, '#'); }
+  function diagName(n) {
+    if (!n || n.nodeType !== 1) return '—';
+    var out = n.tagName.toLowerCase();
+    if (n.id) out += '#' + mask(n.id);
+    var cls = Array.prototype.slice.call(n.classList);
+    if (cls.length) out += '.' + cls.slice(0, 7).map(mask).join('.') + (cls.length > 7 ? '…' : '');
+    ['role', 'data-testid', 'data-p5-nav', 'data-p5-cmd', 'data-p5-promo', 'data-rk-home-hidden'].forEach(function (a) {
+      if (n.hasAttribute(a)) out += '[' + a + (n.getAttribute(a) ? '=' + mask(n.getAttribute(a)).slice(0, 30) : '') + ']';
+    });
+    return out;
+  }
+  function outline(root, depth, max, lines) {
+    var skip = /^(SCRIPT|STYLE|LINK|META|NOSCRIPT|TEMPLATE|svg|path)$/i;
+    (function walk(n, d) {
+      if (lines.length >= max) return;
+      var kids = Array.prototype.filter.call(n.children, function (c) { return !skip.test(c.tagName); });
+      var r = n.getBoundingClientRect();
+      var cs = getComputedStyle(n);
+      var shown = cs.display === 'none' ? ' oculto' : cs.visibility === 'hidden' ? ' invisible' : '';
+      lines.push(new Array(d + 2).join('  ') + diagName(n) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) +
+        (cs.display !== 'block' && !shown ? ' ' + cs.display : '') + shown + (kids.length ? ' [' + kids.length + ']' : ''));
+      if (d >= depth || n.id === 'rk-home' || n.classList.contains('p5-ransom')) return;
+      kids.slice(0, 12).forEach(function (c) { walk(c, d + 1); });
+      if (kids.length > 12) lines.push(new Array(d + 3).join('  ') + '… ' + (kids.length - 12) + ' más');
+    })(root, 0);
+  }
+  function diag() {
+    var L = [], s = RX.settings || {};
+    var m = /(Firefox|Edg|OPR|Chrome)\/(\d+)/.exec(navigator.userAgent);
+    var t = typeof rkLockedTheme === 'function' ? rkLockedTheme(s) : null;
+    L.push('RoCer0 ' + B.runtime.getManifest().version + ' · diagnóstico (sin nombres, textos ni números)');
+    L.push('Navegador: ' + (m ? m[1] + ' ' + m[2] : 'otro') + ' · ventana ' + innerWidth + 'x' + innerHeight + ' · escala ' + devicePixelRatio);
+    L.push('Página: ' + mask(path()) + ' · tema ' + (t ? t.id + ' (fijo)' : s['theme.id'] || '—') +
+      ' · ' + document.documentElement.className.split(/\s+/).filter(function (c) { return /^r[kx]-/.test(c); }).join(' '));
+    L.push('Sesión: ' + meStatus);
+    Object.keys(diagInfo).forEach(function (k) {
+      try { L.push(diagInfo[k]()); } catch (e) { L.push(k + ': fallo al leer (' + e.message + ')'); }
+    });
+    var main = document.querySelector('#container-main, main, [role="main"]') || document.body;
+    L.push('Contenido:');
+    outline(main, 5, 70, L);
+    var nav = document.querySelector('[data-p5-nav], #navigation, .rbx-left-col, .left-nav');
+    if (nav) {
+      var n0 = L.length;
+      L.push('Menú lateral:');
+      outline(nav, 5, n0 + 28, L);
+    }
+    var h1 = document.querySelector('#container-main h1, main h1');
+    if (h1) {
+      var chain = [];
+      for (var n = h1; n && n !== document.body; n = n.parentElement) chain.push(diagName(n));
+      L.push('Título de la página, de dentro afuera: ' + chain.join(' < '));
+    }
+    return L.join('\n');
+  }
+
   function onUrlChange(fn) {
     var last = location.href;
     setInterval(function () { if (location.href !== last) { last = location.href; fn(); } }, 700);
@@ -323,9 +438,9 @@ var RX = (function () {
 
   return {
     B: B, settings: null, features: [], send: send, api: api, el: el, css: css, waitFor: waitFor, mount: mount, dock: dock,
-    me: me, thumbs: thumbs, join: join, follow: follow, path: path, isHome: isHome, icon: icon, ibtn: ibtn, setText: setText, title: title, copy: copy, challenge: challenge,
+    me: me, pageUser: pageUser, thumbs: thumbs, join: join, follow: follow, path: path, stripLocale: stripLocale, isHome: isHome, icon: icon, ibtn: ibtn, setText: setText, title: title, copy: copy, challenge: challenge,
     toast: toast, modal: modal, ask: ask, saveSettings: saveSettings, fmt: fmt, short: short, ago: ago,
     placeIdFromUrl: placeIdFromUrl, universeOf: universeOf, sleep: sleep, local: local, setLocal: setLocal,
-    onUrlChange: onUrlChange, isTop: window === window.top
+    onUrlChange: onUrlChange, isTop: window === window.top, diag: diag, diagInfo: diagInfo, diagName: diagName
   };
 })();

@@ -38,17 +38,30 @@
 #rk-home .rk-meta { display: flex; align-items: center; gap: 10px; color: var(--rk-muted); font-size: 12px; white-space: nowrap; overflow: hidden; min-height: 17px; }
 #rk-home .rk-meta span { display: inline-flex; align-items: center; gap: 4px; }
 
+/* Aviso cuando el Inicio de RoCer0 no ha podido cargar (va encima del de Roblox). */
+#rk-home-fail {
+  box-sizing: border-box; width: 100%; margin: 12px 0 18px; padding: 16px 18px; color: var(--rk-text, #fff); font-size: 14px; line-height: 1.45;
+  background: var(--rk-panel, #16181d); border: 1px solid var(--rk-border, rgba(255,255,255,.14)); border-left: 4px solid var(--rk-danger, #e5484d); border-radius: var(--rk-radius, 12px);
+}
+#rk-home-fail.rk-fail-float { position: fixed; left: 16px; bottom: 16px; width: min(520px, calc(100vw - 32px)); margin: 0; z-index: 2147482500; box-shadow: 0 12px 34px rgba(0,0,0,.55); }
+#rk-home-fail p { margin: 6px 0 0; }
+#rk-home-fail .rk-fail-title { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+#rk-home-fail .rk-fail-title .rk-i { width: 18px; height: 18px; color: var(--rk-danger, #e5484d); flex: none; }
+#rk-home-fail .rk-fail-note { color: var(--rk-muted, #a0a4ab); font-size: 12px; }
+#rk-home-fail .rk-fail-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+#rk-home-fail .rk-i { width: 14px; height: 14px; }
+
 /* Botones */
-#rk-home .rk-btn {
+#rk-home .rk-btn, #rk-home-fail .rk-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent;
   font-weight: 700; font-size: 13px; cursor: pointer; transition: filter .12s, transform .12s; white-space: nowrap; flex: none;
 }
-#rk-home .rk-btn:active { transform: scale(.96); }
-#rk-home .rk-btn:hover { filter: brightness(1.12); }
+#rk-home .rk-btn:active, #rk-home-fail .rk-btn:active { transform: scale(.96); }
+#rk-home .rk-btn:hover, #rk-home-fail .rk-btn:hover { filter: brightness(1.12); }
 #rk-home .rk-btn-accent { background: var(--rk-accent); color: var(--rk-accent-text); box-shadow: var(--rk-glow); }
-#rk-home .rk-btn-play { background: var(--rk-success); color: var(--rk-success-text); border-radius: var(--rk-radius-sm); height: 38px; padding: 0 22px; box-shadow: var(--rk-glow); }
-#rk-home .rk-btn-ghost { background: var(--rk-panel-2); color: var(--rk-text); border-color: var(--rk-border); }
-#rk-home .rk-btn-icon { width: 38px; padding: 0; border-radius: var(--rk-radius-sm); }
+#rk-home .rk-btn-play, #rk-home-fail .rk-btn-play { background: var(--rk-success); color: var(--rk-success-text); border-radius: var(--rk-radius-sm); height: 38px; padding: 0 22px; box-shadow: var(--rk-glow); }
+#rk-home .rk-btn-ghost, #rk-home-fail .rk-btn-ghost { background: var(--rk-panel-2); color: var(--rk-text); border-color: var(--rk-border); }
+#rk-home .rk-btn-icon, #rk-home-fail .rk-btn-icon { width: 38px; padding: 0; border-radius: var(--rk-radius-sm); }
 #rk-home .rk-btn-icon.rk-on { color: var(--rk-danger); }
 #rk-home .rk-btn-icon.rk-on svg, #rk-home .rk-btn-icon.rk-on svg .rc-d { fill: currentColor; fill-opacity: 1; }
 #rk-home :is(.rk-btn, .rk-tab, .rk-chip, .rk-ghost, .rk-coll, .rk-quickplay, .rk-foot-link, .rk-viewall):focus-visible { outline: 2px solid var(--rk-accent); outline-offset: 2px; }

@@ -55,6 +55,8 @@ async function api({ url, method = 'GET', body, headers = {}, raw = false }) {
       if (!opts.headers['Content-Type']) opts.headers['Content-Type'] = 'application/json';
     }
     if (method !== 'GET' && csrfToken && isRoblox) opts.headers['x-csrf-token'] = csrfToken;
+    // Si un servicio no contesta, a los 20 s se da por fallido (el Inicio no se queda cargando para siempre).
+    if (!raw && typeof AbortSignal.timeout === 'function') opts.signal = AbortSignal.timeout(20000);
     return fetch(url, opts);
   };
   let r = await send();
@@ -67,6 +69,13 @@ async function api({ url, method = 'GET', body, headers = {}, raw = false }) {
   let data = text;
   try { data = JSON.parse(text); } catch (e) { /* texto plano */ }
   return { ok: r.ok, status: r.status, data };
+}
+
+// Ping a Roblox para el contador de la página, por si la pestaña no puede medirlo ella misma.
+async function ping() {
+  const t = performance.now();
+  await fetch(ROBLOX_URL + '/robots.txt?rx=' + Date.now(), { method: 'HEAD', cache: 'no-store', credentials: 'omit' });
+  return Math.round(performance.now() - t);
 }
 
 async function authUser() {
@@ -1318,6 +1327,7 @@ B.runtime.onStartup && B.runtime.onStartup.addListener(() => {
 
 const handlers = {
   api,
+  ping,
   rolimons: m => rolimons(m.force),
   serverRegion,
   recordJoin,

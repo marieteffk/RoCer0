@@ -8,7 +8,7 @@ var RK_THEMES = [
     bg: 'none', radius: 14 },
   // Tema fijo: no se puede retocar y, mientras está puesto, decide todo el aspecto (ver RK_LOOK_LOCK).
   // Sus formas y animaciones están en content/daniel.css y content/daniel.js.
-  { id: 'daniel', name: 'Daniel', desc: 'Inspirado en los menús de Persona 5: rojo, negro y blanco, letras recortadas como una nota de rescate, estrellas que giran y animaciones por toda la web. Es un tema fijo: mientras lo tengas puesto no vale ninguna personalización. No tiene relación con ATLUS ni con SEGA.',
+  { id: 'daniel', name: 'Daniel', desc: 'Inspirado en los menús de Persona 5: rojo, negro y blanco, letras recortadas como una nota de rescate, estrellas que dan una vuelta al entrar y animaciones por toda la web. Es un tema fijo: mientras lo tengas puesto no vale ninguna personalización. No tiene relación con ATLUS ni con SEGA.',
     tags: ['fijo', 'oscuro', 'rojo', 'animado'], scheme: 'dark', locked: true,
     c: { bg: '#0f0f0f', surface: '#0f0f0f', surface2: '#1c1c1c', border: '#7a7a7a', text: '#fdfdfd', muted: '#c8c8c8', accent: '#e5191c', accent2: '#1cfeff', success: '#1cfeff', danger: '#ff3d3d' },
     bg: 'daniel', radius: 0 },
@@ -596,7 +596,8 @@ function rkRansom(doc, text, opts) {
 }
 
 // Pone las letras recortadas dentro de un elemento con texto (o las quita si ya no sirven). El texto original
-// se queda para los lectores de pantalla y como enlace, a tamaño 0 por CSS (.p5-host). Si dentro hay iconos u
+// se queda para los lectores de pantalla y como enlace, a tamaño 0 por CSS ([data-p5]; un atributo y no una clase,
+// porque Roblox (React) rehace las clases de sus elementos y se llevaría la marca). Si dentro hay iconos u
 // otras cosas, o el texto pasa de «max» letras, el elemento se deja como está.
 function rkRansomTarget(el) {
   var n = el;
@@ -625,20 +626,18 @@ function rkRansomHost(el, max, mode) {
   var copy = host.querySelector(':scope > .p5-ransom');
   if (!text || text.length > max) {
     if (copy) copy.remove();
-    host.classList.remove('p5-host');
     delete host.dataset.p5;
     return false;
   }
   if (copy && host.dataset.p5 === text && host.lastElementChild === copy) return true;
   if (copy) copy.remove();
   host.dataset.p5 = text;
-  host.classList.add('p5-host');
   host.appendChild(rkRansom(host.ownerDocument, text, { mode: mode }));
   return true;
 }
 function rkUnransom(root) {
   root.querySelectorAll('.p5-ransom').forEach(function (n) { n.remove(); });
-  root.querySelectorAll('.p5-host').forEach(function (n) { n.classList.remove('p5-host'); delete n.dataset.p5; });
+  root.querySelectorAll('[data-p5]').forEach(function (n) { delete n.dataset.p5; });
 }
 // Fuentes de Daniel en las páginas de la extensión (ajustes y popup). Solo se descargan si algo las usa.
 function rkDanielFonts(doc, urlOf) {

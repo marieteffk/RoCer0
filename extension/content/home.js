@@ -35,10 +35,14 @@
     WIDTH: { hero: 12, friends: 8, pinned: 8, challenges: 4, continue: 7, recent: 5, featured: 5, recommended: 4, collections: 3 },
     // Alto aproximado de cada tarjeta mientras carga.
     SKEL: { hero: 170, friends: 128, pinned: 230, challenges: 230, continue: 320, recent: 320, featured: 300, recommended: 300, collections: 300 },
-    ANCHORS: ['#HomeContainer', '.home-container', '#home-page-container', '#container-main .content > div:not(#rk-home)', '#container-main .content'],
+    // El Inicio de Roblox, de más a menos concreto: el de RoCer0 va justo delante y el de Roblox se oculta.
+    HOMES: ['#HomeContainer', '.home-container', '#home-page-container'],
+    // Si no aparece ninguno, la zona de contenido de la página: el de RoCer0 va al principio y lo demás se oculta.
+    HOSTS: ['#container-main > .content', '.container-main > .content', '#container-main', 'main', '[role="main"]'],
 
-    s: null, me: null, root: null, anchor: null, canHide: false,
-    loaded: null, starting: null, seq: 0, timer: null, wanted: null, force: false, listening: false,
+    s: null, me: null, root: null, anchor: null, mode: null, canHide: false,
+    loaded: null, starting: null, again: false, token: 0, seq: 0, timer: null, wanted: null, force: false, listening: false,
+    guardObs: null, routeTimer: null, moves: 0, stage: 'parado', error: '', failBox: null,
     store: null, info: {}, users: {}, favs: {}, omniSorts: [], exploreSorts: [], joinUids: [],
     friendData: null, friendsP: null, exploreP: null, heroPick: undefined,
     chCard: null, chSig: null, observers: [], fits: [], ui: {},
@@ -48,42 +52,77 @@
     run: async function (s) {
       var pending = window.__rkSetHomePending || function () {};
       this.s = s;
-      if (RX.isTop && RX.isHome() && s['home.enabled']) {
-        try { await this.start(); }
-        catch (e) { console.warn('[RX] home', e); this.stop(); }
+      if (RX.isTop) {
+        RX.diagInfo.home = this.report.bind(this);
+        this.watchRoute();
+        await this.route();
       }
       pending(false);
     },
 
     update: function (s) {
-      var self = this;
       this.s = s;
-      if (!RX.isTop || !RX.isHome()) return;
-      if (!s['home.enabled']) { this.stop(); return; }
-      if (!this.root) { this.start().catch(function (e) { console.warn('[RX] home', e); self.stop(); }); return; }
+      if (!RX.isTop) return;
+      if (!this.root || !this.wantHome()) { this.route(); return; }
+      this.hide();
       this.schedule();
     },
 
-    start: function () {
+    wantHome: function () { return !!this.s && !!this.s['home.enabled'] && RX.isHome(); },
+
+    // Entra o sale del Inicio según la página: Roblox cambia de página sin recargar, así que se vigila la dirección.
+    route: function () {
       var self = this;
-      if (!this.starting) this.starting = this.boot().finally(function () { self.starting = null; });
+      if (!this.wantHome()) { if (this.root || this.starting || this.failBox) this.stop(); return Promise.resolve(); }
+      if (this.root) return Promise.resolve();
+      if (this.starting) { this.again = true; return this.starting; }
+      var token = ++this.token;
+      this.starting = this.boot(token)
+        .catch(function (e) { if (token === self.token) self.fail(e); })
+        .finally(function () {
+          self.starting = null;
+          if (self.again) { self.again = false; self.route(); }
+        });
       return this.starting;
     },
 
-    boot: async function () {
+    watchRoute: function () {
+      if (this.routeTimer) return;
+      var self = this, last = location.pathname;
+      var check = function () {
+        if (location.pathname === last) return;
+        last = location.pathname;
+        self.route();
+      };
+      this.routeTimer = setInterval(check, 500);
+      window.addEventListener('popstate', check);
+    },
+
+    boot: async function (token) {
       var self = this;
+      var live = function () { return token === self.token && self.wantHome(); };
+      this.clearFail();
+      this.error = '';
+      this.stage = 'buscando tu cuenta';
       var me = await RX.me();
       if (!me) throw new Error('Sin sesión');
       this.me = me;
-      var anchor = await RX.waitFor(this.ANCHORS, 8000);
-      if (!anchor) throw new Error('No encuentro el Inicio');
-      if (!this.s['home.enabled'] || this.root) return;
-      this.anchor = anchor;
+      if (!live()) return;
+      this.stage = 'buscando dónde va';
+      var spot = await RX.waitFor(this.HOMES.concat(this.HOSTS), 10000);
+      if (!spot) throw new Error('No encuentro el Inicio');
+      if (!live() || this.root) return;
       this.root = RX.el('div', { id: 'rk-home' });
+      this.anchor = null;
+      this.moves = 0;
       this.place();
+      if (!this.root.isConnected) throw new Error('No encuentro el Inicio');
       this.skeleton();
+      this.guard();
+      this.stage = 'cargando datos';
       if (!this.loaded) this.loaded = this.load().catch(function (e) { self.loaded = null; throw e; });
       await this.loaded;
+      if (!live() || !this.root) return;
       if (!this.listening) {
         this.listening = true;
         // Al cambiar el tamaño de la ventana, Roblox puede cambiar cómo coloca el Inicio.
@@ -97,19 +136,62 @@
           if (hit && self.root) self.schedule(true);
         });
       }
+      this.stage = 'pintando';
       await this.render(true);
+      if (live() && this.root) this.stage = 'listo';
     },
 
     // Quita el Inicio de RoCer0 y deja el de Roblox tal cual.
     stop: function () {
       clearTimeout(this.timer);
       this.seq++;
+      this.token++;
       this.wanted = null;
       this.observers.forEach(function (o) { o.disconnect(); });
       this.observers = [];
-      if (this.anchor) this.anchor.classList.remove('rk-home-hidden');
+      if (this.guardObs) { this.guardObs.disconnect(); this.guardObs = null; }
+      document.querySelectorAll('[data-rk-home-hidden]').forEach(function (n) { n.removeAttribute('data-rk-home-hidden'); });
       if (this.root) this.root.remove();
       this.root = null;
+      this.anchor = null;
+      this.clearFail();
+      this.stage = 'parado';
+    },
+
+    // No se pudo montar: se queda el Inicio de Roblox y, encima, un aviso con el motivo, «Reintentar» y el
+    // diagnóstico para copiar. Sin sesión (la página de entrar) no se avisa.
+    fail: function (e) {
+      console.warn('[RX] home', e);
+      var msg = (e && e.message) || String(e);
+      this.stop();
+      this.error = msg;
+      this.stage = 'error';
+      if (msg === 'Sin sesión' || !this.wantHome()) return;
+      var self = this, el = RX.el, spot = null, host = null;
+      for (var i = 0; i < this.HOMES.length && !spot; i++) spot = document.querySelector(this.HOMES[i]);
+      if (spot) host = spot.parentNode;
+      for (var j = 0; j < this.HOSTS.length && !host; j++) host = document.querySelector(this.HOSTS[j]);
+      var box = this.failBox = el('div', { id: 'rk-home-fail', role: 'alert' }, [
+        el('div', { class: 'rk-fail-title' }, [RX.icon('alert'), el('b', { text: 'El Inicio de RoCer0 no ha podido cargar' })]),
+        el('p', { text: this.why(msg) }),
+        el('p', { class: 'rk-fail-note', text: 'Mientras tanto tienes aquí el Inicio de Roblox. Si vuelve a pasar, copia el diagnóstico y pégalo en el chat: solo describe cómo está hecha la página, sin tus datos ni tus textos.' }),
+        el('div', { class: 'rk-fail-actions' }, [
+          el('button', { class: 'rk-btn rk-btn-play', onclick: function () { self.clearFail(); self.route(); } }, [RX.icon('refresh'), 'Reintentar']),
+          el('button', { class: 'rk-btn rk-btn-ghost', onclick: function () { RX.copy(RX.diag(), 'Diagnóstico copiado'); } }, [RX.icon('copy'), 'Copiar diagnóstico']),
+          el('button', { class: 'rk-btn rk-btn-ghost rk-btn-icon', title: 'Cerrar el aviso', 'aria-label': 'Cerrar el aviso', onclick: function () { self.clearFail(); } }, [RX.icon('x')])
+        ])
+      ]);
+      // Sin sitio en la página, o si Roblox también se lleva el aviso, se queda flotando abajo a la izquierda.
+      var float = function () { box.classList.add('rk-fail-float'); document.body.appendChild(box); };
+      if (host) host.insertBefore(box, spot && spot.parentNode === host ? spot : host.firstChild); else float();
+      setTimeout(function () { if (self.failBox === box && !box.isConnected) float(); }, 1000);
+    },
+    clearFail: function () { if (this.failBox) this.failBox.remove(); this.failBox = null; },
+    why: function (msg) {
+      if (/No encuentro/.test(msg)) return 'No encuentro dónde va el Inicio en esta versión de la página de Roblox.';
+      if (/una y otra vez/.test(msg)) return 'Roblox quita el Inicio de RoCer0 cada vez que se pone.';
+      if (/^Error \d+|respuesta|fondo/i.test(msg)) return 'Roblox no ha contestado a la extensión (' + msg + ').';
+      return 'Algo ha fallado al montarlo (' + msg + ').';
     },
 
     schedule: function (force) {
@@ -124,27 +206,65 @@
       }, 150);
     },
 
-    findAnchor: function () {
-      for (var i = 0; i < this.ANCHORS.length; i++) {
-        var a = document.querySelector(this.ANCHORS[i]);
-        if (a) return a;
+    // Pone el Inicio de RoCer0 en la página y oculta (o no) el de Roblox. Si Roblox vuelve a pintar esa parte y se
+    // lleva el de RoCer0 (lo hace al terminar de cargar), el vigilante de guard() vuelve a llamar aquí.
+    place: function () {
+      var r = this.root, a = this.anchor;
+      if (!r) return;
+      if (!a || !a.isConnected) {
+        a = null;
+        for (var i = 0; i < this.HOMES.length && !a; i++) a = document.querySelector(this.HOMES[i]);
+        this.mode = a ? 'home' : 'host';
+        for (var j = 0; j < this.HOSTS.length && !a; j++) a = document.querySelector(this.HOSTS[j]);
+        this.anchor = a;
+        if (!a) return;
       }
-      return null;
+      if (!r.isConnected) {
+        if (this.mode === 'home') a.parentNode.insertBefore(r, a);
+        else a.insertBefore(r, a.firstChild);
+        this.moves++;
+      }
+      this.hide();
+      this.widen();
     },
 
-    // Pone el Inicio de RoCer0 delante del de Roblox y oculta (o no) el original.
-    place: function () {
-      var a = this.anchor;
-      if (!a || !a.isConnected) a = this.anchor = this.findAnchor();
-      if (!a || !this.root) return;
-      var isContent = a.classList.contains('content');
-      this.canHide = !isContent;
-      if (!this.root.isConnected) {
-        if (isContent) a.insertBefore(this.root, a.firstChild);
-        else a.parentNode.insertBefore(this.root, a);
-      }
-      a.classList.toggle('rk-home-hidden', this.canHide && !!this.s['home.hideOriginal'] && !this.ui.showOriginal);
-      this.widen();
+    // Lo que hay que ocultar del Inicio de Roblox: su contenedor o, si no se reconoce, todo lo demás de la zona de
+    // contenido. Con un atributo y no con una clase: Roblox rehace las clases de sus elementos y se perdería.
+    hidden: function () {
+      var a = this.anchor, r = this.root;
+      if (!a || !a.isConnected) return [];
+      if (this.mode === 'home') return [a];
+      // Todo lo de Roblox; lo que pone RoCer0 (ids y clases rk-, rx-, rc-) se queda.
+      return Array.prototype.filter.call(a.children, function (c) {
+        return c !== r && !/^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(c.tagName) && !/^r[kxc]-/.test(c.id) && !/(^|\s)r[kxc]-/.test(c.className);
+      });
+    },
+    hide: function () {
+      var list = this.hidden();
+      var on = !!this.s['home.hideOriginal'] && !this.ui.showOriginal;
+      this.canHide = list.length > 0;
+      document.querySelectorAll('[data-rk-home-hidden]').forEach(function (n) { if (!on || list.indexOf(n) < 0) n.removeAttribute('data-rk-home-hidden'); });
+      if (on) list.forEach(function (n) { if (!n.hasAttribute('data-rk-home-hidden')) n.setAttribute('data-rk-home-hidden', ''); });
+    },
+
+    // Vigila que el Inicio de RoCer0 siga en la página y el de Roblox oculto: Roblox (React) puede rehacer esa parte
+    // al terminar de cargar y llevarse lo que no es suyo. Se repone en el acto, antes de que se llegue a ver, con un
+    // límite por si Roblox lo quitara una y otra vez.
+    guard: function () {
+      var self = this;
+      if (this.guardObs) return;
+      this.guardObs = new MutationObserver(function () {
+        if (!self.root || !self.lost()) return;
+        if (self.moves > 40) { self.fail(new Error('Roblox lo quita una y otra vez')); return; }
+        self.place();
+      });
+      this.guardObs.observe(document.body, { childList: true, subtree: true });
+    },
+    lost: function () {
+      var r = this.root, a = this.anchor;
+      if (!r.isConnected || !a || !a.isConnected) return true;
+      if (!this.s['home.hideOriginal'] || this.ui.showOriginal) return false;
+      return this.hidden().some(function (n) { return !n.hasAttribute('data-rk-home-hidden'); });
     },
 
     // En el PC, la web nueva de Roblox centra el Inicio y lo encoge al ancho de lo que lleva dentro: el de
@@ -157,7 +277,7 @@
       for (var i = 0; i < 4; i++) {
         var p = r.parentElement, up = p && p.parentElement;
         if (!up || p === document.body || p.id === 'container-main' || p.matches('main, #wrap')) return;
-        if (up.querySelector('#navigation, .rbx-left-col, #header, .rbx-header')) return;
+        if (up.querySelector('#navigation, .rbx-left-col, .left-nav, #header, .rbx-header')) return;
         var cs = getComputedStyle(p);
         var inner = p.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
         var before = p.getBoundingClientRect().width;
@@ -167,6 +287,17 @@
         if (!grows && r.getBoundingClientRect().width >= inner - 40) return;
         up.insertBefore(r, p);
       }
+    },
+
+    // Para el diagnóstico: en qué punto está y dónde se ha puesto (sin datos de la cuenta).
+    report: function () {
+      var a = this.anchor, r = this.root;
+      return 'Inicio: ' + (this.s && this.s['home.enabled'] ? 'activado' : 'apagado') + ' · ' + this.stage +
+        (this.error ? ' («' + this.error.replace(/\d+/g, '#').slice(0, 80) + '»)' : '') +
+        ' · modo ' + (this.mode || '—') + ' · ancla ' + (a ? RX.diagName(a) + (a.isConnected ? '' : ' (quitada)') : '—') +
+        ' · puesto: ' + (r && r.isConnected ? 'sí, dentro de ' + RX.diagName(r.parentElement) : 'no') +
+        ' · repuesto ' + Math.max(0, this.moves - 1) + ' veces · ocultos ' + document.querySelectorAll('[data-rk-home-hidden]').length +
+        ' · tarjetas ' + (r ? r.querySelectorAll(':scope > .rk-card').length : 0);
     },
 
     // ---------- Qué tarjetas y dónde ----------
@@ -1174,7 +1305,8 @@
           self.ui.showOriginal = !self.ui.showOriginal;
           self.place();
           label();
-          if (self.ui.showOriginal && self.anchor) self.anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          var first = self.ui.showOriginal && self.hidden()[0];
+          if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
         label();
         items.push(toggle);

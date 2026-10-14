@@ -457,6 +457,29 @@ async function copyServer(msg) {
   } catch (e) { say(msg, e.message, 'err'); }
 }
 
+// ---------- Diagnóstico ----------
+// Pide a la pestaña de Roblox abierta un resumen de cómo está hecha la página (sin textos, nombres ni números) y lo
+// copia al portapapeles para pegarlo en el chat cuando algo no se ve bien. No se envía a ningún sitio.
+async function copyDiag() {
+  const msg = $('#diag-msg');
+  try {
+    const [tab] = await B.tabs.query({ active: true, currentWindow: true });
+    if (!tab || !/^https?:\/\/([a-z0-9-]+\.)*roblox\.com\//i.test(tab.url || '')) throw new Error('Abre la página de Roblox que se ve mal y vuelve a pulsar aquí.');
+    const ask = { type: 'rx:diag' };
+    const res = globalThis.browser
+      ? await B.tabs.sendMessage(tab.id, ask, { frameId: 0 })
+      : await new Promise((resolve, reject) => B.tabs.sendMessage(tab.id, ask, { frameId: 0 }, r => {
+        const err = B.runtime.lastError;
+        if (err) reject(new Error(err.message)); else resolve(r);
+      }));
+    if (!res || !res.text) throw new Error(res && res.error ? res.error : 'La página no ha contestado: recárgala y prueba otra vez.');
+    await navigator.clipboard.writeText(res.text);
+    say(msg, 'Diagnóstico copiado. Pégalo en el chat: solo describe cómo está hecha la página, sin tus datos.', 'ok');
+  } catch (e) {
+    say(msg, /Receiving end|Could not establish|No matching/i.test(e.message) ? 'La página no ha contestado: recárgala y prueba otra vez.' : e.message, 'err');
+  }
+}
+
 // ---------- Inicio ----------
 
 async function init() {
@@ -474,6 +497,8 @@ async function init() {
   $('#search').addEventListener('click', () => open(RBX + '/home#rx-search'));
   $('#roulette').hidden = !s['fun.roulette'];
   $('#roulette').addEventListener('click', () => open(RBX + '/home#rc-ruleta'));
+
+  $('#diag').addEventListener('click', copyDiag);
 
   try { $('#perm').hidden = await B.permissions.contains({ origins: ORIGINS }); } catch (e) { /* navegadores sin permisos opcionales */ }
   $('#grant').addEventListener('click', () => B.permissions.request({ origins: ORIGINS }).then(ok => { $('#perm').hidden = ok; }));

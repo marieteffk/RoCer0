@@ -40,16 +40,21 @@
   /* --p5-stars (estrellas de cinco puntas, una dentro de otra) lo pone el motor de temas: rkP5Stars() en common/themes.js. */
 }
 
-/* ---------- Fondo: rojo con trama a la izquierda, estrellas que giran despacio a la derecha ---------- */
+/* ---------- Fondo: rojo con trama a la izquierda, estrellas a la derecha ---------- */
 html.rk-theme.rk-t-daniel { background: #070707 !important; scrollbar-color: var(--p5-red) #000; }
 html.rk-theme.rk-t-daniel::before { inset: 0; filter: none; animation: none; background: #070707; }
-/* Las estrellas van en un cuadro grande que gira entero (una vuelta cada 90 s). */
+/* Las estrellas van en un cuadro grande y quieto que, al entrar en una página, da una vuelta corta y frena en seco.
+   (Girar sin parar obligaba a repintar la pantalla entera en cada fotograma y hacía que todo fuera pesado.)
+   Al cambiar de página sin recargar, daniel.js alterna rk-p5-turn y rk-p5-turn2 para que la vuelta se repita. */
 html.rk-t-daniel:not(.rk-frame) body::after {
   content: ""; position: fixed; z-index: -1; pointer-events: none;
   width: 160vmax; height: 160vmax; left: calc(80vw - 80vmax); top: calc(40vh - 80vmax);
   background: var(--p5-stars) center / 100% 100% no-repeat;
-  opacity: .58; will-change: transform; animation: rk-p5-spin 90s linear infinite;
+  opacity: .58; animation: rk-p5-turn 1.4s var(--p5-out) backwards;
 }
+html.rk-t-daniel.rk-p5-turn:not(.rk-frame) body::after { animation-name: rk-p5-turn-b; }
+@keyframes rk-p5-turn { from { transform: rotate(-38deg) scale(1.1); } }
+@keyframes rk-p5-turn-b { from { transform: rotate(-38deg) scale(1.1); } }
 /* Panel rojo inclinado a la izquierda, con trama, una raya negra y otra blanca en el borde. */
 html.rk-theme.rk-t-daniel::after {
   inset: 0; z-index: -1;
@@ -60,7 +65,6 @@ html.rk-theme.rk-t-daniel::after {
     var(--p5-red);
   -webkit-mask: linear-gradient(112deg, #000 34.1%, transparent 34.1%); mask: linear-gradient(112deg, #000 34.1%, transparent 34.1%);
 }
-@keyframes rk-p5-spin { to { transform: rotate(360deg); } }
 
 /* Hoja negra donde va el contenido de cada página. */
 html.rk-t-daniel :is(#container-main > .content, .container-main > .content) {
@@ -68,6 +72,11 @@ html.rk-t-daniel :is(#container-main > .content, .container-main > .content) {
   padding: 16px 22px 26px !important; margin-top: 14px; margin-bottom: 30px; position: relative;
 }
 html.rk-t-daniel :is(#container-main, .container-main) { background: transparent !important; }
+/* Si el Inicio de RoCer0 ha salido de la hoja para ocupar todo el ancho y dentro solo queda el de Roblox (oculto),
+   la hoja no se dibuja: sería un marco vacío. */
+html.rk-t-daniel :is(#container-main > .content, .container-main > .content):has(> [data-rk-home-hidden]):not(:has(> :not([data-rk-home-hidden], script, style, link))) {
+  border: 0; box-shadow: none; background: transparent !important; padding: 0 !important; margin: 0;
+}
 
 /* ---------- Entrada a cada página: barrido en diagonal negro, rojo y blanco ---------- */
 html.rk-t-daniel:not(.rk-frame) body::before {
@@ -134,76 +143,101 @@ html.rk-t-daniel :is(#navbar-search-input, .navbar-search input)::placeholder { 
 html.rk-t-daniel :is(#header, .rbx-header) [class*="icon-nav-"] { filter: none; }
 
 /* ---------- Menú lateral: menú de comandos ---------- */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) {
+/* Vale para el menú clásico (#navigation), el nuevo de 2026 (.left-nav) y el que daniel.js encuentre por sus enlaces
+   ([data-p5-nav]). daniel.js marca cada entrada: data-p5-cmd (="user" la de tu nombre), data-p5-here (la página en la
+   que estás), data-p5-icon (iconos), data-p5-badge (contadores), data-p5-promo (recuadros con frases) y data-p5-label. */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) {
   background: linear-gradient(104deg, rgba(0,0,0,.86) 0 74%, transparent 74.2%) !important; border-right: 0 !important; backdrop-filter: none !important;
   box-shadow: none !important; overflow-x: hidden;
 }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) :is(ul, .left-col-list) { padding-top: 8px; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li { position: relative; margin: 1px 0; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) :is(nav, ul, li, .left-col-list) { background: transparent !important; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) :is(ul, .left-col-list) { padding-top: 8px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li { position: relative; margin: 1px 0; }
 /* Cada entrada un poco girada y desplazada, como la lista de comandos. */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(4n+1) > a { --p5-rot: -2deg; --p5-x: 4px; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(4n+2) > a { --p5-rot: 1.5deg; --p5-x: 14px; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(4n+3) > a { --p5-rot: -1deg; --p5-x: 8px; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(4n+4) > a { --p5-rot: 2.5deg; --p5-x: 18px; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a {
-  position: relative; isolation: isolate; background: transparent !important; border-radius: 0 !important; color: #fff !important;
-  transform: translateX(var(--p5-x, 0)) rotate(var(--p5-rot, 0deg)); transition: transform .14s var(--p5-snap), opacity .14s, filter .14s;
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(4n+1) > a { --p5-rot: -2deg; --p5-x: 4px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(4n+2) > a { --p5-rot: 1.5deg; --p5-x: 14px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(4n+3) > a { --p5-rot: -1deg; --p5-x: 8px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(4n+4) > a { --p5-rot: 2.5deg; --p5-x: 18px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]) {
+  position: relative; isolation: isolate; overflow: visible !important; background: transparent !important; border-radius: 0 !important; color: #fff !important;
+  transform: translateX(var(--p5-x, 0)) rotate(var(--p5-rot, 0deg)); transition: transform .14s var(--p5-snap), opacity .14s;
   animation: rk-p5-nav-in .3s var(--p5-out) backwards; padding-top: 9px !important; padding-bottom: 9px !important;
 }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(2) > a { animation-delay: .035s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(3) > a { animation-delay: .07s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(4) > a { animation-delay: .105s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(5) > a { animation-delay: .14s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(6) > a { animation-delay: .175s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(7) > a { animation-delay: .21s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(8) > a { animation-delay: .245s; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li:nth-child(n+9) > a { animation-delay: .28s; }
+/* En el menú nuevo, sin sus iconos de 40 px, cada fila mide lo que sus letras: lista apretada como la de comandos. */
+html.rk-t-daniel .left-nav li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]) { line-height: 1.15 !important; min-height: 0 !important; height: auto !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(2) > a { animation-delay: .035s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(3) > a { animation-delay: .07s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(4) > a { animation-delay: .105s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(5) > a { animation-delay: .14s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(6) > a { animation-delay: .175s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(7) > a { animation-delay: .21s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(8) > a { animation-delay: .245s; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:nth-child(n+9) > a { animation-delay: .28s; }
 @keyframes rk-p5-nav-in { from { opacity: 0; transform: translateX(-40px) skewX(-8deg); } }
-/* Sin iconos: en el menú de comandos solo hay letras. */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a > div:has(> [class*="icon-nav-"]), html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a > [class*="icon-nav-"] { display: none !important; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) :is(.dynamic-ellipsis-item, .font-header-2, .text-nav span, .left-nav-label) {
+/* Sin iconos: en el menú de comandos solo hay letras. (También la capa gris que pone Roblox al pasar el ratón.) */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li > a > div:has(> [class*="icon-nav-"]), html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li > a > [class*="icon-nav-"],
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-icon], html.rk-t-daniel .left-nav li > a > :is(div[role="presentation"], span:has(> .icon)) { display: none !important; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) :is(.dynamic-ellipsis-item, .font-header-2, .text-nav span, .left-nav-label, [data-p5-label]) {
   font-family: var(--p5-title) !important; font-size: 21px !important; font-style: italic; text-transform: uppercase; color: #fff !important;
-  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; letter-spacing: .02em; overflow: visible !important;
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; letter-spacing: .02em; overflow: visible !important; text-overflow: clip !important;
 }
-/* Lo que importa se ilumina y lo demás se apaga: al pasar por una entrada, las otras bajan de brillo. */
-html.rk-t-daniel :is(#navigation, .rbx-left-col):has(li > a:hover) li > a:not(:hover) { filter: brightness(.62); }
+/* Lo que importa se ilumina y lo demás se apaga: al pasar por una entrada, las otras se atenúan (opacidad, que no
+   obliga a repintar las letras como lo haría un filtro). */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]):has(li > a:hover) li:not([data-p5-promo]) > a:not(:hover) { opacity: .55; }
 /* Sin el recuadro gris de los demás temas al pasar el ratón: aquí lo marca el rayo. */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) :is(li a:hover, .left-col-list li:hover) { background: transparent !important; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) :is(li a:hover, .left-col-list li:hover) { background: transparent !important; }
 /* Selección: rayo cian con una esquirla roja detrás, que cambian de forma a saltos (unas 8 veces por segundo). */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a::before, html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a::after {
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"])::before, html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"])::after {
   content: ""; position: absolute; z-index: -1; pointer-events: none; opacity: 0; transform: scale(.4) rotate(-10deg); transition: opacity .08s, transform .14s var(--p5-snap);
 }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a::before { inset: -3px 18px -5px -12px; background: var(--p5-cyan); clip-path: var(--p5-bolt); }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a::after { top: -4px; bottom: -2px; right: -4px; left: auto; width: 64px; background: var(--p5-red); clip-path: var(--p5-shard); }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, :focus-visible, .active, [aria-current="page"], .p5-here)::before,
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, :focus-visible, .active, [aria-current="page"], .p5-here)::after,
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li.active > a::before, html.rk-t-daniel :is(#navigation, .rbx-left-col) li.active > a::after { opacity: 1; transform: none; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"])::before { inset: -3px 18px -5px -12px; background: var(--p5-cyan); clip-path: var(--p5-bolt); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"])::after { top: -4px; bottom: -2px; right: -4px; left: auto; width: 64px; background: var(--p5-red); clip-path: var(--p5-shard); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(:hover, :focus-visible, .active, .bg-surface-300, [aria-current="page"], [data-p5-here])::before, html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(:hover, :focus-visible, .active, .bg-surface-300, [aria-current="page"], [data-p5-here])::after,
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li.active > a::before, html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li.active > a::after { opacity: 1; transform: none; }
 /* Al pasar el ratón cambian sin parar; en la página en la que estás, solo un momento (luego se quedan quietas). */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, :focus-visible)::before { animation: rk-p5-bolt .36s steps(1, end) infinite; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, :focus-visible)::after { animation: rk-p5-shard .36s steps(1, end) infinite; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(.p5-here, .active, [aria-current="page"]):not(:hover)::before,
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li.active > a:not(:hover)::before { animation: rk-p5-bolt .36s steps(1, end) 5; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(.p5-here, .active, [aria-current="page"]):not(:hover)::after,
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li.active > a:not(:hover)::after { animation: rk-p5-shard .36s steps(1, end) 5; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(:hover, :focus-visible)::before { animation: rk-p5-bolt .36s steps(1, end) infinite; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(:hover, :focus-visible)::after { animation: rk-p5-shard .36s steps(1, end) infinite; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here]):not(:hover)::before, html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li.active > a:not(:hover)::before { animation: rk-p5-bolt .36s steps(1, end) 5; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here]):not(:hover)::after, html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li.active > a:not(:hover)::after { animation: rk-p5-shard .36s steps(1, end) 5; }
 @keyframes rk-p5-bolt { 0% { clip-path: var(--p5-bolt); } 33.33% { clip-path: var(--p5-bolt-2); } 66.66% { clip-path: var(--p5-bolt-3); } 100% { clip-path: var(--p5-bolt); } }
 @keyframes rk-p5-shard { 0% { clip-path: var(--p5-shard); } 33.33% { clip-path: var(--p5-shard-3); } 66.66% { clip-path: var(--p5-shard-2); } 100% { clip-path: var(--p5-shard); } }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:hover { transform: translateX(calc(var(--p5-x, 0px) + 8px)) rotate(calc(var(--p5-rot, 0deg) - 2deg)) scale(1.08); }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, .p5-here, .active) :is(.dynamic-ellipsis-item, .font-header-2):not(.p5-host) { color: #fff !important; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
-/* Recuadro de Premium o Roblox Plus del menú */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) :is(.rbx-upgrade-now, [class*="upgrade"], [class*="premium-promo"]) { background: var(--p5-red) !important; border: 2px solid #fff !important; border-radius: 0 !important; transform: rotate(-2deg); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):hover { transform: translateX(calc(var(--p5-x, 0px) + 8px)) rotate(calc(var(--p5-rot, 0deg) - 2deg)) scale(1.08); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li:not([data-p5-promo]) > a:not([data-p5-cmd="user"]):is(:hover, .active, .bg-surface-300, [aria-current="page"], [data-p5-here]) :is(.dynamic-ellipsis-item, .font-header-2, [data-p5-label]):not([data-p5]) { color: #fff !important; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; }
+/* Contadores (mensajes, amigos): etiqueta roja inclinada. */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-badge] {
+  background: var(--p5-red) !important; color: #fff !important; border: 2px solid #000 !important; border-radius: 0 !important; box-shadow: 2px 2px 0 #000;
+  transform: skewX(-12deg) rotate(4deg); font-family: var(--p5-label) !important; font-style: italic; padding: 0 6px !important; min-width: 0 !important; height: auto !important;
+}
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-badge] * { background: transparent !important; color: #fff !important; border-radius: 0 !important; font-family: inherit !important; }
+/* Tu nombre: placa negra inclinada con sombra roja, sin rayo ni letras recortadas. */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) a[data-p5-cmd="user"] {
+  background: #000 !important; border: 2px solid var(--p5-white) !important; border-radius: 0 !important; box-shadow: 4px 4px 0 var(--p5-red);
+  transform: skewX(-8deg) rotate(-1.5deg); margin: 6px 12px 10px 4px; color: #fff !important;
+}
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) a[data-p5-cmd="user"] :is(span, div):not(:has(img)) { font-family: var(--p5-label) !important; font-style: italic; text-transform: uppercase; letter-spacing: .03em; color: #fff !important; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) a[data-p5-cmd="user"] img { border-radius: 0 !important; border: 2px solid var(--p5-white); background: var(--p5-red); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) a[data-p5-cmd="user"] :is(div[role="presentation"]) { display: none !important; }
+/* Recuadro de Premium o Roblox Plus del menú: hoja negra con borde blanco, sombra roja y el enlace en rojo. */
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) :is(.rbx-upgrade-now, [class*="upgrade"], [class*="premium-promo"]) { background: var(--p5-red) !important; border: 2px solid #fff !important; border-radius: 0 !important; transform: rotate(-2deg); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-promo] { transform: rotate(-2deg); margin: 14px 10px 10px 4px; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-promo] > :is(div, a, section) { background: #000 !important; border: 2px solid var(--p5-white) !important; border-radius: 0 !important; box-shadow: 6px 6px 0 var(--p5-red); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-promo] :is(span, p, div) { color: #fff !important; font-style: italic; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-promo] a { color: #fff !important; font-family: var(--p5-label) !important; text-transform: uppercase; text-decoration: none !important; background: var(--p5-red); padding: 1px 8px; display: inline-block; transform: skewX(-10deg); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) [data-p5-promo] :is(.icon, [class*="icon-"]) { display: none !important; }
 
 /* ---------- Letras recortadas (las crea daniel.js; también en la vista previa) ---------- */
-/* El elemento original se queda (lo leen los lectores de pantalla y sigue siendo el enlace), con su texto a tamaño 0. */
-.rk-t-daniel :is(#navigation, #container-main, #rk-home, #header, body) .p5-host.p5-host, .rk-ui-daniel .p5-host.p5-host { font-size: 0 !important; text-shadow: none !important; overflow: visible !important; white-space: normal !important; text-overflow: clip !important; letter-spacing: 0 !important; -webkit-line-clamp: unset !important; }
+/* El elemento original se queda (lo leen los lectores de pantalla y sigue siendo el enlace), con su texto a tamaño 0.
+   La marca es el atributo data-p5 (con el texto): Roblox rehace las clases de sus elementos, pero no lo toca. */
+.rk-t-daniel :is(#navigation, #container-main, #rk-home, #header, body) [data-p5][data-p5], .rk-ui-daniel [data-p5][data-p5] { font-size: 0 !important; text-shadow: none !important; overflow: visible !important; white-space: normal !important; text-overflow: clip !important; letter-spacing: 0 !important; -webkit-line-clamp: unset !important; }
 :is(.rk-t-daniel, .rk-ui-daniel) .p5-ransom {
-  display: inline-flex; flex-wrap: wrap; align-items: center; gap: .08em .3em; line-height: 1; vertical-align: middle; white-space: normal;
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: .08em .5em; line-height: 1; vertical-align: middle; white-space: normal;
   font-style: normal !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: 0 !important; text-shadow: none !important;
   /* Títulos: la palabra entera recortada con un borde blanco grueso y una sombra negra dura. */
   filter: drop-shadow(1.5px 0 0 var(--p5-white)) drop-shadow(-1.5px 0 0 var(--p5-white)) drop-shadow(0 1.5px 0 var(--p5-white)) drop-shadow(0 -1.5px 0 var(--p5-white)) drop-shadow(3px 3px 0 #000);
 }
 /* Menú: letras blancas sobre una silueta negra gruesa que sigue la forma de la palabra, como la lista de comandos. */
 :is(.rk-t-daniel, .rk-ui-daniel) .p5-ransom.p5-list {
-  gap: .04em .28em;
+  gap: .04em .5em;
   filter: drop-shadow(2.5px 0 0 #000) drop-shadow(-2.5px 0 0 #000) drop-shadow(0 2.5px 0 #000) drop-shadow(0 -2.5px 0 #000) drop-shadow(3px 3px 0 rgba(0,0,0,.55));
 }
 :is(.rk-t-daniel, .rk-ui-daniel) .p5-ransom.p5-list :is(.p5-s0, .p5-s4) { text-shadow: none !important; }
@@ -225,9 +259,9 @@ html.rk-t-daniel :is(#navigation, .rbx-left-col) :is(.rbx-upgrade-now, [class*="
 :is(.rk-t-daniel, .rk-ui-daniel) .p5-ransom.p5-list .p5-s2 { box-shadow: 0 0 0 1.5px var(--p5-white); }
 :is(.rk-t-daniel, .rk-ui-daniel) .p5-ransom.p5-list .p5-s1 { box-shadow: 1.5px 1.5px 0 #000; }
 /* En el menú, la entrada elegida crece un poco y sus letras se tuercen al otro lado. */
-html.rk-t-daniel :is(#navigation, .rbx-left-col) .p5-ransom { font-size: 22px; transition: transform .14s var(--p5-snap); transform-origin: left center; }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, .p5-here, .active) .p5-ransom { transform: scale(1.08); }
-html.rk-t-daniel :is(#navigation, .rbx-left-col) li > a:is(:hover, .p5-here, .active) .p5-ransom .p5-l { transform: translateY(var(--y, 0)) rotate(calc(var(--r, 0deg) * -1.4)) scale(var(--z, 1)); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) .p5-ransom { font-size: 20px; transition: transform .14s var(--p5-snap); transform-origin: left center; }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li > a:is(:hover, .active, .bg-surface-300, [aria-current="page"], [data-p5-here]) .p5-ransom { transform: scale(1.08); }
+html.rk-t-daniel :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) li > a:is(:hover, .active, .bg-surface-300, [aria-current="page"], [data-p5-here]) .p5-ransom .p5-l { transform: translateY(var(--y, 0)) rotate(calc(var(--r, 0deg) * -1.4)) scale(var(--z, 1)); }
 html.rk-t-daniel .container-header .p5-ransom, .rk-t-daniel #rk-home .rk-head .p5-ransom { font-size: 25px; }
 .rk-t-daniel #rk-home .rk-hero-title .p5-ransom { font-size: clamp(28px, 4.4cqi, 42px); }
 html.rk-t-daniel #container-main h1 .p5-ransom { font-size: 34px; }
@@ -453,6 +487,14 @@ html.rk-t-daniel ::-webkit-scrollbar-thumb:hover { background: var(--p5-white); 
   animation: rk-p5-skel 1.1s var(--p5-out) infinite;
 }
 @keyframes rk-p5-skel { from { background-position: 200% 0, 0 0; } to { background-position: -100% 0, 0 0; } }
+
+/* Aviso de que el Inicio de RoCer0 no ha podido cargar */
+.rk-t-daniel #rk-home-fail { background: var(--p5-black); border: 3px solid var(--p5-white); border-radius: 0; box-shadow: 8px 8px 0 var(--p5-red), 8px 8px 0 3px #000; }
+.rk-t-daniel #rk-home-fail .rk-fail-title b { font-family: var(--p5-title); font-weight: 400; font-style: italic; text-transform: uppercase; font-size: 21px; letter-spacing: .02em; }
+.rk-t-daniel #rk-home-fail .rk-fail-title .rk-i { color: var(--p5-red); }
+.rk-t-daniel #rk-home-fail .rk-btn { border-radius: 0; border: 2px solid #000; transform: skewX(-10deg); font-family: var(--p5-label); text-transform: uppercase; font-weight: 400; letter-spacing: .03em; box-shadow: 4px 4px 0 #000; }
+.rk-t-daniel #rk-home-fail .rk-btn-play { background: var(--p5-red); color: #fff; }
+.rk-t-daniel #rk-home-fail .rk-btn-ghost { background: #000; color: #fff; border-color: var(--p5-white); }
 
 /* ---------- Paneles y ventanas de RoCer0 ---------- */
 html.rk-t-daniel :is(.rx-panel, .rx-modal, .rx-modal-box, #rx-search .rx-search-box, #rc-roulette .rc-box, #rx-toast, #rc-undo, .rc-ch-card) {

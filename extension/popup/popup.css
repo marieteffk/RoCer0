@@ -93,6 +93,7 @@ input.switch:checked::after { transform: translateX(14px); background: var(--rk-
 .msg:not(:empty) { margin-top: 8px; }
 .msg.ok { color: var(--rk-text); }
 .msg.err { color: var(--rk-danger); }
+.diag-msg:not(:empty) { margin: 0 0 var(--pp-gap); }
 .confirm { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 8px; padding: 7px 8px;
   border: 1px solid var(--rk-accent); border-radius: var(--rk-radius-sm); background: var(--rk-accent-soft); color: var(--rk-text); }
 .confirm-text { flex: 1 1 160px; font-weight: 600; }

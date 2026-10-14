@@ -8,7 +8,7 @@
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
-- **Versión:** 1.1.0
+- **Versión:** 1.1.1
 - **Navegadores:** Firefox 121 o posterior, y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
@@ -28,12 +28,12 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 | Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.0.zip) |
-| Firefox | [rocer0-firefox-1.1.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.0.zip) |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.1.zip) |
+| Firefox | [rocer0-firefox-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.1.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
-1. Descomprime `rocer0-chromium-1.1.0.zip` en una carpeta que no vayas a borrar.
+1. Descomprime `rocer0-chromium-1.1.1.zip` en una carpeta que no vayas a borrar.
 2. Abre la página de extensiones de tu navegador:
    - Chrome: `chrome://extensions`
    - Brave: `brave://extensions`
@@ -48,7 +48,7 @@ La extensión se queda instalada aunque cierres el navegador. Si algún día lo 
 ### Firefox
 
 1. Abre `about:debugging#/runtime/this-firefox`.
-2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.0.zip`.
+2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.1.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
 
@@ -58,9 +58,20 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
 
+### Novedades de la 1.1.1
+
+Arreglos de Daniel a partir de una captura del Roblox de verdad:
+
+- **Daniel en el menú lateral nuevo de Roblox.** Solo conocía el menú antiguo. Ahora reconoce el nuevo (y, si Roblox le cambia el nombre, lo encuentra por sus enlaces): letras recortadas en cada entrada, con más hueco entre palabras, el rayo en la página en la que estás, sin iconos, los contadores en una etiqueta roja, tu nombre en una placa negra y el recuadro de Roblox Plus como una hoja negra.
+- **El Inicio de RoCer0 vuelve a salir.** Roblox pinta su Inicio en dos tiempos y, al terminar de cargar, vacía esa zona y se llevaba el de RoCer0. Ahora se vuelve a poner antes de que se llegue a ver, sale también si llegas al Inicio sin recargar, y el de Roblox sigue oculto aunque lo rehaga. Si aun así no puede, lo dice y deja reintentar.
+- **Daniel va ligero.** Las estrellas del fondo giraban sin parar y obligaban a repintar toda la pantalla en cada fotograma. Ahora están quietas y dan una vuelta corta al entrar en cada página: con la página quieta, el navegador trabaja unas 8 veces menos.
+- **El ping del contador vuelve a medirse.**
+- **Contenedores y ventanas privadas.** Si la pestaña tiene una sesión que la extensión no ve (contenedores de Firefox, ventana privada), el Inicio usa la cuenta de esa pestaña y pide los datos a Roblox desde la propia página.
+- **Copiar diagnóstico.** Botón nuevo arriba en el popup: copia un resumen de cómo está hecha la página de Roblox abierta (etiquetas, clases y tamaños, sin nombres, textos ni números) para pegarlo al avisar de algo que se ve mal. No se envía a ningún sitio.
+
 ### Novedades de la 1.1
 
-- **Tema Daniel**, al estilo de los menús de Persona 5: rojo, negro y blanco, estrellas que giran detrás de todo, el menú lateral convertido en un menú de comandos con rayos azules, títulos con letras recortadas como una nota de rescate, una cortina al cambiar de página y un golpe rojo y negro al hacer clic. También cambia los ajustes y el popup.
+- **Tema Daniel**, al estilo de los menús de Persona 5: rojo, negro y blanco, estrellas detrás de todo, el menú lateral convertido en un menú de comandos con rayos azules, títulos con letras recortadas como una nota de rescate, una cortina al cambiar de página y un golpe rojo y negro al hacer clic. También cambia los ajustes y el popup.
 - **Es un tema fijo:** mientras está puesto no vale ninguna personalización. Lo que tengas guardado no se borra y vuelve en cuanto eliges otro tema.
 
 ### Novedades de la 1.0.1
@@ -98,7 +109,7 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 
 **Daniel, el tema fijo.** Está inspirado en los menús de Persona 5 y cambia toda la web:
 
-- **Colores y fondo:** rojo, negro y blanco planos, con un panel rojo cortado en diagonal y estrellas de cinco puntas que giran despacio detrás de todo.
+- **Colores y fondo:** rojo, negro y blanco planos, con un panel rojo cortado en diagonal y estrellas de cinco puntas detrás de todo, que dan una vuelta corta al entrar en cada página.
 - **Letras recortadas:** los títulos y el menú lateral se escriben como una nota de rescate, cada letra con su recorte, su tipo de letra y su inclinación. El texto de verdad sigue ahí para los lectores de pantalla.
 - **Menú de comandos:** al pasar el ratón por el menú lateral salta un rayo azul con una punta roja, y la página en la que estás queda marcada.
 - **Animaciones:** las tarjetas entran de golpe al abrir una página, una cortina roja y negra cruza la pantalla al cambiar de página y cada clic en un botón deja un golpe rojo y negro. Si tu sistema pide reducir el movimiento, no hay animaciones y se quedan las letras recortadas.
@@ -220,6 +231,7 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
   - **ipinfo.io**, solo con la IP de los servidores de juego, para saber su región (se puede apagar);
   - **open.er-api.com**, para los tipos de cambio de moneda.
 - Las sesiones de las cuentas guardadas se quedan solo en el almacenamiento local de la extensión y solo se envían a roblox.com.
+- El diagnóstico del popup no sale de tu ordenador: solo se copia al portapapeles, y no lleva nombres, textos ni números.
 - Permisos que pide:
   - **almacenamiento**, para tus ajustes y datos;
   - **alarmas**, para las consultas periódicas;
@@ -229,7 +241,7 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 
 ## Límites conocidos
 
-- **Roblox cambia su web a menudo.** Si cambia algo, una función puede dejar de verse hasta que se actualice RoCer0.
+- **Roblox cambia su web a menudo.** Si cambia algo, una función puede dejar de verse hasta que se actualice RoCer0. El botón **Copiar diagnóstico** del popup ayuda a arreglarlo sin compartir tus datos.
 - **Los FPS dentro del juego** los mide el cliente de Roblox (`Shift+F5`). RoCer0 muestra los FPS de la web y el ping hacia Roblox.
 - **Server hop:** la extensión no puede cerrar el juego. Abre la entrada al servidor nuevo y Roblox cierra la partida anterior.
 - **Región del servidor:** Roblox no la publica. Se calcula localizando la IP del servidor.

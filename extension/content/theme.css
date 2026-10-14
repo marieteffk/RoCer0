@@ -165,5 +165,7 @@ html.rk-theme ::-webkit-scrollbar-track { background: transparent; }
 html.rk-theme ::-webkit-scrollbar-thumb { background: var(--rk-scroll); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
 
 /* ---------- Inicio original oculto mientras se monta el rediseño ---------- */
-html.rk-home-pending :is(#HomeContainer, .home-container, #home-page-container) { visibility: hidden !important; }
-.rk-home-hidden { display: none !important; }
+/* Inicio de RoCer0: mientras carga no se ve el de Roblox (ni su contenedor ni, si no lo hay, lo demás de la zona de
+   contenido); luego, lo que hay que ocultar lleva data-rk-home-hidden (un atributo: Roblox rehace sus clases). */
+html.rk-home-pending :is(#HomeContainer, .home-container, #home-page-container, :is(#container-main, .container-main) > .content > :not(#rk-home, #rk-home-fail, script, style)) { visibility: hidden !important; }
+[data-rk-home-hidden] { display: none !important; }

@@ -225,11 +225,15 @@ RX.features.push({
       this.raf = requestAnimationFrame(loop);
     }
     if (this.pingEl) {
+      // Al propio roblox.com (el mismo sitio que la página: no lo frenan los permisos del navegador); si la pestaña
+      // no puede, lo mide el fondo de la extensión.
       var measure = function () {
         if (document.hidden) return;
         var t = performance.now();
-        fetch('https://apis.roblox.com/?rx=' + Date.now(), { mode: 'no-cors', cache: 'no-store', credentials: 'omit' })
-          .then(function () { self.ping = Math.round(performance.now() - t); self.draw(); })
+        fetch(location.origin + '/robots.txt?rx=' + Date.now(), { method: 'HEAD', cache: 'no-store', credentials: 'omit' })
+          .then(function () { return Math.round(performance.now() - t); })
+          .catch(function () { return RX.send('ping'); })
+          .then(function (ms) { self.ping = ms; self.draw(); })
           .catch(function () { self.ping = -1; self.draw(); });
       };
       measure();

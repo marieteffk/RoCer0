@@ -32,6 +32,13 @@
 
   if (!RX.isTop) return;
 
+  // Diagnóstico de esta página, pedido desde el popup (solo se devuelve al popup, que lo copia al portapapeles).
+  RX.B.runtime.onMessage.addListener(function (msg, sender, reply) {
+    if (!msg || msg.type !== 'rx:diag' || sender.id !== RX.B.runtime.id) return false;
+    try { reply({ text: RX.diag() }); } catch (e) { reply({ error: String(e && e.message || e) }); }
+    return false;
+  });
+
   // Tiempo en el sitio: un latido cada 30 s mientras la pestaña está visible y con foco.
   setInterval(function () {
     if (document.visibilityState === 'visible' && document.hasFocus()) RX.send('heartbeat').catch(function () {});
