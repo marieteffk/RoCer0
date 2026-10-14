@@ -22,12 +22,12 @@
 
 ## Instalación
 
-Descarga el archivo de tu navegador en la página de [versiones](https://github.com/marieteffk/RoCer0/releases/latest):
+Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas)):
 
-| Navegador | Archivo |
+| Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | `rocer0-chromium-1.0.0.zip` |
-| Firefox | `rocer0-firefox-1.0.0.zip` |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.0.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.0.0.zip) |
+| Firefox | [rocer0-firefox-1.0.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.0.0.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
@@ -55,6 +55,14 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 ### Actualizar
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
+
+### Novedades de la 1.0
+
+- **Ajustes por secciones:** un menú lateral con 30 secciones en 7 grupos y un buscador que encuentra cualquier opción.
+- **Todo se puede configurar:** cada función tiene su sección con un interruptor general, sus opciones y un botón para restablecerla.
+- **Menos ruido visual:** opciones agrupadas que solo aparecen cuando hacen falta, y densidad cómoda o compacta.
+- **Inicio y popup a tu gusto:** qué tarjetas salen, su orden, el diseño y las opciones de cada una.
+- **Chrome, Brave, Edge y Opera**, además de Firefox.
 
 ## Qué hace RoCer0
 
