@@ -2,14 +2,14 @@
 
 # RoCer0
 
-**Roblox a tu medida.** RoCer0 es una extensión para Firefox, Chrome, Brave, Edge y Opera que cambia el aspecto de roblox.com y le añade decenas de herramientas. Cada función tiene su interruptor y sus opciones, así que puedes dejar solo lo que te guste.
+**Roblox a tu medida.** RoCer0 es una extensión para Firefox, Zen, Chrome, Brave, Edge y Opera que cambia el aspecto de roblox.com y le añade decenas de herramientas. Cada función tiene su interruptor y sus opciones, así que puedes dejar solo lo que te guste.
 
 ![El Inicio de Roblox con RoCer0 y el tema Galaxia](capturas/inicio-galaxia.png)
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
 - **Versión:** 1.1.1
-- **Navegadores:** Firefox 121 o posterior, y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
+- **Navegadores:** Firefox 121 o posterior y los basados en Firefox (Zen, LibreWolf, Floorp, Waterfox), y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
 ## Índice
@@ -29,7 +29,7 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 | Navegador | Descarga |
 |---|---|
 | Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.1.zip) |
-| Firefox | [rocer0-firefox-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.1.zip) |
+| Firefox, Zen, LibreWolf, Floorp y Waterfox | [rocer0-firefox-1.1.1.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.1.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
@@ -45,12 +45,16 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 La extensión se queda instalada aunque cierres el navegador. Si algún día lo pide, vuelve a pulsar **Recargar** en su tarjeta.
 
-### Firefox
+### Firefox, Zen, LibreWolf, Floorp y Waterfox
+
+Zen, LibreWolf, Floorp y Waterfox son Firefox por dentro: usan el zip de Firefox, no el de Chrome.
 
 1. Abre `about:debugging#/runtime/this-firefox`.
 2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.1.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
+
+Si al cargarlo sale «background.service_worker is currently disabled. Add background.scripts.», has elegido el zip de Chrome: usa el de Firefox.
 
 Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay que firmarlo en [addons.mozilla.org](https://addons.mozilla.org/developers/) (se puede firmar sin publicarlo) o usar Firefox Developer Edition o Nightly con `xpinstall.signatures.required` en `false` dentro de `about:config`.
 
