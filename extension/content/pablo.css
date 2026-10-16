@@ -1,0 +1,639 @@
+/* ============================================================
+   RoCer0 · Tema «Pablo» (una velocista eléctrica de noche)
+   Tema fijo: solo actúa con html.rk-t-pablo (lo pone theme-boot.js) y no se puede retocar.
+   Las reglas del Inicio y de los títulos usan .rk-t-pablo a secas para que también se vean en la
+   vista previa de los ajustes (.preview.rk-t-pablo).
+   Todo está dibujado con CSS y SVG propios y fuentes libres (OFL): no usa personajes, imágenes,
+   logotipos ni fuentes de ningún juego. Solo se animan transform y opacity; los brillos se dibujan
+   una vez y no se animan (así no pesa).
+   ============================================================ */
+
+/* ---------- Paleta y piezas ---------- */
+/* Noche violeta, cian eléctrico y verde ácido con el centro casi blanco. .rk-ui-pablo es la misma paleta en los
+   ajustes y el popup de la extensión. Texto sobre cian, verde o rojo: siempre en «vacío» (el más oscuro). */
+.rk-t-pablo, .rk-ui-pablo {
+  --pb-void: #0b0920;
+  --pb-night: #130f2e;
+  --pb-panel: #1d1846;
+  --pb-raised: #272060;
+  --pb-violet: #413476;
+  --pb-indigo: #38328e;
+  --pb-volt: #2be4ff;
+  --pb-arc: #e9fdff;
+  --pb-blue: #2f6bff;
+  --pb-lime: #d2ff3c;
+  --pb-spark: #f2ff6e;
+  --pb-text: #f1f0ff;
+  --pb-muted: #b4aee0;
+  --pb-faint: #8a84bd;
+  --pb-danger: #ff4d6a;
+  --pb-line: rgba(180, 174, 224, .2);
+  --pb-line-hi: rgba(43, 228, 255, .5);
+  --pb-glass: rgba(29, 24, 70, .88);
+  --pb-title: "RC PB Titulo", "Arial Narrow", Impact, sans-serif;
+  --pb-label: "RC PB Etiqueta", "Segoe UI", system-ui, sans-serif;
+  --pb-mono: "RC PB Mono", ui-monospace, Consolas, monospace;
+  /* Movimiento: arranque y frenada de carrera */
+  --pb-out: cubic-bezier(.16, 1, .3, 1);
+  --pb-dash: cubic-bezier(.65, 0, .35, 1);
+  --pb-brake: cubic-bezier(.2, 1.3, .4, 1);
+  /* Energía: de verde ácido a cian (rellenos) y de cian a verde (franjas) */
+  --pb-energy: linear-gradient(100deg, var(--pb-lime), var(--pb-volt));
+  --pb-stripe: linear-gradient(90deg, var(--pb-volt), var(--pb-lime));
+  /* Esquinas cortadas a 45° (solo en piezas sin menús dentro: el recorte taparía lo que se abre) */
+  --pb-cut: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  --pb-cut-sm: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  /* Escuadras en las esquinas de abajo de los paneles grandes (en vez de recortarlos) */
+  --pb-brackets:
+    linear-gradient(var(--pb-volt), var(--pb-volt)) 0 100% / 16px 2px no-repeat,
+    linear-gradient(var(--pb-volt), var(--pb-volt)) 0 100% / 2px 16px no-repeat,
+    linear-gradient(var(--pb-lime), var(--pb-lime)) 100% 100% / 16px 2px no-repeat,
+    linear-gradient(var(--pb-lime), var(--pb-lime)) 100% 100% / 2px 16px no-repeat;
+  /* «//» en verde delante de los títulos y un rayo pequeño debajo */
+  --pb-slashes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 16'%3E%3Cpath d='M7 1L2 15M15 1l-5 14' fill='none' stroke='%23d2ff3c' stroke-width='2.6'/%3E%3C/svg%3E");
+  --pb-zap: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10'%3E%3Cpath d='M1 6L12 3L19 7L31 2L40 6L52 4L60 8L73 3L82 6L95 2L104 7L119 4' fill='none' stroke='%232be4ff' stroke-opacity='.35' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M1 6L12 3L19 7L31 2L40 6L52 4L60 8L73 3L82 6L95 2L104 7L119 4' fill='none' stroke='%23e9fdff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* --pb-arcs (los rayos del fondo) lo pone el motor de temas: rkPbArcs() en common/themes.js. */
+}
+
+/* ---------- Fondo: noche violeta, líneas de pista y rayos quietos ---------- */
+html.rk-theme.rk-t-pablo { background: var(--pb-night) !important; scrollbar-color: var(--pb-volt) var(--pb-void); }
+html.rk-theme.rk-t-pablo::before {
+  inset: 0; filter: none; animation: none;
+  background:
+    radial-gradient(60vmax 40vmax at 10% 0%, rgba(65, 52, 118, .85), transparent 70%),
+    radial-gradient(50vmax 35vmax at 95% 90%, rgba(56, 50, 142, .55), transparent 70%),
+    repeating-linear-gradient(-72deg, transparent 0 46px, rgba(180, 174, 224, .045) 46px 47px),
+    linear-gradient(160deg, var(--pb-night), var(--pb-void));
+}
+html.rk-theme.rk-t-pablo::after { background: var(--pb-arcs, none) 50% 50% / cover no-repeat; opacity: .8; }
+/* La palabra gigante de cada sección (INICIO, AMIGOS…), hueca y muy suave al fondo, que entra deslizándose. Sale de
+   --pb-word, que ponen theme-boot.js y fixed-themes.js en el html (rkPbSetWord); sin palabra, no hay nada. Solo con
+   navegadores que dejan ocultarla a los lectores de pantalla («/ ""»). Nunca se repite en bucle. */
+html.rk-t-pablo:not(.rk-frame) body::after {
+  white-space: pre; position: fixed; right: -1vw; bottom: -5vh; z-index: -1; pointer-events: none; text-align: right;
+  font: 400 min(24vw, calc(150vw / var(--pb-len, 6)))/.8 var(--pb-title); text-transform: uppercase; letter-spacing: .01em;
+  color: transparent; -webkit-text-stroke: 1px rgba(43, 228, 255, .2); text-shadow: .045em .045em 0 rgba(65, 52, 118, .42);
+  animation: rk-pb-word .7s var(--pb-out) backwards;
+}
+@supports (content: "a" / "") {
+  html.rk-t-pablo:not(.rk-frame) body::after { content: var(--pb-word) "\A" var(--pb-word) / ""; }
+}
+html.rk-t-pablo.rk-pb-turn:not(.rk-frame) body::after { animation-name: rk-pb-word-b; }
+@keyframes rk-pb-word { from { opacity: 0; transform: translateX(14vw); } }
+@keyframes rk-pb-word-b { from { opacity: 0; transform: translateX(14vw); } }
+
+/* Hoja donde va el contenido de cada página: panel violeta con borde fino, escuadras abajo y una franja de energía
+   arriba que se carga de izquierda a derecha al entrar. */
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content) {
+  position: relative; background: var(--pb-brackets), rgba(19, 15, 46, .86) !important; border: 1px solid var(--pb-line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .4); padding: 18px 22px 26px !important; margin-top: 14px; margin-bottom: 30px;
+}
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content)::before {
+  content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; pointer-events: none; background: var(--pb-stripe);
+  transform-origin: left; animation: rk-pb-charge .55s var(--pb-out) .08s backwards;
+}
+/* La chispa que recorre la franja una vez. */
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content)::after {
+  content: ""; position: absolute; left: 0; top: -4px; width: 90px; height: 8px; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side, var(--pb-arc), rgba(43, 228, 255, .5) 55%, transparent);
+  animation: rk-pb-run-once .7s var(--pb-dash) .1s;
+}
+@keyframes rk-pb-charge { from { transform: scaleX(0); } }
+@keyframes rk-pb-run-once { from { opacity: 1; transform: translateX(-40px); } 85% { opacity: 1; } to { opacity: 0; transform: translateX(calc(100vw - 420px)); } }
+html.rk-t-pablo :is(#container-main, .container-main) { background: transparent !important; }
+/* Si el Inicio de RoCer0 ha salido de la hoja para ocupar todo el ancho y dentro solo queda el de Roblox (oculto),
+   la hoja no se dibuja: sería un marco vacío. */
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content):has(> [data-rk-home-hidden]):not(:has(> :not([data-rk-home-hidden], script, style, link))) {
+  border: 0; box-shadow: none; background: transparent !important; padding: 0 !important; margin: 0;
+}
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content):has(> [data-rk-home-hidden]):not(:has(> :not([data-rk-home-hidden], script, style, link)))::before,
+html.rk-t-pablo :is(#container-main > .content, .container-main > .content):has(> [data-rk-home-hidden]):not(:has(> :not([data-rk-home-hidden], script, style, link)))::after { display: none; }
+
+/* ---------- Entrada a cada página: estelas de velocidad con el nombre de la sección ---------- */
+/* Finas y de colores, nunca un destello de pantalla entera. Una sola capa que cruza de izquierda a derecha y frena un
+   momento en el centro, con el nombre de la sección (--pb-word) en la punta. Al cambiar de página sin recargar,
+   fixed-themes.js pone #rk-pb-wipe con lo mismo. */
+html.rk-t-pablo:not(.rk-frame) body::before, #rk-pb-wipe {
+  content: ""; position: fixed; top: 0; bottom: 0; left: -100vw; width: 100vw; z-index: 2147483000; pointer-events: none;
+  display: flex; align-items: center; justify-content: flex-end; box-sizing: border-box; padding: 0 5vw 0 0;
+  background:
+    linear-gradient(90deg, transparent, var(--pb-volt) 82%, var(--pb-arc)) 0 13% / 70% 3px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-lime) 82%, #fff) 30% 26% / 50% 2px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-blue) 85%, var(--pb-arc)) 10% 37% / 80% 2px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-volt) 82%, var(--pb-arc)) 70% 63% / 42% 4px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-lime) 82%, #fff) 20% 72% / 60% 2px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-volt) 82%, var(--pb-arc)) 85% 82% / 55% 3px no-repeat,
+    linear-gradient(90deg, transparent, var(--pb-blue) 85%, var(--pb-arc)) 40% 92% / 65% 2px no-repeat,
+    linear-gradient(90deg, transparent 0 35%, rgba(43, 228, 255, .07) 80%, rgba(210, 255, 60, .14) 99%, transparent);
+  font: 400 min(15vw, calc(90vw / var(--pb-len, 6)))/1 var(--pb-title); text-transform: uppercase; letter-spacing: .02em; white-space: nowrap;
+  color: rgba(43, 228, 255, .14); -webkit-text-stroke: 2px var(--pb-arc); text-shadow: 0 0 24px rgba(43, 228, 255, .55);
+  transform: translateX(0); animation: rk-pb-zip .8s linear .02s forwards;
+}
+#rk-pb-wipe { animation-delay: 0s; }
+@supports (content: "a" / "") {
+  html.rk-t-pablo:not(.rk-frame) body::before { content: var(--pb-word, "") / ""; }
+  #rk-pb-wipe::before { content: var(--pb-word, "") / ""; }
+}
+/* Entra deprisa, se queda un instante con la palabra en el centro y sale disparada. */
+@keyframes rk-pb-zip {
+  0% { transform: translateX(0); animation-timing-function: cubic-bezier(.2, .7, .35, 1); }
+  42% { transform: translateX(94vw); animation-timing-function: linear; }
+  62% { transform: translateX(103vw); animation-timing-function: cubic-bezier(.6, 0, .9, .45); }
+  100% { transform: translateX(200vw); visibility: hidden; }
+}
+
+/* ---------- Texto general ---------- */
+html.rk-t-pablo ::selection { background: var(--pb-lime); color: var(--pb-void); }
+html.rk-t-pablo body { cursor: var(--pb-cursor), auto; }
+html.rk-t-pablo :is(a, button, [role="button"], .btn, label, select, summary) { cursor: var(--pb-cursor-link), pointer; }
+html.rk-t-pablo {
+  --pb-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M3 2l19 9-8 2.6L10.4 22z' fill='%232be4ff' stroke='%230b0920' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M6.2 6.4l5.8 9' stroke='%23e9fdff' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") 3 2;
+  --pb-cursor-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M3 2l19 9-8 2.6L10.4 22z' fill='%23d2ff3c' stroke='%230b0920' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M6.2 6.4l5.8 9' stroke='%230b0920' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") 3 2;
+}
+
+/* Títulos de Roblox: enormes, estrechos y en mayúsculas, con un brillo cian quieto (no se anima). */
+html.rk-t-pablo :is(h1, .font-header-1, .container-header h2, .container-header h3, .game-name, .profile-name, .header-title h1, .item-name-container h1, .page-title) {
+  font-family: var(--pb-title) !important; text-transform: uppercase; letter-spacing: .02em; line-height: 1 !important; color: var(--pb-text) !important;
+  text-shadow: 0 0 14px rgba(43, 228, 255, .35), 0 0 34px rgba(47, 107, 255, .25);
+}
+html.rk-t-pablo :is(h1, .font-header-1, .game-name, .profile-name, .header-title h1, .item-name-container h1) { font-size: max(1.35em, 30px) !important; }
+/* Cabecera de cada fila de Roblox: «//» en verde delante y un rayo pequeño debajo. */
+html.rk-t-pablo .container-header :is(h2, h3) {
+  font-size: 27px !important; padding: 2px 0 10px 26px !important; margin: 4px 0 8px !important;
+  background: var(--pb-slashes) 0 6px / 17px 16px no-repeat, var(--pb-zap) 26px 100% / 110px 9px no-repeat !important;
+}
+html.rk-t-pablo .container-header :is(h2, h3) a { color: inherit !important; text-decoration: none !important; }
+html.rk-t-pablo :is(h2, h3, h4, .font-header-2, .font-title, .font-subheader-1):not(#rk-home *) { letter-spacing: .01em; }
+html.rk-t-pablo :is(.text-secondary, .text-label, .font-caption-body, .text-description) { color: var(--pb-muted) !important; }
+html.rk-t-pablo :is(.text-link, a.text-link, a.see-all, .container-header .btn-more, .see-all-link-icon, .btn-text) {
+  color: var(--pb-volt) !important; font-family: var(--pb-label); text-transform: uppercase; font-size: 12px; letter-spacing: .1em;
+  background: linear-gradient(var(--pb-lime), var(--pb-lime)) 0 100% / 0 2px no-repeat; transition: background-size .16s var(--pb-out), color .12s;
+}
+html.rk-t-pablo :is(.text-link, a.text-link, a.see-all, .container-header .btn-more):hover { color: var(--pb-lime) !important; background-size: 100% 2px; text-decoration: none !important; }
+
+/* Eco eléctrico de los títulos: dos copias (cian y verde) que llegan desde atrás y se apagan, como la estela de alguien
+   que corre muy rápido. fixed-themes.js pone el texto en data-pb; los lectores de pantalla no leen las copias. */
+:is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav]) { position: relative; }
+:is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::before, :is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::after {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; box-sizing: border-box;
+  padding: inherit; white-space: nowrap; overflow: visible; background: none !important; text-shadow: none; -webkit-text-stroke: 0;
+  opacity: 0; animation: rk-pb-ghost .5s cubic-bezier(.2, .8, .3, 1) .12s forwards;
+}
+:is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::before { color: var(--pb-volt); --pb-dx: -16px; }
+:is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::after { color: var(--pb-lime); --pb-dx: -34px; animation-delay: .17s; }
+/* Solo con navegadores que dejan ocultar las copias a los lectores de pantalla. */
+@supports (content: "a" / "") {
+  :is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::before, :is(.rk-t-pablo, .rk-ui-pablo) [data-pb]:not([data-p5-nav] *, [data-p5-nav])::after { content: attr(data-pb) / ""; }
+}
+@keyframes rk-pb-ghost { from { opacity: .8; transform: translateX(var(--pb-dx, -20px)); } to { opacity: 0; transform: none; } }
+
+/* ---------- Cabecera ---------- */
+html.rk-t-pablo :is(#header, .rbx-header) {
+  background: var(--pb-stripe) 0 100% / 100% 2px no-repeat, rgba(11, 9, 32, .94) !important; border-bottom: 0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35) !important;
+}
+html.rk-t-pablo :is(#header, .rbx-header) :is(.nav-menu-title, a.font-header-2.nav-menu-title, .rbx-navbar a, .rbx-navbar .text-header) {
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .12em; color: var(--pb-text) !important; transition: color .12s;
+}
+html.rk-t-pablo :is(#header, .rbx-header) :is(.rbx-navbar a, a.nav-menu-title):hover { color: var(--pb-volt) !important; background: transparent !important; text-shadow: 0 0 10px rgba(43, 228, 255, .5); }
+html.rk-t-pablo :is(#nav-robux-amount, .nav-robux-amount, #navbar-robux .text-header) { font-family: var(--pb-mono) !important; color: var(--pb-lime) !important; letter-spacing: .02em; }
+html.rk-t-pablo :is(#navbar-search-input, .navbar-search input, .navbar-search .input-field, input.navbar-search-input) {
+  background: var(--pb-void) !important; color: var(--pb-text) !important; border: 1px solid rgba(180, 174, 224, .4) !important; border-radius: 0 !important;
+  clip-path: var(--pb-cut-sm); font-family: var(--pb-label); letter-spacing: .04em;
+}
+html.rk-t-pablo :is(#navbar-search-input, .navbar-search input):focus { border-color: var(--pb-volt) !important; box-shadow: inset 0 0 0 1px var(--pb-volt) !important; }
+html.rk-t-pablo :is(#navbar-search-input, .navbar-search input)::placeholder { color: var(--pb-faint) !important; text-transform: uppercase; letter-spacing: .12em; }
+
+/* ---------- Menú lateral: lista de salida con dorsales ---------- */
+/* fixed-themes.js marca el menú (data-p5-nav), la lista, cada fila y su enlace (data-p5-row, data-p5-n, data-p5-item),
+   la página en la que estás (data-p5-here), iconos, contadores, el nombre (data-p5-label), tu nombre de usuario
+   (data-p5-cmd="user") y los recuadros con frases (data-p5-promo). Todo va por esas marcas, no por las clases. */
+html.rk-t-pablo :is(#navigation, .rbx-left-col, .left-nav, [data-p5-nav]) {
+  background: linear-gradient(180deg, rgba(11, 9, 32, .92), rgba(19, 15, 46, .86)) !important; border-right: 1px solid var(--pb-line) !important;
+  box-shadow: inset -1px 0 0 rgba(43, 228, 255, .1) !important; backdrop-filter: none !important; overflow-x: hidden;
+}
+html.rk-t-pablo [data-p5-nav] :is(nav, ul, li, .left-col-list, [data-p5-list], [data-p5-row]:not([data-p5-promo])) { background: transparent !important; }
+html.rk-t-pablo [data-p5-nav] :is(div, section, nav, ul, li, span):not([data-p5-promo], [data-p5-promo] *, [data-p5-item], [data-p5-item] *, [data-p5-badge], [data-p5-badge] *) { background-color: transparent !important; }
+html.rk-t-pablo [data-p5-nav] button[data-p5-item] { border: 0 !important; box-shadow: none; text-align: left; cursor: pointer; }
+html.rk-t-pablo :is([data-p5-nav], [data-p5-list]) { counter-reset: pb-nav; }
+html.rk-t-pablo [data-p5-nav] [data-p5-list] { padding-top: 10px; }
+html.rk-t-pablo [data-p5-nav] [data-p5-row]:not([data-p5-promo]) { position: relative; margin: 1px 0; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]) {
+  counter-increment: pb-nav; position: relative; isolation: isolate; overflow: visible !important; background: transparent !important; border-radius: 0 !important;
+  color: var(--pb-text) !important; text-decoration: none !important; margin: 1px 12px 1px 6px; line-height: 1.15 !important; min-height: 0 !important; height: auto !important;
+  padding-top: 8px !important; padding-bottom: 8px !important; transition: transform .14s var(--pb-out); animation: rk-pb-nav-in .32s var(--pb-out) backwards;
+}
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="1"] [data-p5-item], [data-p5-item][data-p5-n="1"]) { animation-delay: .03s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="2"] [data-p5-item], [data-p5-item][data-p5-n="2"]) { animation-delay: .06s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="3"] [data-p5-item], [data-p5-item][data-p5-n="3"]) { animation-delay: .09s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="4"] [data-p5-item], [data-p5-item][data-p5-n="4"]) { animation-delay: .12s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="5"] [data-p5-item], [data-p5-item][data-p5-n="5"]) { animation-delay: .15s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="6"] [data-p5-item], [data-p5-item][data-p5-n="6"]) { animation-delay: .18s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="7"] [data-p5-item], [data-p5-item][data-p5-n="7"]) { animation-delay: .21s; }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-n="8"] [data-p5-item], [data-p5-item][data-p5-n="8"]) { animation-delay: .24s; }
+@keyframes rk-pb-nav-in { from { opacity: 0; transform: translateX(-34px) skewX(-10deg); } }
+/* Sin iconos: en su lugar, el dorsal de cada entrada (01, 02…). */
+html.rk-t-pablo [data-p5-nav] [data-p5-icon], html.rk-t-pablo :is(#navigation, .rbx-left-col) li > a > div:has(> [class*="icon-nav-"]), html.rk-t-pablo :is(#navigation, .rbx-left-col) li > a > [class*="icon-nav-"] { display: none !important; }
+html.rk-t-pablo [data-p5-nav] :is(.dynamic-ellipsis-item, .font-header-2, .text-nav span, .left-nav-label, [data-p5-label]) {
+  font-family: var(--pb-label) !important; font-size: 15px !important; text-transform: uppercase; letter-spacing: .1em; color: var(--pb-text) !important;
+  overflow: visible !important; text-overflow: clip !important; transition: color .12s;
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]) [data-p5-label]::before {
+  content: counter(pb-nav, decimal-leading-zero); display: inline-block; min-width: 22px; margin-right: 10px; font: 400 11px/1 var(--pb-mono);
+  letter-spacing: 0; color: var(--pb-faint); vertical-align: 1px; transition: color .12s;
+}
+/* Al pasar el ratón: la entrada se adelanta y sale un subrayado eléctrico (una forma quieta que solo crece). */
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"])::after {
+  content: ""; position: absolute; z-index: -1; left: 38px; right: 10px; bottom: 2px; height: 6px; pointer-events: none; background: var(--pb-volt);
+  clip-path: polygon(0 70%, 16% 25%, 30% 75%, 50% 15%, 64% 80%, 82% 30%, 100% 60%, 100% 85%, 82% 55%, 64% 100%, 50% 40%, 30% 100%, 16% 50%, 0 95%);
+  transform: scaleX(0); transform-origin: left; transition: transform .18s var(--pb-out);
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(:hover, :focus-visible) { transform: translateX(6px); }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"], [data-p5-here], .active, [aria-current="page"]):is(:hover, :focus-visible)::after { transform: scaleX(1); }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(:hover, :focus-visible) [data-p5-label] { color: var(--pb-volt) !important; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(:hover, :focus-visible) [data-p5-label]::before { color: var(--pb-lime); }
+html.rk-t-pablo [data-p5-nav] :is([data-p5-item]:hover, [data-p5-row]:hover:not([data-p5-promo]), .left-col-list li:hover) { background: transparent !important; }
+/* La página en la que estás: paralelogramo verde y cian con letras oscuras y una chispa diminuta que corre debajo
+   (la única animación sin fin del tema, y mueve una tira de 2 px). */
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"])::before {
+  content: ""; position: absolute; z-index: -1; inset: 3px -6px 3px -4px; pointer-events: none; background: var(--pb-energy);
+  transform: skewX(-14deg) scaleX(0); transform-origin: left; opacity: 0; transition: transform .2s var(--pb-out), opacity .1s;
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here])::before,
+html.rk-t-pablo [data-p5-nav] [data-p5-row].active [data-p5-item]::before { transform: skewX(-14deg); opacity: 1; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here]) :is([data-p5-label], .dynamic-ellipsis-item, .font-header-2),
+html.rk-t-pablo [data-p5-nav] [data-p5-row].active [data-p5-item] :is([data-p5-label], .dynamic-ellipsis-item, .font-header-2) { color: var(--pb-void) !important; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here]) [data-p5-label]::before { color: var(--pb-void); opacity: .7; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item]:not([data-p5-cmd="user"]):is(.active, .bg-surface-300, [aria-current="page"], [data-p5-here])::after,
+html.rk-t-pablo [data-p5-nav] [data-p5-row].active [data-p5-item]::after {
+  left: 0; right: 0; bottom: -3px; height: 2px; clip-path: none; transition: none;
+  background: linear-gradient(90deg, transparent 44%, var(--pb-arc) 48% 52%, transparent 56%);
+  animation: rk-pb-run 1.6s linear infinite;
+}
+@keyframes rk-pb-run { from { transform: translateX(-50%); } to { transform: translateX(50%); } }
+/* Contadores (mensajes, amigos): plaquita verde con números de cronómetro. */
+html.rk-t-pablo [data-p5-nav] [data-p5-badge] {
+  background: var(--pb-lime) !important; color: var(--pb-void) !important; border: 0 !important; border-radius: 0 !important; clip-path: var(--pb-cut-sm);
+  font-family: var(--pb-mono) !important; padding: 0 6px !important; min-width: 0 !important; height: auto !important;
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-badge] * { background: transparent !important; color: var(--pb-void) !important; border-radius: 0 !important; font-family: inherit !important; }
+/* Tu nombre: placa con borde fino, esquina cortada y la cara con marco cian. */
+html.rk-t-pablo [data-p5-nav] [data-p5-item][data-p5-cmd="user"] {
+  background: var(--pb-panel) !important; border: 1px solid var(--pb-line-hi) !important; border-radius: 0 !important; clip-path: var(--pb-cut-sm);
+  margin: 6px 12px 10px 6px; color: var(--pb-text) !important; text-decoration: none !important; box-shadow: inset 0 2px 0 var(--pb-volt);
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-item][data-p5-cmd="user"] :is(span, div, p):not(:has(img)) { font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em; color: var(--pb-text) !important; }
+html.rk-t-pablo [data-p5-nav] [data-p5-item][data-p5-cmd="user"] img { border-radius: 0 !important; outline: 2px solid var(--pb-volt); outline-offset: -2px; background: var(--pb-raised); }
+html.rk-t-pablo [data-p5-nav] [data-p5-item][data-p5-cmd="user"] :is(div[role="presentation"]) { display: none !important; }
+/* Recuadro de Premium o Roblox Plus del menú: panel con franja de energía y la llamada en verde. */
+html.rk-t-pablo [data-p5-nav] :is(.rbx-upgrade-now, [class*="upgrade"], [class*="premium-promo"]):not([data-p5-promo] *) { background: var(--pb-panel) !important; border: 1px solid var(--pb-line-hi) !important; border-radius: 0 !important; }
+html.rk-t-pablo [data-p5-nav] [data-p5-promo] { margin: 14px 12px 10px 6px; }
+html.rk-t-pablo [data-p5-nav] [data-p5-promo] [data-p5-card], html.rk-t-pablo [data-p5-nav] [data-p5-promo][data-p5-card] {
+  background: var(--pb-brackets), var(--pb-panel) !important; border: 1px solid var(--pb-line) !important; border-radius: 0 !important;
+  box-shadow: inset 0 2px 0 var(--pb-volt); text-decoration: none !important;
+}
+html.rk-t-pablo [data-p5-nav] [data-p5-promo] :is(span, p, div) { color: var(--pb-text) !important; }
+html.rk-t-pablo [data-p5-nav] [data-p5-promo] [data-p5-cta] { color: var(--pb-void) !important; font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em; text-decoration: none !important; background: var(--pb-energy) !important; padding: 2px 10px; display: inline-block; align-self: flex-start; clip-path: var(--pb-cut-sm); }
+html.rk-t-pablo [data-p5-nav] [data-p5-promo] :is(.icon, [class*="icon-"], svg) { display: none !important; }
+
+/* ---------- Paneles y tarjetas de Roblox ---------- */
+html.rk-t-pablo :is(.section-content, .profile-header, .profile-header-top, .game-main-content, .game-about-container, .game-stats-container,
+  .rbx-tab-content, .modal-content, .popover, .dropdown-menu, .rbx-popover-content, #settings-popover-menu, .rbx-game-server-item, .game-server-item,
+  .rbx-public-game-server-item, .rbx-friends-game-server-item, .card, .menu-vertical, .catalog-header, .search-options, .notification-stream-base,
+  .trade-row, .trades-list-detail, .item-details-info-content, .group-details, .dialog-container, .accordion-section) {
+  background: var(--pb-glass) !important; border: 1px solid var(--pb-line) !important; border-radius: 0 !important; color: var(--pb-text) !important;
+}
+html.rk-t-pablo :is(.section-content, .game-main-content, .profile-header, .modal-content, .game-about-container) { box-shadow: inset 0 2px 0 var(--pb-volt), 0 14px 36px rgba(0, 0, 0, .3) !important; }
+html.rk-t-pablo :is(.dropdown-menu, .popover, .rbx-popover-content, #settings-popover-menu) {
+  background: var(--pb-panel) !important; border-color: rgba(43, 228, 255, .4) !important; box-shadow: inset 0 2px 0 var(--pb-volt), 0 16px 40px rgba(0, 0, 0, .5) !important;
+}
+html.rk-t-pablo :is(.dropdown-menu li a, .menu-vertical .menu-option, .rbx-menu-item, #settings-popover-menu li a) {
+  font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; font-size: 13px; transition: transform .12s var(--pb-out), color .1s;
+}
+html.rk-t-pablo :is(.dropdown-menu li a, .menu-vertical .menu-option, .rbx-menu-item, #settings-popover-menu li a):hover {
+  background: rgba(43, 228, 255, .12) !important; color: var(--pb-volt) !important; transform: translateX(4px);
+}
+/* Ventanas: entran deprisa y frenan. */
+html.rk-t-pablo .modal-content { animation: rk-pb-brake .28s var(--pb-brake); }
+@keyframes rk-pb-brake { from { opacity: 0; transform: translateX(-32px) skewX(-6deg); } }
+html.rk-t-pablo :is(.modal-header, .modal-title) { font-family: var(--pb-title); text-transform: uppercase; letter-spacing: .02em; }
+html.rk-t-pablo :is(.border-bottom, .border-top, hr, .rbx-divider, .divider-top, .divider-bottom) { border-color: var(--pb-line) !important; }
+
+/* Tarjetas de juego y de objeto: marco fino; al pasar el ratón, suben y se enciende el borde cian (sin animar sombras). */
+html.rk-t-pablo :is(.game-card-thumb-container, .game-card-thumb, .game-tile .thumbnail-2d-container, .game-card-container .thumbnail-2d-container,
+  .item-card-thumb-container, .item-card-thumb, .catalog-item-container .thumbnail-2d-container, .hero-unit .thumbnail-2d-container) {
+  border-radius: 0 !important; border: 1px solid var(--pb-line); background: var(--pb-void) !important;
+}
+html.rk-t-pablo :is(.game-card-container, .item-card-container, .catalog-item-container, .list-item.game-card, .game-tile, [data-testid="game-tile"]) {
+  transition: transform .16s var(--pb-out) !important;
+}
+html.rk-t-pablo :is(.game-card-container, .item-card-container, .catalog-item-container, .list-item.game-card, .game-tile, [data-testid="game-tile"]):hover { transform: translateY(-4px); z-index: 2; }
+html.rk-t-pablo :is(.game-card-container, .item-card-container, .catalog-item-container, .list-item.game-card, .game-tile, [data-testid="game-tile"]):hover
+  :is(.game-card-thumb-container, .thumbnail-2d-container, .item-card-thumb-container) { border-color: var(--pb-volt); box-shadow: 0 0 0 1px var(--pb-volt), 0 0 18px rgba(43, 228, 255, .35); }
+html.rk-t-pablo :is(.game-card-name, .item-card-name, .game-name-title) { font-weight: 700 !important; }
+html.rk-t-pablo :is(.game-card-container, .item-card-container, .game-tile):hover :is(.game-card-name, .item-card-name) { color: var(--pb-volt) !important; }
+/* Caras sueltas (cabecera del perfil, tarjetas de juego…): cuadradas con marco cian. Las de las listas de personas, abajo. */
+html.rk-t-pablo :is(.avatar-headshot, .avatar .thumbnail-2d-container):not([data-p5-nav] *, [data-p5-person] *, [data-p5-face], .friends-carousel-tile *, .avatar-card *) {
+  border-radius: 0 !important; outline: 2px solid var(--pb-volt); outline-offset: -2px; background: var(--pb-raised) !important;
+}
+html.rk-t-pablo :is(.avatar-headshot, .avatar .thumbnail-2d-container):not([data-p5-nav] *, [data-p5-person] *, [data-p5-face], .friends-carousel-tile *, .avatar-card *) img { border-radius: 0 !important; }
+html.rk-t-pablo :is(.avatar-status, .game-card-friend-info) { border-color: var(--pb-void) !important; }
+
+/* ---------- Personas: amigos del Inicio y de los perfiles, la página de amigos y cualquier lista de gente ----------
+   fixed-themes.js marca cada lista (data-p5-people), cada tarjeta (data-p5-person), su cara y su nombre. Las clases que
+   usa Roblox ahora van también aquí para que se vea igual antes de que llegue el JS. Nada cambia de tamaño: el marco es
+   un outline por dentro (el carrusel de Roblox recorta lo que sale de su caja). */
+html.rk-t-pablo :is([data-p5-face], .friends-carousel-tile .avatar-card-image, .avatar-card .avatar-card-image) {
+  border: 0 !important; border-radius: 0 !important; background: var(--pb-raised) !important;
+  outline: 2px solid var(--pb-volt) !important; outline-offset: -2px; transition: transform .16s var(--pb-out), outline-color .12s;
+}
+html.rk-t-pablo :is([data-p5-face], .friends-carousel-tile .avatar-card-image, .avatar-card .avatar-card-image) :is(img, span, div) { border-radius: 0 !important; }
+html.rk-t-pablo :is([data-p5-person], .friends-carousel-tile, .avatar-card):hover :is([data-p5-face], .avatar-card-image) { transform: translateY(-3px); outline-color: var(--pb-lime) !important; }
+/* «Añadir amigos»: el mismo marco, con el borde a rayas. */
+html.rk-t-pablo .friends-carousel-tile .add-friends-icon-container {
+  border-radius: 0 !important; background: var(--pb-void) !important; outline: 2px dashed var(--pb-volt) !important; outline-offset: -2px; transition: transform .16s var(--pb-out);
+}
+html.rk-t-pablo .friends-carousel-tile:hover .add-friends-icon-container { transform: translateY(-3px); outline-color: var(--pb-lime) !important; }
+/* Nombre en letra de etiqueta; debajo, el estado en números de cronómetro. */
+html.rk-t-pablo :is([data-p5-pname], .friends-carousel-display-name, .friends-carousel-tile-name, .avatar-card .avatar-name) {
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .06em; font-size: 13px !important; color: var(--pb-text) !important; text-decoration: none !important;
+}
+html.rk-t-pablo :is([data-p5-person], .friends-carousel-tile, .avatar-card):hover :is([data-p5-pname], .friends-carousel-display-name, .avatar-name) { color: var(--pb-volt) !important; }
+html.rk-t-pablo :is([data-p5-psub], .friends-carousel-tile-sublabel, .avatar-card .avatar-card-label) { font-family: var(--pb-mono) !important; letter-spacing: .02em; color: var(--pb-muted) !important; }
+html.rk-t-pablo :is([data-p5-person], .friends-carousel-tile, .avatar-card) .avatar-status { z-index: 1; }
+html.rk-t-pablo .friends-carousel-0-friends { font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; color: var(--pb-muted) !important; }
+/* Página de amigos (y búsquedas de gente): cada tarjeta, un panel con franja de energía arriba que sube al pasar el ratón. */
+html.rk-t-pablo .avatar-card .avatar-card-container {
+  background: var(--pb-glass) !important; border: 1px solid var(--pb-line) !important; border-radius: 0 !important; box-shadow: inset 0 2px 0 var(--pb-volt) !important;
+  transition: transform .16s var(--pb-out), border-color .12s;
+}
+html.rk-t-pablo .avatar-card:hover .avatar-card-container { transform: translateY(-3px); border-color: var(--pb-line-hi) !important; position: relative; z-index: 2; }
+html.rk-t-pablo .avatar-card .avatar-card-container.disabled { filter: grayscale(1); opacity: .6; }
+html.rk-t-pablo .avatar-card .avatar-card-btns { gap: 8px; padding-right: 6px; }
+html.rk-t-pablo .avatar-card .avatar-card-btns :is(button, .btn) { min-width: 0 !important; padding: 3px 6px !important; font-size: 11px !important; }
+/* Amigos en común (RoCer0, en los perfiles): caras pequeñas con el mismo marco. */
+html.rk-t-pablo .rc-avatars { gap: 8px; }
+html.rk-t-pablo .rc-avatars img { border-radius: 0 !important; box-shadow: 0 0 0 2px var(--pb-volt); background: var(--pb-raised); transition: transform .16s var(--pb-out); }
+html.rk-t-pablo .rc-avatars a:hover img { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--pb-lime); }
+/* Lo que sale al pasar por un amigo (a qué juega, chatear, ver perfil): panel como los demás menús. */
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) {
+  background: var(--pb-panel) !important; border: 1px solid rgba(43, 228, 255, .4) !important; border-radius: 0 !important; color: var(--pb-text) !important;
+  box-shadow: inset 0 2px 0 var(--pb-volt), 0 16px 40px rgba(0, 0, 0, .5) !important;
+}
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) :is(.in-game-friend-card, .in-game-friend-card--iarc, ul, li) { background: transparent !important; border-radius: 0 !important; }
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) :is(.friend-tile-game-card, .thumbnail-2d-container) { border-radius: 0 !important; outline: 1px solid var(--pb-line-hi); outline-offset: -1px; }
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) :is(.friend-tile-game-name, .friend-presence-info, .friend-tile-is-playing) { font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .06em; color: var(--pb-text) !important; }
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) :is(.friend-tile-dropdown-button, .foundation-web-button, .foundation-web-link) {
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em; border-radius: 0 !important; color: var(--pb-text) !important; transition: transform .12s var(--pb-out), color .1s;
+}
+html.rk-t-pablo :is(.friend-tile-dropdown, .friend-tile-dropdown--iarc) :is(.friend-tile-dropdown-button, .foundation-web-button, .foundation-web-link):hover { background: rgba(43, 228, 255, .12) !important; color: var(--pb-volt) !important; transform: translateX(4px); }
+
+/* Pestañas: letras de etiqueta; la elegida, en verde con su raya debajo. */
+html.rk-t-pablo :is(.rbx-tabs-horizontal, .nav-tabs) { border: 0 !important; box-shadow: inset 0 -1px 0 var(--pb-line); gap: 4px; }
+html.rk-t-pablo :is(.rbx-tab, .nav-tabs > li) { background: transparent !important; border: 0 !important; border-radius: 0 !important; transition: box-shadow .12s; }
+html.rk-t-pablo :is(.rbx-tab .text-lead, .rbx-tab a, .nav-tabs > li > a) { font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .1em; color: var(--pb-muted) !important; background: transparent !important; text-shadow: none !important; }
+html.rk-t-pablo :is(.rbx-tab.active, .nav-tabs > li.active) { box-shadow: inset 0 -2px 0 var(--pb-lime) !important; }
+html.rk-t-pablo :is(.rbx-tab.active, .nav-tabs > li.active) :is(.text-lead, a, span) { color: var(--pb-lime) !important; }
+html.rk-t-pablo :is(.rbx-tab:hover:not(.active), .nav-tabs > li:hover:not(.active)) :is(.text-lead, a, span) { color: var(--pb-volt) !important; }
+
+/* ---------- Botones ---------- */
+/* Principales: relleno de energía (verde a cian) con letras oscuras y esquinas cortadas. Al pulsar, se encogen un poco. */
+html.rk-t-pablo :is(.btn-primary-md, .btn-primary-sm, .btn-primary-lg, .btn-primary-xs, .btn-cta-md, .btn-cta-sm, .btn-cta-lg, .btn-cta-xs,
+  .btn-growth-md, .btn-growth-lg, .btn-growth-sm, .btn-growth-xs) {
+  background: var(--pb-energy) !important; border: 0 !important; color: var(--pb-void) !important; border-radius: 0 !important; clip-path: var(--pb-cut-sm);
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em; text-shadow: none !important;
+  transition: transform .12s var(--pb-out), filter .12s !important;
+}
+html.rk-t-pablo :is(.btn-alert-md, .btn-alert-sm, .btn-alert-xs) {
+  background: var(--pb-danger) !important; border: 0 !important; color: var(--pb-void) !important; border-radius: 0 !important; clip-path: var(--pb-cut-sm);
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em;
+}
+/* Secundarios: violeta con la raya cian debajo y letras cian. */
+html.rk-t-pablo :is(.btn-secondary-md, .btn-secondary-sm, .btn-secondary-lg, .btn-secondary-xs, .btn-control-md, .btn-control-sm, .btn-control-xs, .btn-control-lg, .btn-generic-more-sm, .btn-more) {
+  background: var(--pb-raised) !important; border: 0 !important; color: var(--pb-volt) !important; border-radius: 0 !important; clip-path: var(--pb-cut-sm);
+  box-shadow: inset 0 0 0 1px rgba(43, 228, 255, .4), inset 0 -2px 0 var(--pb-volt) !important;
+  font-family: var(--pb-label) !important; text-transform: uppercase; letter-spacing: .08em; transition: transform .12s var(--pb-out), background-color .1s, color .1s !important;
+}
+html.rk-t-pablo :is([class*="btn-primary"], [class*="btn-cta"], [class*="btn-growth"], [class*="btn-alert"]):hover { filter: brightness(1.08) !important; transform: translateY(-1px); }
+html.rk-t-pablo :is([class*="btn-secondary"], [class*="btn-control"]):hover { background: #322a7a !important; color: var(--pb-arc) !important; transform: translateY(-1px); }
+html.rk-t-pablo :is([class*="btn-primary"], [class*="btn-cta"], [class*="btn-growth"], [class*="btn-alert"], [class*="btn-secondary"], [class*="btn-control"]):active { transform: scale(.97); }
+html.rk-t-pablo :is([class*="btn-primary"], [class*="btn-cta"], [class*="btn-growth"], [class*="btn-alert"], [class*="btn-secondary"], [class*="btn-control"]):focus-visible {
+  outline: none !important; box-shadow: inset 0 0 0 2px var(--pb-void), inset 0 0 0 4px var(--pb-arc) !important;
+}
+/* Botón de jugar: grande, de energía, y una raya de luz que lo cruza al pasar el ratón. */
+html.rk-t-pablo :is(.btn-common-play-game-lg, .btn-common-play-game-md, .btn-common-play-game-sm, [class*="btn-common-play-game"]) {
+  position: relative; overflow: hidden; background: var(--pb-energy) !important; border: 0 !important; border-radius: 0 !important; clip-path: var(--pb-cut);
+  color: var(--pb-void) !important; transition: transform .12s var(--pb-out), filter .12s !important;
+}
+html.rk-t-pablo [class*="btn-common-play-game"]::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .8) 48% 52%, transparent 70%);
+  transform: translateX(-110%); transition: transform .5s var(--pb-dash);
+}
+html.rk-t-pablo [class*="btn-common-play-game"]:hover { transform: translateY(-2px); filter: brightness(1.06) !important; }
+html.rk-t-pablo [class*="btn-common-play-game"]:hover::after { transform: translateX(110%); }
+html.rk-t-pablo [class*="btn-common-play-game"] .icon-common-play { filter: brightness(0) saturate(100%) invert(5%) sepia(40%) hue-rotate(220deg); }
+
+/* ---------- Formularios ---------- */
+html.rk-t-pablo :is(input.form-control, textarea.form-control, .input-field, select.input-field, .rbx-select, .form-control, .input-group input,
+  .input-group .form-control, .rbx-input-field, .search-input, .rbx-select-group select) {
+  background: var(--pb-void) !important; color: var(--pb-text) !important; border: 1px solid rgba(180, 174, 224, .45) !important; border-radius: 0 !important;
+}
+html.rk-t-pablo :is(input.form-control, textarea.form-control, .input-field):focus { border-color: var(--pb-volt) !important; box-shadow: 0 0 0 1px var(--pb-volt), 0 0 14px rgba(43, 228, 255, .3) !important; outline: none; }
+html.rk-t-pablo :is(input, textarea)::placeholder { color: var(--pb-faint) !important; }
+html.rk-t-pablo :is(.toggle-switch, .btn-toggle) { border-radius: 0 !important; }
+html.rk-t-pablo :is(.toggle-switch, .btn-toggle).on { background: var(--pb-lime) !important; }
+
+/* ---------- Pie ---------- */
+html.rk-t-pablo :is(footer.container-footer, #footer-container, .container-footer) {
+  background: var(--pb-stripe) 0 0 / 100% 2px no-repeat, var(--pb-void) !important; border-top: 0 !important;
+}
+html.rk-t-pablo :is(footer.container-footer, .container-footer) :is(a, .text-footer-nav) { color: var(--pb-muted) !important; font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .1em; }
+html.rk-t-pablo :is(footer.container-footer, .container-footer) a:hover { color: var(--pb-volt) !important; }
+
+/* ---------- Barras de desplazamiento ---------- */
+html.rk-t-pablo ::-webkit-scrollbar { width: 11px; height: 11px; background: var(--pb-void); }
+html.rk-t-pablo ::-webkit-scrollbar-thumb { background: linear-gradient(var(--pb-volt), var(--pb-blue)); border: 3px solid var(--pb-void); border-radius: 0; }
+html.rk-t-pablo ::-webkit-scrollbar-thumb:hover { background: var(--pb-lime); }
+
+/* ---------- Inicio de RoCer0 ---------- */
+.rk-t-pablo #rk-home { --rk-gap: 20px; gap: 22px 20px; }
+.rk-t-pablo #rk-home .rk-card {
+  position: relative; background: var(--pb-brackets), var(--pb-glass); border: 1px solid var(--pb-line); border-radius: 0;
+  box-shadow: inset 0 2px 0 var(--pb-volt), 0 16px 40px rgba(0, 0, 0, .32); overflow: visible; animation: rk-pb-in .34s var(--pb-out) backwards;
+}
+/* Cada tarjeta llega desde la izquierda con una estela cian que se queda atrás y se apaga. */
+.rk-t-pablo #rk-home .rk-card::after {
+  content: ""; position: absolute; top: 28%; right: 100%; width: 70px; height: 2px; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--pb-volt)); transform-origin: right; animation: rk-pb-trail .42s ease-out backwards; animation-delay: inherit;
+}
+.rk-t-pablo #rk-home .rk-card:nth-child(2) { animation-delay: .03s; }
+.rk-t-pablo #rk-home .rk-card:nth-child(3) { animation-delay: .06s; }
+.rk-t-pablo #rk-home .rk-card:nth-child(4) { animation-delay: .09s; }
+.rk-t-pablo #rk-home .rk-card:nth-child(5) { animation-delay: .12s; }
+.rk-t-pablo #rk-home .rk-card:nth-child(n+6) { animation-delay: .15s; }
+.rk-t-pablo #rk-home.rk-live .rk-card, .rk-t-pablo #rk-home.rk-live .rk-card::after { animation: none !important; }
+@keyframes rk-pb-in { from { opacity: 0; transform: translateX(-26px) skewX(-8deg); } }
+@keyframes rk-pb-trail { from { opacity: .9; transform: scaleX(1); } to { opacity: 0; transform: scaleX(0); } }
+.rk-t-pablo #rk-home .rk-head { margin-bottom: 12px; }
+.rk-t-pablo #rk-home .rk-head h2 {
+  font-family: var(--pb-title) !important; font-weight: 800 !important; font-size: 26px !important; text-transform: uppercase; letter-spacing: .02em !important; line-height: 1 !important;
+  color: var(--pb-text) !important; text-shadow: 0 0 14px rgba(43, 228, 255, .3); padding: 0 0 9px 22px !important;
+  background: var(--pb-slashes) 0 4px / 15px 14px no-repeat, var(--pb-zap) 22px 100% / 96px 8px no-repeat;
+}
+.rk-t-pablo #rk-home .rk-head h2 > .rk-i { color: var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-viewall { color: var(--pb-volt) !important; font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .1em; font-size: 12px; }
+.rk-t-pablo #rk-home .rk-viewall:hover { color: var(--pb-lime) !important; text-decoration: none; }
+.rk-t-pablo #rk-home .rk-count { background: var(--pb-lime); color: var(--pb-void); border: 0; border-radius: 0; clip-path: var(--pb-cut-sm); font-family: var(--pb-mono); }
+.rk-t-pablo #rk-home .rk-meta { color: var(--pb-muted); }
+
+/* Botones del Inicio */
+.rk-t-pablo #rk-home .rk-btn { border-radius: 0; border: 0; clip-path: var(--pb-cut-sm); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; transition: transform .12s var(--pb-out), filter .12s; }
+.rk-t-pablo #rk-home .rk-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.rk-t-pablo #rk-home .rk-btn:active { transform: scale(.97); }
+.rk-t-pablo #rk-home :is(.rk-btn-play, .rk-btn-accent) { background: var(--pb-energy); color: var(--pb-void); }
+.rk-t-pablo #rk-home .rk-btn-play { position: relative; overflow: hidden; height: 44px; padding: 0 28px; font-size: 15px; clip-path: var(--pb-cut); }
+.rk-t-pablo #rk-home .rk-btn-play::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .8) 48% 52%, transparent 70%); transform: translateX(-110%); transition: transform .5s var(--pb-dash); }
+.rk-t-pablo #rk-home .rk-btn-play:hover::after { transform: translateX(110%); }
+.rk-t-pablo #rk-home .rk-btn-ghost { background: var(--pb-raised); color: var(--pb-volt); box-shadow: inset 0 0 0 1px rgba(43, 228, 255, .4), inset 0 -2px 0 var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-btn-ghost:hover { color: var(--pb-arc); }
+.rk-t-pablo #rk-home .rk-btn-icon { width: 44px; }
+
+/* Banner: noche con rayos, la foto del juego con la esquina cortada y el título enorme. */
+.rk-t-pablo #rk-home .rk-hero {
+  min-height: 210px; background: var(--pb-arcs, none) 50% 50% / cover no-repeat, radial-gradient(70% 90% at 0% 0%, rgba(65, 52, 118, .9), transparent 70%), var(--pb-panel); overflow: hidden;
+}
+.rk-t-pablo #rk-home .rk-hero-img { inset: 0 0 0 auto; width: 52%; clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%); -webkit-mask-image: none; mask-image: none; transition: transform .3s var(--pb-out); }
+.rk-t-pablo #rk-home .rk-hero:hover .rk-hero-img { transform: translateX(-6px); }
+.rk-t-pablo #rk-home .rk-hero-img::after { background: linear-gradient(90deg, var(--pb-panel) 0, transparent 30%), linear-gradient(0deg, rgba(11, 9, 32, .55), transparent 55%); }
+.rk-t-pablo #rk-home .rk-hero-body { padding: 26px 28px; max-width: 58%; align-items: flex-start; flex-direction: column; justify-content: center; }
+.rk-t-pablo #rk-home .rk-eyebrow { color: var(--pb-lime); font-family: var(--pb-mono); letter-spacing: .14em; text-transform: uppercase; }
+.rk-t-pablo #rk-home .rk-eyebrow::before { content: "// "; color: var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-eyebrow .rk-i { color: var(--pb-lime); }
+.rk-t-pablo #rk-home .rk-hero-title { font-family: var(--pb-title) !important; font-weight: 800 !important; text-transform: uppercase; font-size: clamp(30px, 5.2cqi, 52px) !important; line-height: .95 !important; letter-spacing: .01em; text-shadow: 0 0 22px rgba(43, 228, 255, .4) !important; margin-top: 8px !important; }
+.rk-t-pablo #rk-home .rk-hero .rk-meta { color: var(--pb-muted); }
+.rk-t-pablo #rk-home .rk-hero .rk-star { color: var(--pb-lime); }
+@container rk-card (max-width: 560px) {
+  .rk-t-pablo #rk-home .rk-hero-body { max-width: 100%; }
+  .rk-t-pablo #rk-home .rk-hero-img { opacity: .3; width: 100%; clip-path: none; }
+}
+
+/* Amigos */
+.rk-t-pablo #rk-home .rk-friend { background: var(--pb-void); border: 1px solid var(--pb-line); border-radius: 0; transition: transform .16s var(--pb-out), border-color .12s; }
+.rk-t-pablo #rk-home .rk-friend:hover { transform: translateY(-3px); border-color: var(--pb-line-hi); }
+.rk-t-pablo #rk-home .rk-avatar img, .rk-t-pablo #rk-home .rk-avatar-ph { border-radius: 0; background: var(--pb-raised); box-shadow: 0 0 0 2px var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-friend:hover .rk-avatar img { box-shadow: 0 0 0 2px var(--pb-lime); }
+.rk-t-pablo #rk-home .rk-dot { border-radius: 0; transform: rotate(45deg); border-color: var(--pb-void); }
+.rk-t-pablo #rk-home .rk-friend-name { font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .06em; }
+.rk-t-pablo #rk-home .rk-friend .rk-btn { height: 30px; }
+.rk-t-pablo #rk-home .rk-arrow { border-radius: 0; background: var(--pb-raised); color: var(--pb-volt); border: 1px solid var(--pb-line-hi); clip-path: var(--pb-cut-sm); }
+
+/* Juegos */
+.rk-t-pablo #rk-home .rk-thumb { border-radius: 0; border: 1px solid var(--pb-line); overflow: hidden; transition: transform .16s var(--pb-out), border-color .12s; }
+.rk-t-pablo #rk-home .rk-tile:hover .rk-thumb { transform: translateY(-4px); border-color: var(--pb-volt); box-shadow: 0 0 0 1px var(--pb-volt), 0 0 18px rgba(43, 228, 255, .35); }
+.rk-t-pablo #rk-home .rk-tile-name { font-weight: 700; margin-top: 8px; }
+.rk-t-pablo #rk-home .rk-tile:hover .rk-tile-name { color: var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-pill { border-radius: 0; background: var(--pb-void); border: 1px solid var(--pb-line); font-family: var(--pb-mono); }
+.rk-t-pablo #rk-home .rk-pill .rk-i { color: var(--pb-lime); }
+.rk-t-pablo #rk-home .rk-thumb .rk-quickplay { border-radius: 0; background: var(--pb-energy); color: var(--pb-void); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.rk-t-pablo #rk-home .rk-ghost { border: 1px dashed var(--pb-line-hi); border-radius: 0; }
+.rk-t-pablo #rk-home button.rk-ghost:hover { border-color: var(--pb-lime); color: var(--pb-lime); background: transparent; }
+
+/* Pestañas, fichas y listas */
+.rk-t-pablo #rk-home .rk-tab, .rk-t-pablo #rk-home .rk-chip { border-radius: 0; border: 1px solid var(--pb-line); background: transparent; color: var(--pb-muted); font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; clip-path: var(--pb-cut-sm); }
+.rk-t-pablo #rk-home .rk-tab.rk-on, .rk-t-pablo #rk-home .rk-chip.rk-on { background: var(--pb-lime); color: var(--pb-void); border-color: var(--pb-lime); }
+.rk-t-pablo #rk-home .rk-tab:hover:not(.rk-on), .rk-t-pablo #rk-home .rk-chip:hover:not(.rk-on) { color: var(--pb-volt); border-color: var(--pb-line-hi); }
+.rk-t-pablo #rk-home .rk-row { border-radius: 0; transition: transform .12s var(--pb-out); }
+.rk-t-pablo #rk-home .rk-row:hover { background: rgba(43, 228, 255, .1); transform: translateX(4px); }
+.rk-t-pablo #rk-home .rk-row img, .rk-t-pablo #rk-home .rk-row-ph { border-radius: 0; }
+.rk-t-pablo #rk-home .rk-row-name { font-weight: 700; }
+.rk-t-pablo #rk-home .rk-rank { font-family: var(--pb-mono); font-size: 20px; color: var(--pb-lime); }
+.rk-t-pablo #rk-home .rk-bar { height: 6px; border-radius: 0; background: var(--pb-void); transform: skewX(-20deg); }
+.rk-t-pablo #rk-home .rk-bar i { background: var(--pb-energy); border-radius: 0; }
+.rk-t-pablo #rk-home .rk-collections .rk-coll, .rk-t-pablo #rk-home .rk-coll { border-radius: 0; border: 1px solid var(--pb-line); clip-path: var(--pb-cut); }
+.rk-t-pablo #rk-home .rk-coll:hover { transform: translateY(-3px) !important; border-color: var(--pb-volt) !important; }
+.rk-t-pablo #rk-home .rk-coll-name { font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .06em; }
+.rk-t-pablo #rk-home .rk-featured-title { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; text-shadow: 0 0 18px rgba(43, 228, 255, .4); }
+.rk-t-pablo #rk-home .rk-badge { border-radius: 0; background: var(--pb-lime); color: var(--pb-void); clip-path: var(--pb-cut-sm); backdrop-filter: none; }
+.rk-t-pablo #rk-home .rk-badge .rk-i { color: var(--pb-void); }
+.rk-t-pablo #rk-home .rk-es-icon { border-radius: 0; background: var(--pb-raised); color: var(--pb-volt); clip-path: var(--pb-cut-sm); }
+.rk-t-pablo #rk-home .rc-streak { border-radius: 0; background: var(--pb-lime); color: var(--pb-void); clip-path: var(--pb-cut-sm); }
+.rk-t-pablo #rk-home .rc-medal { border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.rk-t-pablo #rk-home .rc-ch > .rk-i { color: var(--pb-volt); }
+.rk-t-pablo #rk-home .rk-foot-link { color: var(--pb-volt); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; }
+/* Cargando: una franja de luz que pasa por encima (se mueve con transform, sin repintar). */
+.rk-t-pablo #rk-home .rk-skel { position: relative; overflow: hidden; border-radius: 0; background: var(--pb-void); border: 1px solid var(--pb-line); animation: none; }
+.rk-t-pablo #rk-home .rk-skel::after {
+  content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(43, 228, 255, .14) 50%, transparent 70%);
+  transform: translateX(-100%); animation: rk-pb-shimmer 1.2s var(--pb-dash) infinite;
+}
+@keyframes rk-pb-shimmer { to { transform: translateX(100%); } }
+
+/* Aviso de que el Inicio de RoCer0 no ha podido cargar */
+.rk-t-pablo #rk-home-fail { background: var(--pb-brackets), var(--pb-glass); border: 1px solid var(--pb-line); border-radius: 0; box-shadow: inset 0 2px 0 var(--pb-volt); }
+.rk-t-pablo #rk-home-fail .rk-fail-title b { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; font-size: 24px; letter-spacing: .02em; }
+.rk-t-pablo #rk-home-fail .rk-fail-title .rk-i { color: var(--pb-volt); }
+.rk-t-pablo #rk-home-fail .rk-btn { border-radius: 0; border: 0; clip-path: var(--pb-cut-sm); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; }
+.rk-t-pablo #rk-home-fail .rk-btn-play { background: var(--pb-energy); color: var(--pb-void); }
+.rk-t-pablo #rk-home-fail .rk-btn-ghost { background: var(--pb-raised); color: var(--pb-volt); }
+
+/* ---------- Paneles y ventanas de RoCer0 ---------- */
+html.rk-t-pablo :is(.rx-panel, .rx-modal, .rx-modal-box, #rx-search .rx-search-box, #rc-roulette .rc-box, #rx-toast, #rc-undo, .rc-ch-card) {
+  border-radius: 0 !important; border: 1px solid var(--pb-line-hi) !important; box-shadow: inset 0 2px 0 var(--pb-volt), 0 18px 44px rgba(0, 0, 0, .5) !important;
+}
+html.rk-t-pablo .rx-modal { animation: rk-pb-brake .28s var(--pb-brake); }
+html.rk-t-pablo :is(#rx-toast, #rc-undo) { background: var(--pb-panel) !important; color: var(--pb-text) !important; font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .06em; }
+html.rk-t-pablo :is(.rc-chip, .rc-tag, .rc-inv-item, #rx-streamer-badge, .rx-value-tag, .rx-bar, .rc-avatars img, .rx-acc-item img, .rc-inv-item img) { border-radius: 0 !important; }
+html.rk-t-pablo :is(.rc-chip, .rc-tag) { background: var(--pb-void) !important; color: var(--pb-text) !important; border: 1px solid var(--pb-line) !important; clip-path: var(--pb-cut-sm); }
+html.rk-t-pablo :is(.rc-chip, .rc-tag):is(:hover, :focus-visible) { border-color: var(--pb-volt) !important; color: var(--pb-volt) !important; }
+html.rk-t-pablo #rx-streamer-badge { background: var(--pb-lime) !important; color: var(--pb-void) !important; clip-path: var(--pb-cut-sm); }
+html.rk-t-pablo :is(.rx-panel-title, .rx-modal-head, .rx-search-title) { font-family: var(--pb-title) !important; text-transform: uppercase; letter-spacing: .02em; }
+html.rk-t-pablo :is(.rx-btn, .rx-primary, .rx-play) { border-radius: 0 !important; clip-path: var(--pb-cut-sm); }
+
+/* ---------- Papelera de amigos ---------- */
+html.rk-t-pablo #rk-trash {
+  background: var(--pb-void); color: var(--pb-volt); border: 1px solid var(--pb-line-hi); border-right: 0; border-radius: 0; box-shadow: none;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px)); --rk-trash-fill: rgba(43, 228, 255, .12); --rk-trash-lid: rgba(43, 228, 255, .12);
+}
+html.rk-t-pablo #rk-trash:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--pb-arc); }
+html.rk-t-pablo #rk-trash[aria-pressed="true"] { background: var(--pb-danger); color: var(--pb-void); --rk-trash-ink: var(--pb-danger); --rk-trash-fill: rgba(11, 9, 32, .2); --rk-trash-lid: rgba(11, 9, 32, .2); }
+html.rk-t-pablo .rk-trash-count { top: 3px; left: 3px; border-radius: 0; background: var(--pb-lime); color: var(--pb-void); font-family: var(--pb-mono); box-shadow: none; }
+html.rk-t-pablo #rk-trash[aria-pressed="true"] .rk-trash-count { background: var(--pb-void); color: var(--pb-danger); }
+html.rk-t-pablo #rk-trash-bar {
+  background: var(--pb-panel); color: var(--pb-text); border: 1px solid rgba(255, 77, 106, .55); border-radius: 0; clip-path: var(--pb-cut);
+  box-shadow: inset 0 2px 0 var(--pb-danger);
+}
+html.rk-t-pablo .rk-trash-head b { font-family: var(--pb-title); font-size: 21px; text-transform: uppercase; letter-spacing: .03em; }
+html.rk-t-pablo .rk-trash-n { font-family: var(--pb-mono); color: var(--pb-danger); }
+html.rk-t-pablo .rk-trash-progress { border-radius: 0; background: var(--pb-void); }
+html.rk-t-pablo .rk-trash-progress i { border-radius: 0; background: linear-gradient(90deg, var(--pb-danger), var(--pb-spark)); }
+html.rk-t-pablo .rk-trash-tick { border-radius: 0; border: 2px solid var(--pb-arc); background: rgba(11, 9, 32, .6); clip-path: var(--pb-cut-sm); box-shadow: none; }
+html.rk-t-pablo [data-rk-trash="on"] > .rk-trash-tick { background: var(--pb-danger); color: var(--pb-void); }
+html.rk-t-pablo #rk-trash-lasso { border-radius: 0; }
+html.rk-t-pablo .rk-trash-warn { border-radius: 0; background: rgba(255, 77, 106, .14); border-color: rgba(255, 77, 106, .55); }
+html.rk-t-pablo .rk-trash-list li { border-radius: 0; background: var(--pb-void); border: 1px solid var(--pb-line); }
+html.rk-t-pablo :is(.rk-trash-list img, .rk-trash-ph) { border-radius: 0; box-shadow: 0 0 0 2px var(--pb-volt); }
+html.rk-t-pablo .rx-btn.rk-trash-go, html.rk-t-pablo .rx-btn.rk-trash-danger { background: var(--pb-danger); border-color: var(--pb-danger); color: var(--pb-void) !important; }
+
+/* ---------- Chispas al hacer clic (las pone fixed-themes.js) ---------- */
+/* Ocho rayitas cian y verdes que salen del punto y se apagan, con un rombo de luz en el centro. */
+.rk-pb-hit { position: fixed; z-index: 2147483001; width: 64px; height: 64px; margin: -32px 0 0 -32px; pointer-events: none; }
+.rk-pb-hit::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(from -4deg, #2be4ff 0 8deg, transparent 8deg 45deg, #d2ff3c 45deg 53deg, transparent 53deg 90deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 0 34%, #000 37% 62%, transparent 66%); mask: radial-gradient(closest-side, transparent 0 34%, #000 37% 62%, transparent 66%);
+  animation: rk-pb-spark .42s cubic-bezier(.2, .8, .3, 1) forwards;
+}
+.rk-pb-hit::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; background: #e9fdff;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); animation: rk-pb-core .3s ease-out forwards;
+}
+@keyframes rk-pb-spark { from { transform: scale(.35) rotate(-18deg); opacity: 1; } 60% { opacity: 1; } to { transform: scale(1.3) rotate(10deg); opacity: 0; } }
+@keyframes rk-pb-core { from { transform: scale(1.3); opacity: 1; } to { transform: scale(.2); opacity: 0; } }
+
+/* ---------- Movimiento reducido: sin estelas, chispas, ecos ni entradas (colores y formas igual) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html.rk-t-pablo body::before, #rk-pb-wipe, .rk-pb-hit { display: none !important; }
+  :is(.rk-t-pablo, .rk-ui-pablo) [data-pb]::before, :is(.rk-t-pablo, .rk-ui-pablo) [data-pb]::after { display: none !important; }
+  :is(.rk-t-pablo, .rk-ui-pablo) *, :is(.rk-t-pablo, .rk-ui-pablo) *::before, :is(.rk-t-pablo, .rk-ui-pablo) *::after { animation: none !important; transition: none !important; }
+  html.rk-t-pablo body::after { animation: none !important; }
+}

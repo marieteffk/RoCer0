@@ -207,7 +207,7 @@ function refreshVisibility() {
   refreshLock();
 }
 
-// ---------- Tema fijo (Daniel) ----------
+// ---------- Temas fijos (Daniel, Pablo) ----------
 // Mientras está puesto, lo que decide el tema (RK_LOOK_LOCK) se queda con candado: se ve lo que tenías guardado,
 // pero no se puede tocar ni se aplica. Al cambiar de tema vuelve a funcionar tal cual.
 const LOCK_PANELS = ['panel-icons-style', 'panel-icons-grid', 'panel-icons-rbx', 'panel-icons-io'];
@@ -662,6 +662,8 @@ function buildCard(card, sec) {
     }));
     return h('div', { class: 'group always' }, [groupHead(card.title, card.icon), box]);
   }
+  // Una explicación (cómo se usa algo), sin ajustes.
+  if (card.text) return h('div', { class: 'group always' }, [groupHead(card.title, card.icon), h('div', { class: 'card card-text' }, [h('p', { text: card.text })])]);
   const items = (card.items || []).filter(it => it.type !== 'hidden' && !(it.key && it.key === sec.master));
   if (!items.length) return null;
   const keys = (card.items || []).map(it => it.key).filter(Boolean);
@@ -1324,7 +1326,7 @@ function applyCustomIcons() {
 
 async function applyPageTheme() {
   const seq = ++pageThemeSeq;
-  // Con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+  // Con un tema fijo puesto (Daniel, Pablo), los ajustes de aspecto valen lo que decide el tema.
   const eff = rkLookLock(settings);
   applyCustomIcons();
   refreshLock();
@@ -1338,11 +1340,12 @@ async function applyPageTheme() {
   const root = document.documentElement;
   Array.from(root.classList).forEach(c => { if (c.startsWith('rk-ui-')) root.classList.remove(c); });
   rkApply(root, p);
-  // Daniel: títulos de cada sección con letras recortadas.
-  if (t.locked && t.id === 'daniel') {
-    rkDanielFonts(document);
-    $$('#pages .page-head h1').forEach(n => rkRansomHost(n, 26, 'title'));
-  } else $$('#pages .page-head').forEach(n => rkUnransom(n));
+  // Temas fijos: sus letras y los títulos de cada sección a su manera (letras recortadas en Daniel, eco eléctrico en Pablo).
+  if (t.locked) rkFixedFonts(document, t.id);
+  if (t.locked && t.id === 'daniel') $$('#pages .page-head h1').forEach(n => rkRansomHost(n, 26, 'title'));
+  else $$('#pages .page-head').forEach(n => rkUnransom(n));
+  if (t.locked && t.id === 'pablo') $$('#pages .page-head h1').forEach(n => rkEchoHost(n, 26));
+  else $$('#pages .page-head').forEach(n => rkUnecho(n));
   rcApplyIconStyle(root, rcIconStyleOf(eff, t));
   root.style.setProperty('--rc-icon-scale', String(Math.max(50, Math.min(200, Number(eff['icons.scale']) || 100)) / 100));
   const col = rkHex(eff['icons.color'] || '');

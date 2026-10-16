@@ -12,6 +12,11 @@ var RK_THEMES = [
     tags: ['fijo', 'oscuro', 'rojo', 'animado'], scheme: 'dark', locked: true,
     c: { bg: '#0f0f0f', surface: '#0f0f0f', surface2: '#1c1c1c', border: '#7a7a7a', text: '#fdfdfd', muted: '#c8c8c8', accent: '#e5191c', accent2: '#1cfeff', success: '#1cfeff', danger: '#ff3d3d' },
     bg: 'daniel', radius: 0 },
+  // Otro tema fijo: una velocista eléctrica de noche. Sus formas y animaciones están en content/pablo.css.
+  { id: 'pablo', name: 'Pablo', desc: 'Una velocista eléctrica de noche: violeta muy oscuro, rayos cian y verde ácido, estelas de velocidad, esquinas cortadas y títulos enormes y estrechos. Las páginas entran a la carrera y cada clic suelta chispas. Es un tema fijo: mientras lo tengas puesto no vale ninguna personalización.',
+    tags: ['fijo', 'oscuro', 'violeta', 'animado'], scheme: 'dark', locked: true,
+    c: { bg: '#130f2e', surface: '#1d1846', surface2: '#272060', border: '#4a4390', text: '#f1f0ff', muted: '#b4aee0', accent: '#2be4ff', accent2: '#d2ff3c', success: '#d2ff3c', danger: '#ff4d6a' },
+    bg: 'pablo', radius: 0 },
   { id: 'amoled', name: 'AMOLED', desc: 'Negro puro para pantallas OLED y máximo contraste.', tags: ['oscuro', 'negro', 'plano'], scheme: 'dark',
     c: { bg: '#000000', surface: '#0a0a0a', surface2: '#141414', border: '#232323', text: '#f5f5f5', muted: '#9a9a9a', accent: '#00a2ff', accent2: '#7c5cff', success: '#1fd660', danger: '#ff4d4d' },
     bg: 'none', radius: 12 },
@@ -124,7 +129,7 @@ function rkActiveThemeId(settings, now) {
 }
 
 // ---------- Temas fijos ----------
-// Un tema fijo (Daniel) no se puede retocar y, mientras está puesto, decide todo el aspecto.
+// Un tema fijo (Daniel, Pablo) no se puede retocar y, mientras está puesto, decide todo el aspecto.
 function rkFixedTheme(id) {
   for (var i = 0; i < RK_THEMES.length; i++) if (RK_THEMES[i].id === id) return RK_THEMES[i].locked ? RK_THEMES[i] : null;
   return null;
@@ -197,6 +202,7 @@ var RK_LAYOUT_BASE = { nav: 'normal', sidebar: 'normal', width: 'normal', cards:
 var RK_THEME_LAYOUTS = {
   medianoche: { nav: 'floating', buttons: 'pill', animIn: 'fade' },
   daniel: { iconStyle: 'gruesa', hover: 'none' },
+  pablo: { iconStyle: 'fina', hover: 'none' },
   amoled: { nav: 'minimal', cards: 'flat', tiles: 'square', density: 'compact', hover: 'zoom' },
   vidrio: { nav: 'floating', sidebar: 'floating', cards: 'glass', buttons: 'pill', hover: 'glow', animIn: 'rise', iconStyle: 'fina' },
   nebulosa: { nav: 'floating', cards: 'glass', headings: 'gradient', hover: 'glow', iconStyle: 'duotono' },
@@ -368,6 +374,56 @@ function rkP5Stars() {
   return rkP5StarsUrl;
 }
 
+// Fondo de Pablo: unos pocos rayos curvos, cian y verde con el centro casi blanco, que cruzan la pantalla. Se hacen con
+// el punto medio desplazado (cada tramo se parte en dos y el punto del medio se aparta un poco, cada vez menos) y alguna
+// rama corta: salen quebrados y con ramas, como los de verdad, y no en zigzag de dibujo. Dibujo propio en SVG; se hace
+// una sola vez y siempre sale igual.
+var rkPbArcsUrl = null;
+function rkPbArcs() {
+  if (rkPbArcsUrl) return rkPbArcsUrl;
+  var seed = 20261016;
+  var rnd = function () { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return ((seed >>> 0) % 100003) / 100003; };
+  // Puntos de un rayo de (x1, y1) a (x2, y2) y sus ramas.
+  var bolt = function (x1, y1, x2, y2, gens, off, out) {
+    var pts = [[x1, y1], [x2, y2]];
+    for (var g = 0; g < gens; g++) {
+      var next = [pts[0]];
+      for (var i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1;
+        var d = (rnd() - 0.5) * 2 * off, mx = (a[0] + b[0]) / 2 - dy / len * d, my = (a[1] + b[1]) / 2 + dx / len * d;
+        next.push([mx, my], b);
+        if (out && g >= 1 && g <= 2 && rnd() < 0.3) {
+          var ang = Math.atan2(dy, dx) + (rnd() < 0.5 ? -1 : 1) * (0.4 + rnd() * 0.35), l = len * (0.45 + rnd() * 0.3);
+          out.push(bolt(mx, my, mx + Math.cos(ang) * l, my + Math.sin(ang) * l, 3, off / 3, null));
+        }
+      }
+      pts = next;
+      off *= 0.58;
+    }
+    return pts;
+  };
+  // Tramos rectos muy cortos: de lejos, una línea viva y quebrada como un rayo de verdad.
+  var path = function (pts) {
+    return 'M' + pts.map(function (q) { return Math.round(q[0]) + ' ' + Math.round(q[1]); }).join('L');
+  };
+  var defs = '', draw = '', n = 0;
+  // [desde, hasta, desvío, color, brillo, grosor]
+  [[-40, 170, 780, 20, 120, '#2be4ff', 0.95, 1.1], [1640, 600, 840, 910, 110, '#d2ff3c', 0.8, 1], [-40, 780, 1640, 500, 120, '#2f6bff', 0.55, 0.8]].forEach(function (b) {
+    var branches = [], main = bolt(b[0], b[1], b[2], b[3], 6, b[4], branches);
+    [main].concat(branches).forEach(function (pts, k) {
+      var id = 'b' + (n++), w = (k ? 0.55 : 1) * b[7];
+      defs += "<path id='" + id + "' d='" + path(pts) + "'/>";
+      draw += "<use href='#" + id + "' stroke='" + b[5] + "' stroke-opacity='" + (0.12 * b[6]).toFixed(2) + "' stroke-width='" + (18 * w).toFixed(1) + "'/>" +
+        "<use href='#" + id + "' stroke='" + b[5] + "' stroke-opacity='" + (0.7 * b[6]).toFixed(2) + "' stroke-width='" + (3.4 * w).toFixed(1) + "'/>" +
+        "<use href='#" + id + "' stroke='#e9fdff' stroke-opacity='" + (0.9 * b[6]).toFixed(2) + "' stroke-width='" + (1.2 * w).toFixed(1) + "'/>";
+    });
+  });
+  var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'><defs>" + defs + "</defs>" +
+    "<g fill='none' stroke-linecap='round' stroke-linejoin='round'>" + draw + '</g></svg>';
+  rkPbArcsUrl = 'url("data:image/svg+xml,' + svg.replace(/#/g, '%23').replace(/</g, '%3C').replace(/>/g, '%3E') + '")';
+  return rkPbArcsUrl;
+}
+
 function rkBackground(t, image) {
   var c = t.c, a = c.accent, b = c.accent2, bg = c.bg;
   switch (t.bg) {
@@ -397,6 +453,10 @@ function rkBackground(t, image) {
     // Rojo a la izquierda y las estrellas oscurecidas a la derecha (en roblox.com, daniel.css pinta su propio fondo que gira).
     case 'daniel': return { layer: 'linear-gradient(112deg, ' + a + ' 0 34%, #000 34% 35.8%, #fdfdfd 35.8% 36.6%, transparent 36.6%), ' +
       'linear-gradient(rgba(7,7,7,.46), rgba(7,7,7,.46)), var(--p5-stars) 70% 45% / auto 260% no-repeat, #070707' };
+    // Noche violeta con dos brillos, líneas de calle de pista y los rayos de rkPbArcs (en roblox.com, pablo.css pinta el suyo).
+    case 'pablo': return { layer: 'var(--pb-arcs) 50% 50% / cover no-repeat, ' +
+      'radial-gradient(60% 45% at 8% 0%, rgba(65,52,118,.9), transparent 70%), radial-gradient(50% 40% at 96% 92%, rgba(56,50,142,.6), transparent 70%), ' +
+      'repeating-linear-gradient(-72deg, transparent 0 46px, rgba(180,174,224,.05) 46px 47px), linear-gradient(160deg, #130f2e, #0b0920)' };
     case 'color': return { layer: 'linear-gradient(' + (rkHex(t.bgColor) || bg) + ', ' + (rkHex(t.bgColor) || bg) + ')' };
     case 'custom': return rkCustomGradient(t);
     case 'mesh': return { layer: 'radial-gradient(at 0% 0%, ' + rkA(a, 0.38) + ' 0, transparent 52%), radial-gradient(at 100% 0%, ' + rkA(b, 0.32) + ' 0, transparent 50%), radial-gradient(at 100% 100%, ' + rkA(c.success, 0.22) + ' 0, transparent 52%), radial-gradient(at 0% 100%, ' + rkA(b, 0.26) + ' 0, transparent 50%), radial-gradient(at 50% 50%, ' + rkA(a, 0.10) + ' 0, transparent 60%), ' + bg };
@@ -505,6 +565,7 @@ function rkThemeVars(t, opts) {
   };
   if (L.cursor && L.cursor !== 'normal') { var cv = rkCursorVars(L.cursor, c.accent); for (var cvk in cv) vars[cvk] = cv[cvk]; }
   if (t.bg === 'daniel') vars['--p5-stars'] = rkP5Stars();
+  if (t.bg === 'pablo') vars['--pb-arcs'] = rkPbArcs();
   var classes = ['rk-vars', 'rk-theme', dark ? 'rk-dark' : 'rk-light'];
   if (t.glow) classes.push('rk-glow');
   if (glass > 0) classes.push('rk-glass');
@@ -520,7 +581,7 @@ function rkThemeVars(t, opts) {
     if (v && v !== 'normal' && !(k === 'avatars' && v === 'circle') && !(k === 'animIn' && v === 'none')) classes.push('rk-l-' + k + '-' + v);
   }
   if (Number(L.zoom) && Number(L.zoom) !== 100) classes.push('rk-l-zoom');
-  // Tema fijo: rk-locked y rk-t-<id> (las reglas de Daniel cuelgan de html.rk-t-daniel).
+  // Tema fijo: rk-locked y rk-t-<id> (las reglas de Daniel cuelgan de html.rk-t-daniel y las de Pablo, de html.rk-t-pablo).
   if (t.locked) classes.push('rk-locked', 'rk-t-' + t.id);
   return { vars: vars, classes: classes, scheme: dark ? 'dark' : 'light', needsImage: t.bg === 'upload', media: !!bgx.media };
 }
@@ -530,7 +591,7 @@ var RK_ALL_CLASSES = ['rk-vars', 'rk-theme', 'rk-dark', 'rk-light', 'rk-glow', '
 function rkApply(el, payload) {
   RK_ALL_CLASSES.forEach(function (k) { el.classList.remove(k); });
   Array.prototype.slice.call(el.classList).forEach(function (k) { if (k.indexOf('rk-l-') === 0 || k.indexOf('rk-t-') === 0) el.classList.remove(k); });
-  for (var i = el.style.length - 1; i >= 0; i--) { var p = el.style[i]; if (p.indexOf('--rk-') === 0) el.style.removeProperty(p); }
+  for (var i = el.style.length - 1; i >= 0; i--) { var p = el.style[i]; if (/^--(rk|p5|pb)-/.test(p)) el.style.removeProperty(p); }
   if (!payload) return;
   for (var k in payload.vars) el.style.setProperty(k, payload.vars[k]);
   payload.classes.forEach(function (cl) { el.classList.add(cl); });
@@ -541,13 +602,18 @@ function rkApply(el, payload) {
 // Sale siempre igual para el mismo texto (no baila al repintar). Las fuentes van en fonts/ (licencia OFL).
 var RK_RANSOM_FONTS = ['"RC P5 Titulo", Impact, "Arial Narrow", sans-serif', '"RC P5 Didona", "Bodoni MT Black", Georgia, serif', '"RC P5 Losa", Rockwell, "Courier New", serif',
   '"RC P5 Negra", "Arial Black", sans-serif', '"RC P5 Comic", "Comic Sans MS", sans-serif', '"RC P5 Plantilla", Stencil, Impact, sans-serif', '"RC P5 Redonda", "Arial Black", sans-serif'];
-// Fuentes del tema Daniel: [familia, archivo en fonts/]. Son versiones recortadas y renombradas de fuentes con licencia OFL (ver fonts/LICENCIAS.txt).
-var RK_DANIEL_FONTS = [['RC P5 Titulo', 'titulo'], ['RC P5 Didona', 'didona'], ['RC P5 Losa', 'losa'], ['RC P5 Negra', 'negra'], ['RC P5 Comic', 'comic'],
-  ['RC P5 Plantilla', 'plantilla'], ['RC P5 Redonda', 'redonda'], ['RC P5 Etiqueta', 'etiqueta']];
+// Fuentes de cada tema fijo: [familia, archivo en fonts/]. Son versiones recortadas y renombradas de fuentes con licencia
+// OFL (ver fonts/LICENCIAS.txt). Solo se cargan mientras su tema está puesto.
+var RK_FIXED_FONTS = {
+  daniel: [['RC P5 Titulo', 'titulo'], ['RC P5 Didona', 'didona'], ['RC P5 Losa', 'losa'], ['RC P5 Negra', 'negra'], ['RC P5 Comic', 'comic'],
+    ['RC P5 Plantilla', 'plantilla'], ['RC P5 Redonda', 'redonda'], ['RC P5 Etiqueta', 'etiqueta']],
+  pablo: [['RC PB Titulo', 'pb-titulo'], ['RC PB Etiqueta', 'pb-etiqueta'], ['RC PB Mono', 'pb-mono']]
+};
 // @font-face con las direcciones de la extensión (en roblox.com las pone theme-boot.js; en los ajustes y el popup, la propia página).
-function rkDanielFontCss(urlOf) {
-  return RK_DANIEL_FONTS.map(function (f) {
-    return '@font-face { font-family: "' + f[0] + '"; src: url("' + urlOf('fonts/' + f[1] + '.woff2') + '") format("woff2"); font-display: swap; }';
+function rkFixedFontCss(id, urlOf) {
+  return (RK_FIXED_FONTS[id] || []).map(function (f) {
+    // Un solo grosor por fuente, válido para cualquier peso que pida la página: así el navegador no la engorda a lo bruto.
+    return '@font-face { font-family: "' + f[0] + '"; src: url("' + urlOf('fonts/' + f[1] + '.woff2') + '") format("woff2"); font-weight: 100 900; font-display: swap; }';
   }).join('\n');
 }
 // Letras recortadas del tema Daniel: cada letra en su caja, con otra fuente, otro tamaño y otro giro.
@@ -639,12 +705,71 @@ function rkUnransom(root) {
   root.querySelectorAll('.p5-ransom').forEach(function (n) { n.remove(); });
   root.querySelectorAll('[data-p5]').forEach(function (n) { delete n.dataset.p5; });
 }
-// Fuentes de Daniel en las páginas de la extensión (ajustes y popup). Solo se descargan si algo las usa.
-function rkDanielFonts(doc, urlOf) {
-  if (doc.getElementById('rocer0-daniel-fonts')) return;
+
+// ---------- Tema Pablo: eco eléctrico ----------
+// Marca un título con su propio texto (data-pb) para que content/pablo.css pinte detrás dos copias desplazadas que
+// se cargan y se apagan. No añade nada a la página: solo el atributo (Roblox rehace las clases, los atributos no).
+// Como las letras recortadas, solo en elementos que tienen únicamente texto y de hasta «max» letras.
+function rkEchoHost(el, max) {
+  var host = rkRansomTarget(el);
+  if (!host) return false;
+  var text = '';
+  host.childNodes.forEach(function (c) { if (c.nodeType === 3) text += c.nodeValue; });
+  text = text.replace(/\s+/g, ' ').trim();
+  if (!text || text.length > max) {
+    if (host.hasAttribute('data-pb')) host.removeAttribute('data-pb');
+    return false;
+  }
+  if (host.getAttribute('data-pb') !== text) host.setAttribute('data-pb', text);
+  return true;
+}
+function rkUnecho(root) {
+  root.querySelectorAll('[data-pb]').forEach(function (n) { n.removeAttribute('data-pb'); });
+}
+
+// Palabra de cada sección de roblox.com para Pablo (la gigante del fondo y la que pasa con las estelas). Va según la
+// dirección, sin el idioma (/es/home cuenta como /home); las páginas que no están aquí van sin palabra.
+var RK_PB_WORDS = [
+  [/^\/(home)?$/i, 'Inicio'],
+  [/^\/users\/(\d+\/)?(friends|connections|followers|following)$/i, 'Amigos'],
+  [/^\/users\/\d+\/profile$/i, 'Perfil'],
+  [/^\/users\/(\d+\/)?(inventory|favorites)$|^\/my\/inventory$/i, 'Inventario'],
+  [/^\/my\/avatar$/i, 'Avatar'],
+  [/^\/(catalog|bundles|marketplace)(\/|$)/i, 'Tienda'],
+  [/^\/(discover|charts)(\/|$)/i, 'Descubrir'],
+  [/^\/games\/\d+/i, 'Juego'],
+  [/^\/my\/messages$/i, 'Mensajes'],
+  [/^\/trades?(\/|$)/i, 'Cambios'],
+  [/^\/(communities|groups)(\/|$)|^\/my\/(communities|groups)$/i, 'Comunidades'],
+  [/^\/my\/account$/i, 'Ajustes'],
+  [/^\/(upgrades\/robux|robux)(\/|$)/i, 'Robux'],
+  [/^\/search(\/|$)/i, 'Buscar'],
+  [/^\/badges\/\d+/i, 'Insignia'],
+  [/^\/premium(\/|$)/i, 'Premium']
+];
+function rkPbWord(path) {
+  var p = String(path || '/').replace(/^\/(?:en|es|de|fr|pt|pt-br|ja|ko|zh-cn|zh-tw|zh-cjv|it|id|th|tr|vi|pl|ru|ar)(?=\/)/i, '').replace(/\/+$/, '') || '/';
+  for (var i = 0; i < RK_PB_WORDS.length; i++) if (RK_PB_WORDS[i][0].test(p)) return RK_PB_WORDS[i][1];
+  return '';
+}
+// La pone en el html como variables (--pb-word es un texto de CSS y --pb-len, sus letras, para ajustar el tamaño):
+// así content/pablo.css la usa desde el primer momento, antes de que exista el body. Sin palabra, se quitan.
+function rkPbSetWord(root, word) {
+  if (word) {
+    root.style.setProperty('--pb-word', JSON.stringify(word));
+    root.style.setProperty('--pb-len', String(word.length));
+  } else {
+    root.style.removeProperty('--pb-word');
+    root.style.removeProperty('--pb-len');
+  }
+}
+
+// Fuentes de un tema fijo en las páginas de la extensión (ajustes y popup). Solo se descargan si algo las usa.
+function rkFixedFonts(doc, id, urlOf) {
+  if (!RK_FIXED_FONTS[id] || doc.getElementById('rocer0-' + id + '-fonts')) return;
   var el = doc.createElement('style');
-  el.id = 'rocer0-daniel-fonts';
-  el.textContent = rkDanielFontCss(urlOf || function (p) { return '../' + p; });
+  el.id = 'rocer0-' + id + '-fonts';
+  el.textContent = rkFixedFontCss(id, urlOf || function (p) { return '../' + p; });
   (doc.head || doc.documentElement).appendChild(el);
 }
 

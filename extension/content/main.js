@@ -1,7 +1,7 @@
 // Arranque: carga los ajustes y ejecuta cada módulo.
 (async function () {
   var stored = await RX.B.storage.local.get(['settings', 'iconImages']);
-  // rkLookLock: con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+  // rkLookLock: con un tema fijo puesto (Daniel, Pablo), los ajustes de aspecto valen lo que decide el tema.
   var s = RX.settings = rkLookLock(rxMergeSettings(stored.settings));
   var iconImages = stored.iconImages || {};
   // Con un tema fijo tampoco valen los iconos cambiados por imágenes tuyas.

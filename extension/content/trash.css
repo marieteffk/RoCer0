@@ -1,0 +1,122 @@
+/* ============================================================
+   RoCer0 · Papelera de amigos (la monta content/trash.js)
+   El botón del borde derecho, la barra del modo borrar, la casilla de cada amigo, el recuadro de arrastrar y la
+   ventana de confirmar. Usa los colores del tema (--rk-*); Daniel y Pablo la retocan en su propio CSS.
+   ============================================================ */
+
+/* ---------- El botón: una papelera pegada al borde derecho ---------- */
+#rk-trash {
+  position: fixed; right: 0; top: 50%; z-index: 99990; box-sizing: border-box; width: 62px; height: 68px; margin: 0; padding: 0 4px 0 8px;
+  display: grid; place-items: center; transform: translateY(-50%);
+  color: var(--rk-text); background: var(--rk-panel); border: 1px solid var(--rk-border); border-right: 0; border-radius: 18px 0 0 18px;
+  box-shadow: var(--rk-shadow); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.2, .9, .3, 1.25), background-color .15s, color .15s, box-shadow .15s;
+  --rk-trash-fill: var(--rk-panel-2); --rk-trash-lid: var(--rk-panel-2);
+}
+#rk-trash svg { width: 40px; height: 40px; display: block; overflow: visible; pointer-events: none; }
+#rk-trash:hover { transform: translateY(-50%) translateX(-5px); }
+#rk-trash:focus-visible { outline: 3px solid var(--rk-accent); outline-offset: 2px; }
+#rk-trash:disabled { cursor: progress; }
+/* La tapa gira sobre su bisagra de la izquierda: un poco al pasar el ratón, abierta del todo en el modo borrar. */
+#rk-trash .rk-trash-lid { transform-origin: 9px 15px; transition: transform .3s cubic-bezier(.3, 1.7, .5, 1); }
+#rk-trash:hover .rk-trash-lid { transform: rotate(-9deg); }
+#rk-trash[aria-pressed="true"] {
+  background: var(--rk-danger); color: #fff; border-color: transparent; box-shadow: 0 10px 28px rgba(220, 38, 38, .45);
+  --rk-trash-fill: rgba(255, 255, 255, .16); --rk-trash-lid: rgba(255, 255, 255, .16); --rk-trash-ink: var(--rk-danger);
+}
+#rk-trash[aria-pressed="true"] .rk-trash-lid { transform: translate(-1px, -3px) rotate(-34deg); }
+/* Con amigos elegidos asoman papeles arrugados, y cada vez que cae uno más la papelera da un saltito. */
+#rk-trash .rk-trash-paper { opacity: 0; transform: translateY(7px); transition: opacity .15s, transform .3s cubic-bezier(.3, 1.7, .5, 1); }
+#rk-trash.rk-trash-full .rk-trash-paper { opacity: 1; transform: none; }
+#rk-trash.rk-trash-bump svg { animation: rk-trash-bump .32s cubic-bezier(.3, 1.7, .5, 1); }
+@keyframes rk-trash-bump { 0% { transform: none; } 35% { transform: translateY(2px) scale(1.08, .9); } 70% { transform: translateY(-2px) scale(.96, 1.05); } }
+.rk-trash-count {
+  position: absolute; top: 5px; left: 5px; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 999px;
+  background: var(--rk-danger); color: #fff; font: 700 12px/20px system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
+  box-shadow: 0 0 0 2px var(--rk-panel); pointer-events: none;
+}
+.rk-trash-count:empty { display: none; }
+#rk-trash[aria-pressed="true"] .rk-trash-count { background: #fff; color: var(--rk-danger); box-shadow: 0 0 0 2px var(--rk-danger); }
+
+/* ---------- Barra del modo borrar (abajo, en el centro) ---------- */
+#rk-trash-bar {
+  position: fixed; left: 50%; bottom: 22px; z-index: 99990; box-sizing: border-box; width: min(760px, calc(100vw - 110px));
+  transform: translateX(-50%); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 14px;
+  padding: 12px 16px; color: var(--rk-text); background: var(--rk-surface); border: 1px solid var(--rk-border); border-radius: var(--rk-radius, 12px);
+  box-shadow: var(--rk-shadow), 0 0 0 2px rgba(220, 38, 38, .55); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  animation: rk-trash-in .24s cubic-bezier(.2, .9, .3, 1.15);
+}
+@keyframes rk-trash-in { from { opacity: 0; transform: translateX(-50%) translateY(18px); } }
+/* Arriba: título y número, ayuda y botones; debajo, la barra de progreso y los mensajes. */
+.rk-trash-head { grid-row: 1; grid-column: 1; display: flex; flex-direction: column; gap: 1px; min-width: 96px; }
+.rk-trash-head b { font-size: 15px; }
+.rk-trash-n { font-weight: 700; color: var(--rk-danger); }
+.rk-trash-help { grid-row: 1; grid-column: 2; margin: 0; font-size: 12.5px; color: var(--rk-muted); }
+.rk-trash-msg { grid-row: 3; grid-column: 1 / -1; margin: 2px 0 0; font-size: 13px; font-weight: 600; }
+.rk-trash-msg[data-kind="warn"] { color: #d97706; }
+.rk-trash-msg[data-kind="ok"] { color: var(--rk-success); }
+html.rk-dark .rk-trash-msg[data-kind="warn"], body.dark-theme .rk-trash-msg[data-kind="warn"] { color: #fbbf24; }
+.rk-trash-progress { grid-row: 2; grid-column: 1 / -1; height: 6px; border-radius: 999px; background: var(--rk-panel-2); overflow: hidden; }
+.rk-trash-progress i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--rk-danger); transition: width .3s; }
+.rk-trash-actions { grid-row: 1; grid-column: 3; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; }
+#rk-trash-bar .rx-btn { margin: 0; }
+#rk-trash-bar [hidden] { display: none !important; }
+/* Sitio debajo de la lista para que la última fila no se quede tapada por la barra. */
+html.rk-trash-mode body { padding-bottom: 110px; }
+.rx-btn.rk-trash-go, .rx-btn.rk-trash-danger { background: var(--rk-danger); border-color: var(--rk-danger); color: #fff !important; }
+.rx-btn.rk-trash-go:hover:not(:disabled), .rx-btn.rk-trash-danger:hover { filter: brightness(1.1); border-color: var(--rk-danger); }
+#rk-trash-bar .rx-btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+#rk-trash-bar.rk-trash-busy .rk-trash-help { display: none; }
+@media (max-width: 760px) {
+  #rk-trash-bar { grid-template-columns: 1fr; bottom: 12px; width: calc(100vw - 90px); left: 12px; transform: none; animation: none; }
+  #rk-trash-bar > * { grid-row: auto; grid-column: 1; }
+  .rk-trash-actions { justify-content: flex-start; }
+}
+
+/* ---------- Tarjetas de amigos en el modo borrar ---------- */
+html.rk-trash-mode [data-rk-trash-id] { cursor: pointer; -webkit-user-select: none; user-select: none; }
+html.rk-trash-mode [data-rk-trash-id] :is(a, img) { cursor: pointer !important; -webkit-user-drag: none; }
+/* Las cuentas borradas o bloqueadas vienen «desactivadas» (sin clics): en el modo borrar también se pueden elegir. */
+html.rk-trash-mode [data-rk-trash-id] .avatar-card-container.disabled { pointer-events: auto; }
+[data-rk-trash-pos] { position: relative; }
+[data-rk-trash-id] { outline: 2px dashed transparent; outline-offset: 3px; transition: outline-color .12s, opacity .25s, filter .25s; }
+html.rk-trash-mode [data-rk-trash-id]:hover:not([data-rk-trash="gone"]) { outline-color: rgba(220, 38, 38, .55); }
+[data-rk-trash="on"] { outline: 3px solid var(--rk-danger) !important; outline-offset: 3px; }
+[data-rk-trash="on"] img { filter: brightness(.82) saturate(.7); }
+[data-rk-trash-hot] { outline-style: solid !important; }
+[data-rk-trash="gone"] { opacity: .32; filter: grayscale(1); pointer-events: none; }
+/* La casilla de cada amigo: vacía, con la marca roja si está elegido y con «Eliminado» si ya no es tu amigo. */
+.rk-trash-tick {
+  position: absolute; top: 6px; right: 6px; z-index: 6; box-sizing: border-box; width: 26px; height: 26px; display: grid; place-items: center;
+  border-radius: 50%; background: rgba(0, 0, 0, .45); border: 2px solid #fff; color: transparent; pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .35); transition: transform .16s cubic-bezier(.3, 1.7, .5, 1), background-color .12s, color .12s;
+}
+.rk-trash-tick svg { width: 16px; height: 16px; }
+[data-rk-trash="on"] > .rk-trash-tick { background: var(--rk-danger); color: #fff; transform: scale(1.14); }
+[data-rk-trash="gone"] > .rk-trash-tick { background: #444; color: #fff; }
+[data-rk-trash="gone"] > .rk-trash-tick::after {
+  content: "Eliminado"; position: absolute; right: 30px; top: 1px; padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+  background: #444; color: #fff; font: 700 11px/16px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+html:not(.rk-trash-mode) .rk-trash-tick { display: none; }
+
+/* ---------- Recuadro de arrastrar ---------- */
+#rk-trash-lasso { position: fixed; z-index: 99989; box-sizing: border-box; pointer-events: none; border: 2px dashed var(--rk-danger); border-radius: 6px; background: rgba(220, 38, 38, .12); }
+#rk-trash-lasso[data-mode="remove"] { border-color: var(--rk-muted); background: rgba(127, 127, 127, .14); }
+
+/* ---------- Ventana de confirmar ---------- */
+.rx-modal.rk-trash-modal { width: min(600px, 94vw); }
+.rk-trash-warn { margin: 0 0 12px; padding: 10px 12px; border-radius: var(--rk-radius-sm, 8px); background: rgba(220, 38, 38, .12); border: 1px solid rgba(220, 38, 38, .45); font-weight: 600; }
+.rk-trash-list { list-style: none; margin: 0; padding: 0; max-height: 46vh; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+.rk-trash-list li { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 6px 8px; border-radius: var(--rk-radius-sm, 8px); background: var(--rk-panel-2); }
+.rk-trash-list img, .rk-trash-ph { width: 36px; height: 36px; flex: none; border-radius: 50%; background: var(--rk-surface); object-fit: cover; }
+.rk-trash-list li > div { min-width: 0; display: flex; flex-direction: column; }
+.rk-trash-list b, .rk-trash-list li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rk-trash-list li span { font-size: 12px; color: var(--rk-muted); }
+.rk-trash-note { margin: 12px 0 0; font-size: 13px; color: var(--rk-muted); }
+.rk-trash-confirm-actions { justify-content: flex-end; margin: 14px 0 2px; gap: 8px; }
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #rk-trash, #rk-trash *, #rk-trash-bar, .rk-trash-tick, [data-rk-trash-id] { transition: none !important; animation: none !important; }
+}

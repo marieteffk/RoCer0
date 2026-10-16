@@ -657,7 +657,7 @@
   // ---------- Vista previa ----------
   const GAMES = [
     ['Aventura Pirata', 210, 92, '48K'], ['Torre Imposible', 12, 88, '9,1K'], ['Simulador de Mascotas', 330, 95, '210K'], ['Carreras Turbo', 40, 90, '15K'],
-    ['Escape del Laboratorio', 280, 86, '3,2K'], ['Ciudad RP', 160, 93, '76K'], ['Arena de Espadas', 0, 89, '22K'], ['Parkour Neón', 300, 91, '5,4K']
+    ['Escape del Laboratorio', 280, 86, '3,2K'], ['Ciudad RP', 160, 93, '76K'], ['Arena de Espadas', 0, 89, '22K'], ['Parkour Nocturno', 300, 91, '5,4K']
   ];
   const FRIENDS = [['Luna', 'Ciudad RP', 'rk-ingame', 25], ['Max', 'Torre Imposible', 'rk-ingame', 200], ['Sofi', 'En línea', 'rk-online', 320], ['Leo', 'Desconectado · hace 2 h', '', 140]];
   const SIDE = [['home', 'Inicio'], ['profile', 'Perfil'], ['messages', 'Mensajes'], ['friends', 'Amigos'], ['avatar', 'Avatar'], ['inventory', 'Inventario'], ['trade', 'Intercambios'], ['groups', 'Comunidades']];
@@ -749,12 +749,14 @@
       inner.textContent = '';
       inner.append(...buildInner());
       inner.dataset.tid = t.id;
-      // Daniel: letras recortadas en el menú y en los títulos, como en roblox.com.
+      // Temas fijos: el menú y los títulos como en roblox.com (letras recortadas en Daniel, eco eléctrico en Pablo).
+      if (t.locked) rkFixedFonts(document, t.id);
       if (t.locked && t.id === 'daniel') {
-        rkDanielFonts(document);
         inner.querySelectorAll('.pv-side-item > span').forEach(n => rkRansomHost(n, 18, 'list'));
         inner.querySelectorAll('#rk-home .rk-head h2, #rk-home .rk-hero-title').forEach(n => rkRansomHost(n, 30, 'title'));
       }
+      // En Pablo el menú lleva dorsales (01, 02…) y no eco, como en roblox.com.
+      if (t.locked && t.id === 'pablo') inner.querySelectorAll('#rk-home .rk-head h2, #rk-home .rk-hero-title').forEach(n => rkEchoHost(n, 30));
     }
     if (typeof RkFx !== 'undefined') {
       if (!fxMount) fxMount = new RkFx.Mount({ doc: document, root: box.querySelector('.pv-fx'), box, mediaUrl: cfg => B.runtime.getURL('page/bgmedia.html') + '#' + encodeURIComponent(JSON.stringify(cfg)) });

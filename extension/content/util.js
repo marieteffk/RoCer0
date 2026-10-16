@@ -42,10 +42,26 @@ var RX = (function () {
       }
       var text = await res.text(), data = text;
       try { data = JSON.parse(text); } catch (e) { /* texto plano */ }
-      return { ok: res.ok, status: res.status, data: data };
+      var headers = {};
+      // Desde la página, Roblox solo deja leer algunas cabeceras; las que no, llegan vacías.
+      if (!res.ok) ['retry-after', 'x-ratelimit-reset', 'rblx-challenge-id', 'rblx-challenge-type'].forEach(function (k) {
+        var v = res.headers.get(k);
+        if (v) headers[k] = v.slice(0, 200);
+      });
+      return { ok: res.ok, status: res.status, data: data, headers: headers };
     } catch (e) { return null; }
   }
 
+  // Si Roblox dice que no, se lanza un error con el código HTTP (status), el de Roblox (code) y las cabeceras útiles.
+  function answer(r) {
+    if (r.ok) return r.data;
+    var first = r.data && r.data.errors && r.data.errors[0];
+    var e = new Error((first && first.message) || ('Error ' + r.status));
+    e.status = r.status;
+    e.code = first ? first.code : undefined;
+    e.headers = r.headers || {};
+    throw e;
+  }
   async function api(url, opts) {
     var r = viaPage ? await fromPage(url, opts) : null;
     if (!r) r = await send('api', Object.assign({ url: url }, opts || {}));
@@ -53,13 +69,14 @@ var RX = (function () {
       var again = await fromPage(url, opts);
       if (again && again.ok) { viaPage = true; r = again; }
     }
-    if (!r.ok) {
-      var m = r.data && r.data.errors && r.data.errors[0] && r.data.errors[0].message;
-      var e = new Error(m || ('Error ' + r.status));
-      e.status = r.status;
-      throw e;
-    }
-    return r.data;
+    return answer(r);
+  }
+  // Siempre desde la página, con la sesión de esta pestaña. La papelera lo usa cuando el fondo de la extensión ve otra
+  // cuenta (contenedores de Firefox, otra sesión en el navegador).
+  async function apiPage(url, opts) {
+    var r = await fromPage(url, opts);
+    if (!r) { var e = new Error('Roblox no contesta'); e.status = 0; e.headers = {}; throw e; }
+    return answer(r);
   }
 
   function el(tag, attrs, children) {
@@ -416,8 +433,8 @@ var RX = (function () {
     var main = document.querySelector('#container-main, main, [role="main"]') || document.body;
     L.push('Contenido:');
     outline(main, 5, 70, L);
-    // El menú lateral: el que haya marcado Daniel, uno conocido o el que Daniel encuentre por sus enlaces.
-    var finder = RX.features.filter(function (f) { return f.id === 'daniel'; })[0];
+    // El menú lateral: el que haya marcado un tema fijo, uno conocido o el que encuentre content/fixed-themes.js por sus enlaces.
+    var finder = RX.features.filter(function (f) { return f.id === 'fixed'; })[0];
     var nav = document.querySelector('[data-p5-nav], #navigation, .rbx-left-col, .left-nav');
     if (!nav && finder) { try { nav = finder.navs()[0]; } catch (e) { /* sin menú */ } }
     if (nav) {
@@ -446,7 +463,7 @@ var RX = (function () {
   }
 
   return {
-    B: B, settings: null, features: [], send: send, api: api, el: el, css: css, waitFor: waitFor, mount: mount, dock: dock,
+    B: B, settings: null, features: [], send: send, api: api, apiPage: apiPage, el: el, css: css, waitFor: waitFor, mount: mount, dock: dock,
     me: me, pageUser: pageUser, thumbs: thumbs, join: join, follow: follow, path: path, stripLocale: stripLocale, isHome: isHome, icon: icon, ibtn: ibtn, setText: setText, title: title, copy: copy, challenge: challenge,
     toast: toast, modal: modal, ask: ask, saveSettings: saveSettings, fmt: fmt, short: short, ago: ago,
     placeIdFromUrl: placeIdFromUrl, universeOf: universeOf, sleep: sleep, local: local, setLocal: setLocal,

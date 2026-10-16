@@ -466,7 +466,19 @@ var RX_SECTIONS = [
       { title: 'Favoritos', icon: 'star', items: [
         { key: 'friends.favorites', type: 'tags', default: [], label: 'Amigos favoritos', help: 'Nombre de usuario o ID. Salen primero en el Inicio y puedes recibir avisos solo de ellos.', placeholder: 'Nombre o ID y pulsa Intro' }
       ] },
-      { title: 'Relacionado', icon: 'link', links: [['notifications', 'Avisos de amigos'], ['stats', 'A qué juegan tus amigos'], ['general', 'Cada cuánto se consulta']] }
+      { title: 'Relacionado', icon: 'link', links: [['notifications', 'Avisos de amigos'], ['stats', 'A qué juegan tus amigos'], ['general', 'Cada cuánto se consulta'], ['trash', 'Papelera de amigos']] }
+    ]
+  },
+  {
+    id: 'trash', group: 'people', title: 'Papelera de amigos', icon: 'trash', master: 'trash.enabled',
+    desc: 'Un botón con una papelera en el borde derecho de tu página de Amigos. Al pulsarlo eliges a quién quitar (de uno en uno, o manteniendo pulsado el ratón y arrastrando para coger a varios) y, cuando lo confirmas, se eliminan todos.',
+    keywords: 'papelera borrar eliminar quitar amigos limpiar seleccionar varios arrastrar',
+    cards: [
+      { title: 'Papelera', icon: 'trash', items: [
+        { key: 'trash.enabled', type: 'bool', default: true, label: 'Botón de la papelera en tu página de Amigos', help: 'Solo sale en tu propia lista de amigos, en la pestaña Amigos. Nunca en la de otra persona ni en las solicitudes.' }
+      ] },
+      { title: 'Cómo se usa', icon: 'info', text: 'Pulsa la papelera del borde derecho para entrar en el modo borrar. Haz clic en cada amigo que quieras quitar, o mantén pulsado el ratón y arrastra para coger a varios a la vez (con Mayús coges todos los que hay entre dos). Luego pulsa Eliminar: te enseña la lista y solo se eliminan si lo confirmas. Esc o la propia papelera salen sin borrar nada.' },
+      { title: 'Relacionado', icon: 'link', links: [['friends', 'Amigos']] }
     ]
   },
   {

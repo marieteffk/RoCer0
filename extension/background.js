@@ -68,7 +68,16 @@ async function api({ url, method = 'GET', body, headers = {}, raw = false }) {
   const text = await r.text();
   let data = text;
   try { data = JSON.parse(text); } catch (e) { /* texto plano */ }
-  return { ok: r.ok, status: r.status, data };
+  return r.ok ? { ok: true, status: r.status, data } : { ok: false, status: r.status, data, headers: pickHeaders(r.headers) };
+}
+
+// Cuando Roblox dice que no, de la respuesta solo interesan estas cabeceras: cuánto esperar (429) y si pide una
+// comprobación de que eres tú (captcha y parecidos). La papelera de amigos las usa para saber qué hacer.
+const KEEP_HEADERS = ['retry-after', 'x-ratelimit-reset', 'rblx-challenge-id', 'rblx-challenge-type'];
+function pickHeaders(h) {
+  const out = {};
+  KEEP_HEADERS.forEach(k => { const v = h.get(k); if (v) out[k] = v.slice(0, 200); });
+  return out;
 }
 
 // Ping a Roblox para el contador de la página, por si la pestaña no puede medirlo ella misma.

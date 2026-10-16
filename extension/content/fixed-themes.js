@@ -1,11 +1,24 @@
-// Tema «Daniel» (al estilo Persona 5): letras recortadas en el menú lateral y en los títulos, la entrada elegida
-// del menú marcada, una cortina al cambiar de página sin recargar y un golpe rojo al hacer clic.
-// Solo actúa mientras Daniel está puesto (es un tema fijo: ver rkLockedTheme en common/themes.js).
-// Las marcas van en atributos data-p5-* y no en clases: Roblox (React) rehace las clases de sus elementos.
+// Temas fijos (Daniel y Pablo): marcan el menú lateral, los títulos y las listas de personas para que su CSS
+// (content/daniel.css y content/pablo.css) los rehaga, ponen una cortina al cambiar de página sin recargar y un
+// efecto al hacer clic. Solo actúan mientras uno de ellos está puesto (ver rkLockedTheme en common/themes.js).
+// Las marcas van en atributos data-p5-* y no en clases: Roblox (React) rehace las clases de sus elementos. Se llaman
+// así por Daniel, el primer tema fijo; Pablo usa las mismas y cada CSS las pinta a su manera.
 RX.features.push({
-  id: 'daniel',
+  id: 'fixed',
+  // Lo que cambia de un tema a otro: cómo se escriben los títulos, la cortina y el efecto del clic.
+  KINDS: {
+    // Daniel: letras recortadas (nota de rescate) en los títulos y el menú, cortina negra y roja, golpe rojo.
+    daniel: { name: 'Daniel', wipe: 'rk-p5-wipe', wipeMs: 800, hit: 'rk-p5-hit', hitMs: 460, turn: 'rk-p5-turn',
+      title: function (el, max) { return rkRansomHost(el, max); }, label: function (el) { rkRansomHost(el, 18, 'list'); },
+      clear: function (root) { rkUnransom(root); } },
+    // Pablo: títulos con un eco eléctrico detrás (lo pinta pablo.css), descarga al cambiar de página y chispa al hacer clic.
+    // También pone la palabra de la sección en la que estás (words): la gigante del fondo y la que pasa con las estelas.
+    pablo: { name: 'Pablo', wipe: 'rk-pb-wipe', wipeMs: 860, hit: 'rk-pb-hit', hitMs: 520, turn: 'rk-pb-turn', words: true,
+      title: function (el, max) { return rkEchoHost(el, max); }, label: function (el) { rkEchoHost(el, 24); },
+      clear: function (root) { rkUnecho(root); } }
+  },
   // Menú lateral de Roblox: el clásico (#navigation), el nuevo (.left-nav) y, si cambia de nombre o de forma, el bloque
-  // que tenga sus enlaces. Daniel lo reconoce por los enlaces y no por cómo está montado.
+  // que tenga sus enlaces. Se reconoce por los enlaces y no por cómo está montado.
   NAVS: '#navigation, .rbx-left-col, .left-nav',
   NAV_LINKS: /\/(home|my\/avatar|users\/friends|users\/connections|my\/messages|users\/profile|my\/inventory|users\/\d+\/inventory|users\/inventory|trades?|communities|groups|plus|giftcards|transactions)\b/i,
   // Lo que nunca es el menú lateral, aunque tenga esos enlaces.
@@ -15,12 +28,12 @@ RX.features.push({
   // Entradas del menú: enlaces y, desde 2026, algún botón sin enlace (la tienda oficial).
   ITEM: 'a[href], button',
   // Listas de personas: nunca dentro del menú, la cabecera, el pie, los menús que se abren, el chat ni las piezas de
-  // RoCer0 (su Inicio, los amigos en común de los perfiles…), que ya tienen su propio estilo de Daniel.
+  // RoCer0 (su Inicio, los amigos en común de los perfiles…), que ya tienen su propio estilo en cada tema.
   PEOPLE_NOT: '[data-p5-nav], #header, .rbx-header, footer, #footer-container, .container-footer, .p5-ransom, .dropdown-menu, .popover, ' +
     '.chat-container, #chat-container, .react-chat-root, [id^="rk-"], [id^="rx-"], [class^="rk-"], [class*=" rk-"], [class^="rc-"], [class*=" rc-"], [class^="rx-"], [class*=" rx-"]',
   PROFILE: /\/users\/(\d+)\/profile\b/i,
   FACE: 'img, .thumbnail-2d-container, .avatar-card-image, [class*="headshot"], [class*="avatar"]',
-  // Dónde van las letras recortadas: [selector, máximo de letras]. Si el texto es más largo se queda como está.
+  // Títulos que cambia cada tema: [selector, máximo de letras]. Si el texto es más largo se queda como está.
   TARGETS: [
     ['#rk-home .rk-head h2 .rk-h-text', 28],
     ['#rk-home .rk-hero-title', 30],
@@ -31,17 +44,21 @@ RX.features.push({
   run: function (s) { this.update(s); },
   update: function (s) {
     var t = rkLockedTheme(s);
-    var on = !!t && t.id === 'daniel' && /^(www\.|web\.)?roblox\.com$/i.test(location.hostname);
-    if (on === this.on) return;
-    this.on = on;
-    if (on) this.start(); else this.stop();
+    var kind = t && this.KINDS[t.id] && /^(www\.|web\.)?roblox\.com$/i.test(location.hostname) ? t.id : '';
+    if (kind === (this.kind || '')) return;
+    if (this.on) this.stop();
+    this.kind = kind;
+    this.k = this.KINDS[kind] || null;
+    this.on = !!kind;
+    if (this.on) this.start();
   },
 
   start: function () {
     var self = this;
     this.scans = 0;
+    this.page();
     this.scan();
-    // Solo cuenta lo que cambia Roblox: lo que pone RoCer0 (letras, cortina, golpe, contador de FPS) no vuelve a buscar.
+    // Solo cuenta lo que cambia Roblox: lo que pone RoCer0 (letras, cortina, efectos, contador de FPS) no vuelve a buscar.
     var timer = null;
     this.obs = new MutationObserver(function (list) {
       if (timer) return;
@@ -52,7 +69,7 @@ RX.features.push({
       }
     });
     this.obs.observe(document.body, { childList: true, subtree: true, characterData: true });
-    // Páginas que cambian sin recargar: cortina, estrellas y menú al día.
+    // Páginas que cambian sin recargar: cortina, fondo y menú al día.
     this.href = location.pathname;
     this.ticks = 0;
     this.poll = setInterval(function () {
@@ -60,44 +77,55 @@ RX.features.push({
       if (++self.ticks % 5 === 0 && self.ticks < 600 && !document.querySelector('[data-p5-nav] [data-p5-item]')) self.scan();
       if (location.pathname === self.href) return;
       self.href = location.pathname;
+      self.page();
       self.wipe();
       self.scan();
     }, 400);
     this.onClick = function (e) { self.hit(e); };
     document.addEventListener('click', this.onClick, true);
-    RX.diagInfo.daniel = function () { return self.report(); };
+    RX.diagInfo.fixed = function () { return self.report(); };
   },
 
   stop: function () {
+    var self = this;
     if (this.obs) { this.obs.disconnect(); this.obs = null; }
     clearInterval(this.poll);
     if (this.onClick) document.removeEventListener('click', this.onClick, true);
-    rkUnransom(document);
+    // Se quita lo de los dos temas: así no queda nada al pasar de uno a otro.
+    Object.keys(this.KINDS).forEach(function (id) {
+      var k = self.KINDS[id];
+      k.clear(document);
+      var w = document.getElementById(k.wipe);
+      if (w) w.remove();
+      document.querySelectorAll('.' + k.hit).forEach(function (n) { n.remove(); });
+      document.documentElement.classList.remove(k.turn, k.turn + '2');
+    });
     this.MARKS.forEach(function (a) {
       document.querySelectorAll('[' + a + ']').forEach(function (n) { n.removeAttribute(a); });
     });
+    rkPbSetWord(document.documentElement, '');
     this.box = null;
-    var w = document.getElementById('rk-p5-wipe');
-    if (w) w.remove();
-    document.documentElement.classList.remove('rk-p5-turn', 'rk-p5-turn2');
-    delete RX.diagInfo.daniel;
+    this.on = false;
+    delete RX.diagInfo.fixed;
   },
 
   // ¿Lo ha cambiado RoCer0? (dentro de las letras recortadas, de los avisos o del contador, o son piezas suyas)
   ours: function (m) {
+    var k = this.k;
     var t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
-    if (t && t.closest('.p5-ransom, #rx-perf, #rx-toast, #rk-p5-wipe')) return true;
+    if (t && t.closest('.p5-ransom, #rx-perf, #rx-toast, #' + k.wipe)) return true;
     if (m.type !== 'childList') return false;
-    var mine = function (n) { return n.nodeType === 1 && (n.classList.contains('p5-ransom') || n.classList.contains('rk-p5-hit') || n.id === 'rk-p5-wipe'); };
+    var mine = function (n) { return n.nodeType === 1 && (n.classList.contains('p5-ransom') || n.classList.contains(k.hit) || n.id === k.wipe); };
     return m.addedNodes.length + m.removedNodes.length > 0 &&
       Array.prototype.every.call(m.addedNodes, mine) && Array.prototype.every.call(m.removedNodes, mine);
   },
 
   scan: function () {
     if (!this.on) return;
+    var k = this.k;
     this.scans++;
     this.TARGETS.forEach(function (tg) {
-      document.querySelectorAll(tg[0]).forEach(function (el) { rkRansomHost(el, tg[1]); });
+      document.querySelectorAll(tg[0]).forEach(function (el) { k.title(el, tg[1]); });
     });
     this.navs().forEach(this.nav, this);
     this.people();
@@ -171,7 +199,7 @@ RX.features.push({
     return out;
   },
 
-  // Marca cada fila del menú (para el CSS) y le pone las letras recortadas a su nombre.
+  // Marca cada fila del menú (para el CSS) y le pone a su nombre la letra del tema.
   nav: function (box) {
     var set = function (n, a, v) { if (n.getAttribute(a) !== v) n.setAttribute(a, v); };
     var del = function (n, a) { if (n.hasAttribute(a)) n.removeAttribute(a); };
@@ -184,7 +212,7 @@ RX.features.push({
       var text = self.text(row);
       set(row, 'data-p5-row', String(i % 4));
       set(row, 'data-p5-n', String(Math.min(i, 8)));
-      // Recuadros con frases (Premium, Roblox Plus): se quedan como panel, sin letras recortadas. Se notan por lo largo
+      // Recuadros con frases (Premium, Roblox Plus): se quedan como panel, sin cambiar sus letras. Se notan por lo largo
       // del texto o por tener dos frases sin foto (el de Roblox Plus de 2026: «More fun for less Robux.» y «Subscribe»).
       var promo = text.length > 34 || (text.length > 20 && !row.querySelector('img') && self.phrases(row) >= 2 &&
         /plus|premium|upgrade|subscri|membership/i.test((a && a.getAttribute('href') || '') + ' ' + text));
@@ -201,7 +229,7 @@ RX.features.push({
         return;
       }
       del(row, 'data-p5-promo');
-      // Tu nombre de usuario (con tu cara): placa negra, sin letras recortadas.
+      // Tu nombre de usuario (con tu cara): placa aparte, sin la letra del tema.
       var href = a.getAttribute('href') || '';
       var isUser = !!a.querySelector('img') || (!!user && (text === user.name || text === user.displayName || text === '@' + user.name ||
         (!!user.id && new RegExp('/users/' + user.id + '/profile\\b').test(href))));
@@ -213,14 +241,15 @@ RX.features.push({
       if (isUser) return;
       var label = self.parts(a);
       if (label) set(label, 'data-p5-label', '');
-      // Sin hijos (el texto va suelto dentro del enlace): las letras van en el propio enlace.
-      rkRansomHost(label || a, 18, 'list');
+      // Sin hijos (el texto va suelto dentro del enlace): la letra va en el propio enlace.
+      self.k.label(label || a);
     });
   },
 
   // Listas de personas: amigos en el Inicio y en los perfiles, la página de amigos, miembros de comunidades, gente
   // buscada… Cada tarjeta lleva al perfil de alguien con su cara dentro del enlace, y la lista es lo que reúne a varias.
-  // Se reconocen así y no por sus clases (las que usa Roblox ahora también están en daniel.css por si esto llega tarde).
+  // Se reconocen así y no por sus clases (las que usa Roblox ahora también están en el CSS de cada tema por si esto
+  // llega tarde).
   people: function () {
     var self = this, lists = [], cache = new Map();
     var who = function (el) {
@@ -272,7 +301,7 @@ RX.features.push({
     for (var n = w.nextNode(); n && texts.length < 2; n = w.nextNode()) {
       var el = n.parentElement;
       if (!n.nodeValue.trim() || !el || texts.indexOf(el) >= 0) continue;
-      if (el.closest('[data-p5-face], .avatar-status, .p5-ransom, script, style')) continue;
+      if (el.closest('[data-p5-face], .avatar-status, .p5-ransom, .rk-trash-tick, script, style')) continue;
       // Los botones de la tarjeta (aceptar, chatear…) no son su nombre; el botón que envuelve toda la tarjeta, sí.
       var b = el.closest('button, .btn, [class*="btn-"]');
       if (b && tile.contains(b) && !(link && b.contains(link))) continue;
@@ -320,6 +349,11 @@ RX.features.push({
 
   here: function () { return RX.path().replace(/\/+$/, '') || '/'; },
 
+  // La palabra de la sección (solo los temas con words), en el html como variables de CSS (ver rkPbSetWord).
+  page: function () {
+    rkPbSetWord(document.documentElement, this.k && this.k.words ? rkPbWord(location.pathname) : '');
+  },
+
   user: function () {
     var m = document.querySelector('meta[name="user-data"]');
     return m ? { id: m.getAttribute('data-userid') || '', name: m.getAttribute('data-name') || '', displayName: m.getAttribute('data-displayname') || '' } : null;
@@ -327,22 +361,23 @@ RX.features.push({
 
   reduced: function () { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; },
 
-  // Cortina al cambiar de página sin recargar; las estrellas del fondo dan otra vuelta corta.
+  // Cortina al cambiar de página sin recargar; el fondo da otra vuelta corta.
   wipe: function () {
     if (this.reduced()) return;
-    var old = document.getElementById('rk-p5-wipe');
+    var k = this.k;
+    var old = document.getElementById(k.wipe);
     if (old) old.remove();
     var w = document.createElement('div');
-    w.id = 'rk-p5-wipe';
+    w.id = k.wipe;
     document.body.appendChild(w);
-    setTimeout(function () { w.remove(); }, 800);
+    setTimeout(function () { w.remove(); }, k.wipeMs);
     // Dos nombres para la misma vuelta: al cambiar de uno a otro, la animación vuelve a empezar.
-    var root = document.documentElement, odd = root.classList.contains('rk-p5-turn');
-    root.classList.toggle('rk-p5-turn', !odd);
-    root.classList.toggle('rk-p5-turn2', odd);
+    var root = document.documentElement, odd = root.classList.contains(k.turn);
+    root.classList.toggle(k.turn, !odd);
+    root.classList.toggle(k.turn + '2', odd);
   },
 
-  // Golpe rojo y negro donde haces clic (botones y enlaces).
+  // Efecto donde haces clic (botones y enlaces): el golpe rojo y negro de Daniel o la chispa de Pablo.
   hit: function (e) {
     if (!e.isTrusted || e.button !== 0 || this.reduced()) return;
     var t = e.target && e.target.closest && e.target.closest('a, button, [role="button"], .btn, label');
@@ -351,11 +386,11 @@ RX.features.push({
     if (now - (this.lastHit || 0) < 120) return;
     this.lastHit = now;
     var n = document.createElement('div');
-    n.className = 'rk-p5-hit';
+    n.className = this.k.hit;
     n.style.left = e.clientX + 'px';
     n.style.top = e.clientY + 'px';
     document.body.appendChild(n);
-    setTimeout(function () { n.remove(); }, 460);
+    setTimeout(function () { n.remove(); }, this.k.hitMs);
   },
 
   // Para el diagnóstico: qué menú ha encontrado, cuántas filas ha marcado y cómo es una fila por dentro (sin textos).
@@ -368,12 +403,12 @@ RX.features.push({
       for (var n = row; n && !n.hasAttribute('data-p5-nav'); n = n.parentElement) chain.push(RX.diagName(n));
       shape = ' · fila: ' + chain.slice(0, 4).join(' < ') + ' · dentro: ' + Array.prototype.map.call(item.children, function (c) { return RX.diagName(c); }).join(' + ');
     }
-    return 'Daniel: menús ' + navs.length + ' (' + navs.map(function (n) { return RX.diagName(n) + ', secciones ' + self.keys(n).length; }).join('; ') + ')' +
+    return this.k.name + ': menús ' + navs.length + ' (' + navs.map(function (n) { return RX.diagName(n) + ', secciones ' + self.keys(n).length; }).join('; ') + ')' +
       ' · filas ' + document.querySelectorAll('[data-p5-nav] [data-p5-row]').length +
       ' · entradas ' + document.querySelectorAll('[data-p5-nav] [data-p5-item]').length +
-      ' · con letras ' + document.querySelectorAll('[data-p5-nav] [data-p5]').length +
+      ' · con letras ' + document.querySelectorAll('[data-p5-nav] :is([data-p5], [data-pb])').length +
       ' · recuadros ' + document.querySelectorAll('[data-p5-nav] [data-p5-promo]').length +
-      ' · títulos ' + document.querySelectorAll('[data-p5]:not([data-p5-nav] *)').length +
+      ' · títulos ' + document.querySelectorAll(':is([data-p5], [data-pb]):not([data-p5-nav] *)').length +
       ' · búsquedas ' + this.scans + shape +
       ' · personas: listas ' + document.querySelectorAll('[data-p5-people]').length +
       ' (' + Array.prototype.slice.call(document.querySelectorAll('[data-p5-people]'), 0, 3).map(function (n) { return RX.diagName(n); }).join('; ') + ')' +

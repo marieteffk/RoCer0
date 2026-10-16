@@ -8,7 +8,7 @@
 
 <sub>Las capturas están hechas con datos de ejemplo.</sub>
 
-- **Versión:** 1.1.2
+- **Versión:** 1.2.0
 - **Navegadores:** Firefox 121 o posterior y los basados en Firefox (Zen, LibreWolf, Floorp, Waterfox), y Chrome, Brave, Edge y Opera (basados en Chromium 111 o posterior).
 - **Sin servidores propios:** todo lo que guarda se queda en tu navegador.
 
@@ -28,12 +28,12 @@ Descarga el zip de tu navegador (están en la carpeta [`descargas/`](descargas))
 
 | Navegador | Descarga |
 |---|---|
-| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.1.2.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.1.2.zip) |
-| Firefox, Zen, LibreWolf, Floorp y Waterfox | [rocer0-firefox-1.1.2.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.1.2.zip) |
+| Chrome, Brave, Edge y Opera | [rocer0-chromium-1.2.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-chromium-1.2.0.zip) |
+| Firefox, Zen, LibreWolf, Floorp y Waterfox | [rocer0-firefox-1.2.0.zip](https://github.com/marieteffk/RoCer0/raw/main/descargas/rocer0-firefox-1.2.0.zip) |
 
 ### Chrome, Brave, Edge y Opera
 
-1. Descomprime `rocer0-chromium-1.1.2.zip` en una carpeta que no vayas a borrar.
+1. Descomprime `rocer0-chromium-1.2.0.zip` en una carpeta que no vayas a borrar.
 2. Abre la página de extensiones de tu navegador:
    - Chrome: `chrome://extensions`
    - Brave: `brave://extensions`
@@ -50,7 +50,7 @@ La extensión se queda instalada aunque cierres el navegador. Si algún día lo 
 Zen, LibreWolf, Floorp y Waterfox son Firefox por dentro: usan el zip de Firefox, no el de Chrome.
 
 1. Abre `about:debugging#/runtime/this-firefox`.
-2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.1.2.zip`.
+2. Pulsa **Cargar complemento temporal…** y elige `rocer0-firefox-1.2.0.zip`.
 3. Se abre la página de ajustes. Si sale el aviso amarillo de permisos, pulsa **Dar permiso**.
 4. Entra en roblox.com y recarga la página.
 
@@ -61,6 +61,13 @@ Firefox quita los complementos temporales al cerrarse. Para tenerlo siempre hay 
 ### Actualizar
 
 Descarga la versión nueva y repite los pasos. Tus ajustes, temas, fijados y notas se conservan mientras no quites la extensión. Antes de quitarla, puedes guardar una copia en **Ajustes → Permisos y datos → Exportar ajustes**.
+
+### Novedades de la 1.2
+
+- **Tema Pablo**, eléctrico y a toda velocidad: noche violeta, rayos cian y verde ácido, estelas que cruzan la pantalla con el nombre de la sección al cambiar de página, títulos con ecos que se quedan atrás, el menú lateral como una lista de salida con dorsales y chispas al hacer clic. También cambia los ajustes y el popup.
+- **Es un tema fijo, como Daniel:** mientras está puesto no vale ninguna personalización. Lo que tengas guardado no se borra y vuelve en cuanto eliges otro tema.
+- **Papelera de amigos.** En tu página de Amigos sale un botón con una papelera pegado al borde derecho. Al pulsarlo entras en el modo borrar: eliges amigos con un clic, de uno en uno, o manteniendo pulsado el ratón y arrastrando para coger a varios. **Eliminar** te enseña la lista y solo se eliminan si lo confirmas. Va poco a poco para que Roblox no la frene y se apaga en **Ajustes → Papelera de amigos**.
+- **Daniel y Pablo también visten la papelera.**
 
 ### Novedades de la 1.1.2
 
@@ -106,7 +113,7 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 
 ### Apariencia
 
-**Temas.** 28 temas inspirados en los de BetterDiscord: oscuros, claros, transparentes, animados, neón, pastel, de espacio, de naturaleza, dos de temporada (Halloween y Navidad, que se ponen solos en sus fechas) y Daniel, un tema fijo al estilo de Persona 5. Un tema no cambia solo los colores, también la forma de la web. El editor deja tocarlo todo y se ve al momento en una vista previa:
+**Temas.** 29 temas inspirados en los de BetterDiscord: oscuros, claros, transparentes, animados, neón, pastel, de espacio, de naturaleza y dos de temporada (Halloween y Navidad, que se ponen solos en sus fechas). Dos de ellos son fijos: Daniel, al estilo de Persona 5, y Pablo, eléctrico y a toda velocidad. Un tema no cambia solo los colores, también la forma de la web. El editor deja tocarlo todo y se ve al momento en una vista previa:
 
 - **Colores:** el acento y los 10 colores del tema por separado.
 - **Fondo:** color, degradado propio de hasta 6 colores, 25 fondos dibujados, una imagen o varias que van cambiando, o un vídeo de tu PC. Tiene filtros (desenfoque, brillo, contraste, saturación…), capas por encima (viñeta, tinte, líneas de monitor…) y 10 tipos de partículas como nieve, estrellas o pétalos.
@@ -120,7 +127,7 @@ Las funciones están agrupadas igual que en el menú de los ajustes.
 | ![Un vídeo de tu PC de fondo, nieve por delante y el menú lateral solo con iconos](capturas/fondo-video-nieve.png) | ![Una imagen de tu PC de fondo con el tema Sakura](capturas/fondo-imagen-de-tu-pc.png) |
 | Vídeo de tu PC de fondo, nieve y el menú lateral solo con iconos | Una imagen de tu PC de fondo con el tema Sakura |
 
-**Daniel, el tema fijo.** Está inspirado en los menús de Persona 5 y cambia toda la web:
+**Daniel, tema fijo.** Está inspirado en los menús de Persona 5 y cambia toda la web:
 
 - **Colores y fondo:** rojo, negro y blanco planos, con un panel rojo cortado en diagonal y estrellas de cinco puntas detrás de todo, que dan una vuelta corta al entrar en cada página.
 - **Letras recortadas:** los títulos y el menú lateral se escriben como una nota de rescate, cada letra con su recorte, su tipo de letra y su inclinación. El texto de verdad sigue ahí para los lectores de pantalla.
@@ -141,6 +148,29 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 | La página de amigos con Daniel | Un perfil con Daniel: sus amigos y los amigos en común |
 
 <sub>Daniel está dibujado entero para RoCer0: no usa imágenes, logos, sonidos ni tipos de letra de los juegos de Persona, y RoCer0 no tiene ninguna relación con ATLUS ni con SEGA. Sus letras son fuentes libres (SIL Open Font License) recortadas y con otro nombre; las licencias están en [`extension/fonts/LICENCIAS.txt`](extension/fonts/LICENCIAS.txt).</sub>
+
+**Pablo, tema fijo.** Es eléctrico, va a toda velocidad y también cambia toda la web:
+
+- **Colores y fondo:** noche violeta e índigo con brillos suaves, líneas de pista y rayos quietos, y dos colores de energía, cian eléctrico y verde ácido. Las piezas llevan esquinas cortadas, líneas finas y etiquetas pequeñas tipo «// 01».
+- **La palabra de cada sección:** Inicio, Amigos, Perfil, Tienda… en letras enormes y huecas al fondo de la página.
+- **Menú de carrera:** cada entrada del menú lateral lleva su dorsal (01, 02…) en lugar del icono y se adelanta con un subrayado eléctrico al pasar el ratón. La página en la que estás va en un paralelogramo de energía con una chispa que corre debajo.
+- **Títulos con eco:** dos copias, una cian y otra verde, llegan desde atrás y se apagan.
+- **Amigos:** caras en marcos cuadrados cian, que se ponen verdes al pasar el ratón, nombres en letra de etiqueta, el estado en números de cronómetro y tarjetas como paneles con una franja de energía.
+- **Animaciones:** al entrar en una página o cambiar de página cruzan la pantalla unas estelas de velocidad con el nombre de la sección, las tarjetas del Inicio llegan desde la izquierda, las ventanas entran deprisa y frenan, y cada clic suelta ocho chispas. Si tu sistema pide reducir el movimiento, no hay estelas, chispas ni ecos, y se quedan los colores y las formas.
+- **Ajustes, popup y papelera** con el mismo estilo.
+
+Como Daniel, es un **tema fijo**: mientras está puesto no vale ninguna personalización y esas opciones salen con candado en los ajustes. Lo que tengas guardado vuelve en cuanto eliges otro tema.
+
+| | |
+|---|---|
+| ![El Inicio de Roblox con el tema Pablo](capturas/pablo-inicio.png) | ![Las estelas de Pablo al cambiar de página](capturas/pablo-estelas.png) |
+| El Inicio con Pablo, con el ratón sobre una entrada del menú | Al cambiar de página: las estelas con el nombre de la sección |
+| ![La página de amigos con el tema Pablo y la papelera](capturas/pablo-amigos.png) | ![Un perfil con el tema Pablo](capturas/pablo-perfil.png) |
+| La página de amigos con Pablo, en el modo borrar | Un perfil con Pablo |
+| ![Los ajustes con el tema Pablo](capturas/pablo-ajustes.png) | ![El popup con el tema Pablo](capturas/pablo-popup.png) |
+| Los ajustes con Pablo | El popup con Pablo |
+
+<sub>Pablo también está dibujado entero para RoCer0, con formas, colores y animaciones propias. Sus letras son fuentes libres (SIL Open Font License) recortadas y con otro nombre; las licencias están en el mismo archivo.</sub>
 
 **Iconos.** Más de cien iconos dibujados para RoCer0, sin emojis. Puedes cambiar su trazo, tamaño y color, y cambiar cualquiera (también los de la barra y el menú de Roblox) por una imagen de tu PC.
 
@@ -163,6 +193,17 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 **Perfiles.** En el perfil de cada persona: valor de su inventario y sus objetos más valiosos (si es público), amigos en común, nombres anteriores y cuándo se conectó por última vez.
 
 **Amigos.** Registra a qué juegan tus amigos para el Inicio, las estadísticas y el Wrapped, y te deja marcar amigos favoritos para los avisos.
+
+**Papelera de amigos.** Un botón con una papelera en el borde derecho de tu página de Amigos activa el modo borrar. Solo sale en tu propia lista, nunca en la de otra persona ni en las solicitudes.
+
+- Eliges a quién quitar con un clic, de uno en uno, o manteniendo pulsado el ratón y arrastrando para coger a varios. Con Mayús coges todos los que hay entre dos, y **Todos** y **Ninguno** eligen o sueltan la página entera. Lo que eliges se guarda aunque pases de página en la lista.
+- **Eliminar** te enseña la lista de elegidos y avisa de que no se puede deshacer: solo se eliminan si lo confirmas. Esc o la propia papelera salen sin borrar nada.
+- Va sin prisa para que Roblox no la frene: los 8 primeros seguidos y luego uno cada pocos segundos. Si Roblox pide esperar, espera, y si quiere comprobar que eres tú, se para y los deja elegidos.
+
+| | |
+|---|---|
+| ![El modo borrar de la papelera con varios amigos elegidos](capturas/papelera-modo-borrar.png) | ![La ventana para confirmar la papelera](capturas/papelera-confirmar.png) |
+| El modo borrar, arrastrando para elegir a varios | Antes de eliminar, hay que confirmarlo |
 
 **Notas.** Notas y etiquetas personales en juegos y perfiles, que solo ves tú. En los ajustes están todas juntas, con buscador y filtro por etiqueta.
 
@@ -215,7 +256,7 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 ![Los ajustes de RoCer0, sección Inicio](capturas/ajustes-inicio.png)
 
 - Están **dentro de Roblox**: en roblox.com, ve a **Ajustes → RoCer0** o a la rueda dentada → **RoCer0**. También se abren como página aparte desde el popup.
-- Un **menú lateral** con las 30 secciones, agrupadas como en este texto.
+- Un **menú lateral** con las 31 secciones, agrupadas como en este texto.
 - Un **buscador** que encuentra cualquier opción por su nombre (pulsa `/`). Las opciones se pueden cambiar desde los propios resultados.
 - Cada sección tiene un **interruptor general** arriba y un botón para **restablecerla**.
 - Densidad cómoda o compacta, y abrir en la última sección que usaste o en la que elijas.
@@ -247,6 +288,7 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
   - **ipinfo.io**, solo con la IP de los servidores de juego, para saber su región (se puede apagar);
   - **open.er-api.com**, para los tipos de cambio de moneda.
 - Las sesiones de las cuentas guardadas se quedan solo en el almacenamiento local de la extensión y solo se envían a roblox.com.
+- La papelera de amigos solo pide a Roblox que quite a los amigos que elegiste, y solo después de que lo confirmes.
 - El diagnóstico del popup no sale de tu ordenador: solo se copia al portapapeles, y no lleva nombres, textos ni números.
 - Permisos que pide:
   - **almacenamiento**, para tus ajustes y datos;
@@ -264,6 +306,7 @@ Es un **tema fijo**: mientras está puesto no vale ninguna personalización. Ni 
 - **Última conexión:** Roblox ya no la enseña. RoCer0 la reconstruye con lo que ve desde que lo instalaste.
 - **Estadísticas, Wrapped y retos** empiezan vacíos y se llenan mientras el navegador está abierto.
 - **Vídeo de fondo:** hasta 30 MB, sin sonido y en bucle.
+- **Papelera de amigos:** Roblox no deja quitar muchos amigos seguidos, así que con muchos va poco a poco (unos 9 por minuto después de los 8 primeros).
 
 ## Para desarrolladores
 
@@ -278,7 +321,7 @@ RoCer0 está hecha en JavaScript sin dependencias ni paso de compilación. El c�
 | `options/` | La página de ajustes, que se genera a partir de las secciones de `defaults.js` |
 | `popup/` | El panel del botón de la barra |
 | `page/` | Piezas que se cargan dentro de Roblox (vídeo de fondo y lanzador de juegos) |
-| `fonts/` | Las letras del tema Daniel, fuentes libres con sus licencias en `LICENCIAS.txt` |
+| `fonts/` | Las letras de los temas Daniel y Pablo, fuentes libres con sus licencias en `LICENCIAS.txt` |
 
 Para probarla sin empaquetar, carga la carpeta `extension/` como extensión descomprimida en Chromium o su `manifest.json` como complemento temporal en Firefox.
 

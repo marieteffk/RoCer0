@@ -111,7 +111,7 @@ try {
 
 async function paintTheme(settings) {
   const root = document.documentElement;
-  // Con un tema fijo puesto (Daniel), los ajustes de aspecto valen lo que decide el tema.
+  // Con un tema fijo puesto (Daniel, Pablo), los ajustes de aspecto valen lo que decide el tema.
   settings = rkLookLock(settings);
   const t = settings['theme.extension'] ? rkEffectiveTheme(settings) : rkEffectiveTheme(rxMergeSettings({}), 'medianoche');
   let image = null;
@@ -124,7 +124,7 @@ async function paintTheme(settings) {
   p.classes = p.classes.map(c => c.startsWith('rk-t-') ? 'rk-ui-' + c.slice(5) : c);
   Array.from(root.classList).forEach(c => { if (c.startsWith('rk-ui-')) root.classList.remove(c); });
   rkApply(root, p);
-  danielLook();
+  fixedLook();
   rcApplyIconStyle(root, rcIconStyleOf(settings, t));
   // Tamaño y color de los iconos, como en los ajustes.
   root.style.setProperty('--rc-icon-scale', String(Math.max(50, Math.min(200, Number(settings['icons.scale']) || 100)) / 100));
@@ -133,11 +133,17 @@ async function paintTheme(settings) {
   else { root.style.removeProperty('--rc-icon-color'); root.classList.remove('rc-ic-colored'); }
 }
 
-// Tema Daniel: letras recortadas en el nombre y en los títulos de las tarjetas.
-function danielLook() {
-  if (!document.documentElement.classList.contains('rk-ui-daniel')) { rkUnransom(document); return; }
-  rkDanielFonts(document);
-  document.querySelectorAll('.brand b, .card-head h2').forEach(n => rkRansomHost(n, 22, 'title'));
+// Temas fijos: el nombre y los títulos de las tarjetas con letras recortadas (Daniel) o con eco eléctrico (Pablo).
+function fixedLook() {
+  const cl = document.documentElement.classList;
+  if (cl.contains('rk-ui-daniel')) {
+    rkFixedFonts(document, 'daniel');
+    document.querySelectorAll('.brand b, .card-head h2').forEach(n => rkRansomHost(n, 22, 'title'));
+  } else rkUnransom(document);
+  if (cl.contains('rk-ui-pablo')) {
+    rkFixedFonts(document, 'pablo');
+    document.querySelectorAll('.brand b, .card-head h2').forEach(n => rkEchoHost(n, 22));
+  } else rkUnecho(document);
 }
 
 // Miniaturas de juegos: las que no tienen imagen guardada se piden todas juntas al final.
@@ -513,7 +519,7 @@ async function init() {
       h('div', { class: 'btn-row' }, [btn('sliders', 'Elegir tarjetas', { onclick: () => openSettings('popup') })])
     ]));
   }
-  danielLook();
+  fixedLook();
   fillThumbs();
 }
 

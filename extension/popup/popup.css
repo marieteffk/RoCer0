@@ -245,3 +245,48 @@ html.rk-ui-daniel .link { font-weight: 800; font-style: italic; transition: tran
 html.rk-ui-daniel .link:hover { background: var(--p5-red); border-color: var(--p5-white); transform: rotate(-2deg) scale(1.05); }
 html.rk-ui-daniel .link:hover .rk-i { color: #fff; }
 html.rk-ui-daniel .link .rk-i { color: var(--p5-red); }
+
+/* ---------- Tema Pablo (html.rk-ui-pablo; sus colores y formas vienen de content/pablo.css) ---------- */
+html.rk-ui-pablo .brand b { font-family: var(--pb-title); font-weight: 800; font-size: 23px; letter-spacing: .02em; text-shadow: 0 0 14px rgba(43, 228, 255, .45); }
+html.rk-ui-pablo .logo { border-radius: 0; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .icon-btn { border-radius: 0; clip-path: var(--pb-cut-sm); transition: transform .12s var(--pb-out), color .1s; }
+html.rk-ui-pablo .icon-btn:hover { background: var(--pb-raised); color: var(--pb-volt); transform: translateY(-1px); }
+html.rk-ui-pablo :is(.card, .link) { background: var(--pb-brackets), var(--pb-glass); border: 1px solid var(--pb-line); border-radius: 0; box-shadow: inset 0 2px 0 var(--pb-volt), 0 10px 24px rgba(0, 0, 0, .3); }
+html.rk-ui-pablo #cards > .card { animation: rk-pb-in .3s var(--pb-out) backwards; }
+html.rk-ui-pablo #cards > .card:nth-child(2) { animation-delay: .03s; }
+html.rk-ui-pablo #cards > .card:nth-child(3) { animation-delay: .06s; }
+html.rk-ui-pablo #cards > .card:nth-child(4) { animation-delay: .09s; }
+html.rk-ui-pablo #cards > .card:nth-child(n+5) { animation-delay: .12s; }
+html.rk-ui-pablo .card-head h2 { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; font-size: 19px; letter-spacing: .02em; overflow: visible; }
+html.rk-ui-pablo .card-head > .rk-i { color: var(--pb-volt); }
+html.rk-ui-pablo .mini-btn { border-radius: 0; }
+html.rk-ui-pablo .mini-btn:hover { background: rgba(43, 228, 255, .12); color: var(--pb-volt); }
+html.rk-ui-pablo .btn { border: 0; border-radius: 0; clip-path: var(--pb-cut-sm); background: var(--pb-raised); color: var(--pb-volt);
+  box-shadow: inset 0 0 0 1px rgba(43, 228, 255, .4), inset 0 -2px 0 var(--pb-volt); font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+  transition: transform .12s var(--pb-out), filter .12s, color .1s, background-color .1s; }
+html.rk-ui-pablo .btn:hover { background: #322a7a; color: var(--pb-arc); transform: translateY(-1px); }
+html.rk-ui-pablo .btn:active { transform: scale(.97); }
+html.rk-ui-pablo .btn-accent, html.rk-ui-pablo .btn-accent:hover { background: var(--pb-energy); color: var(--pb-void); box-shadow: none; }
+html.rk-ui-pablo .btn-accent:hover { filter: brightness(1.08); }
+html.rk-ui-pablo :is(select, input[type=text]) { background: var(--pb-void); color: var(--pb-text); border: 1px solid rgba(180, 174, 224, .45); border-radius: 0; }
+html.rk-ui-pablo :is(select, input[type=text]):focus { border-color: var(--pb-volt); box-shadow: 0 0 0 1px var(--pb-volt); }
+html.rk-ui-pablo input[type=text]::placeholder { color: var(--pb-faint); }
+html.rk-ui-pablo select option, html.rk-ui-pablo select optgroup { background: var(--pb-panel); color: var(--pb-text); }
+html.rk-ui-pablo input.switch { border-radius: 0; transform: skewX(-12deg); background: var(--pb-void); border: 1px solid rgba(180, 174, 224, .5); }
+html.rk-ui-pablo input.switch::after { border-radius: 0; background: var(--pb-muted); box-shadow: none; }
+html.rk-ui-pablo input.switch:checked { background: var(--pb-energy); border-color: transparent; }
+html.rk-ui-pablo input.switch:checked::after { background: var(--pb-void); }
+html.rk-ui-pablo :is(.pill, .tag, .confirm, .item, .item-main, .outfit-btn, .outfit-btn img, .outfit-btn .ph, .look-mark, .swatch, .bar, .bar i, .toggle) { border-radius: 0; }
+html.rk-ui-pablo .pill { background: var(--pb-lime); color: var(--pb-void); clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .pill .rk-i { color: var(--pb-void); }
+html.rk-ui-pablo .tag { background: var(--pb-void); color: var(--pb-volt); border: 1px solid var(--pb-line-hi); font-family: var(--pb-mono); }
+html.rk-ui-pablo .bar { background: var(--pb-void); transform: skewX(-20deg); }
+html.rk-ui-pablo .bar i { background: var(--pb-energy); }
+html.rk-ui-pablo :is(.item, .toggle, .outfit-btn):hover { background: rgba(43, 228, 255, .1); }
+html.rk-ui-pablo :is(.item, .toggle):hover .rk-i { color: var(--pb-volt); }
+html.rk-ui-pablo .thumb, html.rk-ui-pablo .thumb.round { border-radius: 0; box-shadow: 0 0 0 1px var(--pb-line-hi); }
+html.rk-ui-pablo .folder { color: var(--pb-lime); font-family: var(--pb-mono); letter-spacing: .06em; }
+html.rk-ui-pablo .more { color: var(--pb-void); background: var(--pb-lime); padding: 1px 8px; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .link { font-family: var(--pb-label); font-weight: 600; transition: transform .14s var(--pb-out), border-color .12s; }
+html.rk-ui-pablo .link:hover { border-color: var(--pb-volt); transform: translateY(-2px); }
+html.rk-ui-pablo .link .rk-i { color: var(--pb-volt); }

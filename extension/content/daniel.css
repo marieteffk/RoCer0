@@ -587,6 +587,31 @@ html.rk-t-daniel #rx-streamer-badge { background: var(--p5-red) !important; colo
 html.rk-t-daniel :is(.rx-panel-title, .rx-modal-head, .rx-search-title) { font-family: var(--p5-title) !important; font-style: italic; text-transform: uppercase; letter-spacing: .02em; }
 html.rk-t-daniel :is(.rx-btn, .rx-primary, .rx-play) { border-radius: 0 !important; transform: skewX(-8deg); }
 
+/* ---------- Papelera de amigos ---------- */
+/* Botón negro con borde blanco y sombra roja; en el modo borrar, rojo. Casillas cuadradas y la barra como una hoja negra. */
+html.rk-t-daniel #rk-trash {
+  background: #000; color: var(--p5-white); border: 3px solid var(--p5-white); border-right: 0; border-radius: 0; box-shadow: -6px 6px 0 var(--p5-red);
+  --rk-trash-fill: transparent; --rk-trash-lid: transparent;
+}
+html.rk-t-daniel #rk-trash:focus-visible { outline: 3px solid var(--p5-cyan); outline-offset: 2px; }
+html.rk-t-daniel #rk-trash[aria-pressed="true"] { background: var(--p5-red); color: #fff; border-color: #000; box-shadow: -6px 6px 0 #000; --rk-trash-ink: var(--p5-red); --rk-trash-fill: rgba(0, 0, 0, .25); --rk-trash-lid: rgba(0, 0, 0, .25); }
+html.rk-t-daniel .rk-trash-count { border-radius: 0; background: var(--p5-red); color: #fff; font-family: var(--p5-label); box-shadow: 0 0 0 2px #000; transform: rotate(-6deg); }
+html.rk-t-daniel #rk-trash[aria-pressed="true"] .rk-trash-count { background: #fff; color: var(--p5-red); }
+html.rk-t-daniel #rk-trash-bar { background: var(--p5-dots-w), #000; color: #fff; border: 3px solid var(--p5-white); border-radius: 0; box-shadow: 8px 8px 0 var(--p5-red); }
+html.rk-t-daniel .rk-trash-head b { font-family: var(--p5-title); font-weight: 400; font-style: italic; font-size: 20px; text-transform: uppercase; letter-spacing: .02em; }
+html.rk-t-daniel .rk-trash-n { font-family: var(--p5-label); color: var(--p5-red-hi); }
+html.rk-t-daniel .rk-trash-help { color: #d8d8d8; }
+html.rk-t-daniel .rk-trash-progress { border-radius: 0; background: #2a2a2a; transform: skewX(-20deg); }
+html.rk-t-daniel .rk-trash-progress i { border-radius: 0; background: var(--p5-red); }
+html.rk-t-daniel .rk-trash-tick { border-radius: 0; border: 2px solid #fff; background: rgba(0, 0, 0, .7); box-shadow: 3px 3px 0 #000; }
+html.rk-t-daniel [data-rk-trash="on"] > .rk-trash-tick { background: var(--p5-red); color: #fff; transform: scale(1.14) rotate(-6deg); }
+html.rk-t-daniel [data-rk-trash="on"] { outline-color: var(--p5-red) !important; }
+html.rk-t-daniel #rk-trash-lasso { border-radius: 0; border-color: var(--p5-red); background: rgba(229, 25, 28, .14); }
+html.rk-t-daniel .rk-trash-warn { border-radius: 0; background: var(--p5-red); color: #fff; border: 2px solid #000; box-shadow: 4px 4px 0 #000; }
+html.rk-t-daniel .rk-trash-list li { border-radius: 0; background: #000; border: 2px solid rgba(255, 255, 255, .5); }
+html.rk-t-daniel :is(.rk-trash-list img, .rk-trash-ph) { border-radius: 0; box-shadow: 0 0 0 2px #fff; }
+html.rk-t-daniel .rx-btn.rk-trash-go, html.rk-t-daniel .rx-btn.rk-trash-danger { background: var(--p5-red); border-color: #000; color: #fff !important; }
+
 /* ---------- Golpe al hacer clic (lo pinta daniel.js) ---------- */
 .rk-p5-hit { position: fixed; z-index: 2147483001; width: 70px; height: 70px; margin: -35px 0 0 -35px; pointer-events: none; }
 .rk-p5-hit::before, .rk-p5-hit::after { content: ""; position: absolute; inset: 0; clip-path: polygon(50% 0, 61% 33%, 98% 22%, 70% 52%, 96% 84%, 57% 68%, 46% 100%, 39% 66%, 2% 78%, 30% 50%, 6% 16%, 40% 32%); }

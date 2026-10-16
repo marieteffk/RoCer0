@@ -111,6 +111,7 @@ html.rk-glow .page-head h1 { text-shadow: var(--rk-text-glow); }
 .group-head .panel-actions input[type=search] { width: 220px; padding: 5px 9px; }
 .card { background: var(--rk-panel); border: 1px solid var(--rk-border); border-radius: var(--rk-radius); padding: 16px 18px; backdrop-filter: var(--rk-backdrop); -webkit-backdrop-filter: var(--rk-backdrop); }
 .card.rows, .card.links { padding: 0; overflow: hidden; }
+.card-text p { margin: 0; line-height: 1.55; color: var(--rk-muted); }
 .panel-note { margin: 0 0 12px; }
 .flash { animation: flash 1.4s ease; }
 @keyframes flash { 0%, 40% { box-shadow: 0 0 0 3px var(--rk-accent); border-radius: var(--rk-radius); } 100% { box-shadow: 0 0 0 3px transparent; } }
@@ -614,6 +615,114 @@ html.rk-ui-daniel .preview-label { display: inline-block; padding: 1px 10px; col
 .preview.rk-t-daniel .pv-side-item.on::before { content: ""; position: absolute; inset: -3px 8px -5px -10px; z-index: -1; background: var(--p5-cyan); clip-path: var(--p5-bolt); }
 .preview.rk-t-daniel .pv-side-item.on::after { content: ""; position: absolute; top: -4px; bottom: -2px; right: -2px; width: 44px; z-index: -1; background: var(--p5-red); clip-path: var(--p5-shard); }
 .preview.rk-t-daniel .pv-footer { color: #fff; font-family: var(--p5-label); font-style: italic; text-transform: uppercase; }
+
+/* ---------- Tema Pablo en estos ajustes (html.rk-ui-pablo; sus colores y formas vienen de content/pablo.css) ---------- */
+html.rk-ui-pablo .side { background: linear-gradient(180deg, var(--pb-volt), var(--pb-lime)) 100% 0 / 2px 100% no-repeat, linear-gradient(180deg, rgba(11, 9, 32, .96), rgba(19, 15, 46, .93)); border-right: 0; }
+html.rk-ui-pablo .brand b { font-family: var(--pb-title); font-weight: 800; font-size: 26px; letter-spacing: .02em; text-shadow: 0 0 14px rgba(43, 228, 255, .45); }
+html.rk-ui-pablo .brand small { font-family: var(--pb-mono); color: var(--pb-lime); letter-spacing: .04em; }
+html.rk-ui-pablo .logo { border-radius: 0; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .side-search { border-radius: 0; background: var(--pb-void); border: 1px solid rgba(180, 174, 224, .4); clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .side-search:focus-within { border-color: var(--pb-volt); box-shadow: inset 0 0 0 1px var(--pb-volt); }
+html.rk-ui-pablo .side-search input::placeholder { color: var(--pb-faint); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .1em; }
+html.rk-ui-pablo .side-search-ic { color: var(--pb-volt); }
+html.rk-ui-pablo .side-search kbd { background: var(--pb-raised); color: var(--pb-volt); border-color: var(--pb-line-hi); border-radius: 0; font-family: var(--pb-mono); }
+html.rk-ui-pablo .nav-group { font-family: var(--pb-mono); font-weight: 400; letter-spacing: .14em; color: var(--pb-lime); }
+html.rk-ui-pablo .nav-group::before { content: "// "; color: var(--pb-volt); }
+html.rk-ui-pablo #nav a { isolation: isolate; border-radius: 0; font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: 12.5px;
+  transition: transform .14s var(--pb-out), color .1s; }
+html.rk-ui-pablo #nav a:hover { background: transparent; color: var(--pb-volt); transform: translateX(4px); }
+html.rk-ui-pablo #nav a:hover .ui-i { color: var(--pb-volt); }
+/* La sección abierta: el mismo paralelogramo verde y cian del menú de roblox.com, con letras oscuras. */
+html.rk-ui-pablo #nav a.active { background: transparent; color: var(--pb-void); }
+html.rk-ui-pablo #nav a.active::before { left: 2px; right: 6px; top: 2px; bottom: 2px; width: auto; z-index: -1; border-radius: 0; background: var(--pb-energy); transform: skewX(-14deg); }
+html.rk-ui-pablo #nav a.active .ui-i { color: var(--pb-void); }
+html.rk-ui-pablo #nav a.off:not(.active) .nav-label { color: var(--pb-faint); }
+
+html.rk-ui-pablo .page-ic { border-radius: 0; background: var(--pb-raised); color: var(--pb-volt); border: 1px solid var(--pb-line-hi); clip-path: var(--pb-cut-sm); box-shadow: inset 0 2px 0 var(--pb-volt); }
+html.rk-ui-pablo .page-ic .ui-i { color: var(--pb-volt); }
+html.rk-ui-pablo .page-head h1 { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; font-size: 38px; line-height: 1;
+  text-shadow: 0 0 16px rgba(43, 228, 255, .4), 0 0 34px rgba(47, 107, 255, .25); }
+html.rk-ui-pablo .page-desc { font-family: var(--pb-label); color: var(--pb-muted); text-shadow: none; }
+html.rk-ui-pablo .page-master { border-radius: 0; background: var(--pb-void); border: 1px solid var(--pb-line-hi); clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .page-master-text { font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .08em; }
+html.rk-ui-pablo .group-head h3 { font-family: var(--pb-label); font-weight: 600; letter-spacing: .14em; color: var(--pb-text); text-shadow: none; }
+html.rk-ui-pablo .group-head h3 .ui-i { color: var(--pb-volt); }
+html.rk-ui-pablo :is(.card, .stat, .medal) { background: var(--pb-brackets), var(--pb-glass); border: 1px solid var(--pb-line); border-radius: 0; box-shadow: inset 0 2px 0 var(--pb-volt), 0 14px 34px rgba(0, 0, 0, .3); }
+html.rk-ui-pablo .page-off, html.rk-ui-pablo .page-locked { border-radius: 0; background: var(--pb-panel); border: 1px solid rgba(210, 255, 60, .5); box-shadow: inset 3px 0 0 var(--pb-lime); }
+html.rk-ui-pablo .page-locked > .ui-i, html.rk-ui-pablo .page-off > .ui-i { color: var(--pb-lime); }
+html.rk-ui-pablo .lock-chip { border-radius: 0; background: var(--pb-lime); color: var(--pb-void); border-color: var(--pb-lime); clip-path: var(--pb-cut-sm); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .06em; }
+html.rk-ui-pablo .lock-chip .ui-i { color: var(--pb-void); }
+html.rk-ui-pablo .link-row:hover, html.rk-ui-pablo .item:hover { background: rgba(43, 228, 255, .1); }
+
+/* Controles */
+html.rk-ui-pablo .btn { border: 0; border-radius: 0; clip-path: var(--pb-cut-sm); background: var(--pb-raised); color: var(--pb-volt);
+  box-shadow: inset 0 0 0 1px rgba(43, 228, 255, .4), inset 0 -2px 0 var(--pb-volt); font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+  transition: transform .12s var(--pb-out), filter .12s, color .1s, background-color .1s; }
+html.rk-ui-pablo .btn:hover:not(:disabled) { background: #322a7a; color: var(--pb-arc); transform: translateY(-1px); }
+html.rk-ui-pablo .btn:active:not(:disabled) { transform: scale(.97); }
+html.rk-ui-pablo .btn:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--pb-void), inset 0 0 0 4px var(--pb-arc); }
+html.rk-ui-pablo .btn-accent, html.rk-ui-pablo .btn-accent:hover:not(:disabled) { background: var(--pb-energy); color: var(--pb-void); box-shadow: none; }
+html.rk-ui-pablo .btn-accent:hover:not(:disabled) { filter: brightness(1.08); }
+html.rk-ui-pablo .btn-danger-solid, html.rk-ui-pablo .btn-danger-solid:hover:not(:disabled) { background: var(--pb-danger); color: var(--pb-void); box-shadow: none; }
+html.rk-ui-pablo .btn-danger:hover:not(:disabled) { color: var(--pb-danger); }
+html.rk-ui-pablo .btn-ghost { background: transparent; box-shadow: none; color: var(--pb-muted); }
+html.rk-ui-pablo .btn-ghost:hover:not(:disabled) { background: rgba(43, 228, 255, .1); color: var(--pb-volt); }
+html.rk-ui-pablo :is(input:not([type]), input[type=text], input[type=url], input[type=number], input[type=search], input[type=time], select, textarea) {
+  background: var(--pb-void); color: var(--pb-text); border: 1px solid rgba(180, 174, 224, .45); border-radius: 0; }
+html.rk-ui-pablo :is(input, select, textarea):focus { border-color: var(--pb-volt); box-shadow: 0 0 0 1px var(--pb-volt), 0 0 14px rgba(43, 228, 255, .3); }
+html.rk-ui-pablo :is(input, textarea)::placeholder { color: var(--pb-faint); }
+html.rk-ui-pablo select option, html.rk-ui-pablo select optgroup { background: var(--pb-panel); color: var(--pb-text); }
+html.rk-ui-pablo input.switch { border-radius: 0; background: var(--pb-void); border: 1px solid rgba(180, 174, 224, .5); transform: skewX(-12deg); }
+html.rk-ui-pablo input.switch::after { border-radius: 0; background: var(--pb-muted); box-shadow: none; }
+html.rk-ui-pablo input.switch:checked { background: var(--pb-energy); border-color: transparent; }
+html.rk-ui-pablo input.switch:checked::after { background: var(--pb-void); }
+html.rk-ui-pablo input.switch:focus-visible { box-shadow: 0 0 0 2px var(--pb-arc); }
+html.rk-ui-pablo :is(.segc, .seg) { border-radius: 0; background: var(--pb-void); border: 1px solid var(--pb-line); }
+html.rk-ui-pablo :is(.segc, .seg) button { border-radius: 0; font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+html.rk-ui-pablo :is(.segc, .seg) button:hover { color: var(--pb-volt); }
+html.rk-ui-pablo :is(.segc, .seg) button.on { background: var(--pb-lime); color: var(--pb-void); box-shadow: none; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo :is(.chip, .chip-opt, .tag-pill, .pill, .tag, .tcheck, .tnow, .hotkey, .tagbox, .order-row, .swatch) { border-radius: 0; }
+html.rk-ui-pablo :is(.chip, .chip-opt) { background: var(--pb-void); border: 1px solid var(--pb-line); color: var(--pb-muted); font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo :is(.chip, .chip-opt):hover { color: var(--pb-volt); border-color: var(--pb-line-hi); }
+html.rk-ui-pablo :is(.chip.on, .chip-opt.on) { background: var(--pb-lime); color: var(--pb-void); border-color: var(--pb-lime); }
+html.rk-ui-pablo .chip-opt.on .ui-i { color: var(--pb-void); }
+html.rk-ui-pablo .meter, html.rk-ui-pablo .meter i, html.rk-ui-pablo .bar i { border-radius: 0; }
+html.rk-ui-pablo .meter i, html.rk-ui-pablo .bar i { background: var(--pb-energy); }
+html.rk-ui-pablo kbd { border-radius: 0; font-family: var(--pb-mono); color: var(--pb-volt); }
+
+/* Galería, diálogos y avisos */
+html.rk-ui-pablo .tcard { border-radius: 0; transition: transform .16s var(--pb-out), border-color .12s; }
+html.rk-ui-pablo .tcard:hover, html.rk-ui-pablo .tcard:focus-visible { transform: translateY(-3px); border-color: var(--pb-volt); }
+html.rk-ui-pablo .tcard.on { border-color: var(--pb-lime); box-shadow: 0 0 0 1px var(--pb-lime), inset 0 2px 0 var(--pb-lime); }
+html.rk-ui-pablo .tcard .tname { font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+html.rk-ui-pablo .tcard :is(.tcheck, .tfixed) { background: var(--pb-lime); color: var(--pb-void); clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .tcard .tfixed .ui-i { color: var(--pb-void); }
+html.rk-ui-pablo .dlg { border-radius: 0; background: var(--pb-panel); border: 1px solid var(--pb-line-hi); box-shadow: inset 0 2px 0 var(--pb-volt), 0 24px 60px rgba(0, 0, 0, .5); animation: rk-pb-brake .28s var(--pb-brake); }
+html.rk-ui-pablo .dlg h2 { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; font-size: 26px; letter-spacing: .02em; }
+html.rk-ui-pablo .dlg h2 .ui-i { color: var(--pb-volt); }
+html.rk-ui-pablo #toast { border-radius: 0; background: var(--pb-panel); border: 1px solid var(--pb-line-hi); box-shadow: inset 0 2px 0 var(--pb-volt), 0 12px 30px rgba(0, 0, 0, .45);
+  font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .06em; }
+html.rk-ui-pablo #toast .ui-i { color: var(--pb-lime); }
+html.rk-ui-pablo .ed-locked-head h2 { font-family: var(--pb-title); font-weight: 800; text-transform: uppercase; font-size: 26px; letter-spacing: .02em; }
+html.rk-ui-pablo .ed-locked-head > .ui-i { background: var(--pb-lime); color: var(--pb-void); padding: 4px; clip-path: var(--pb-cut-sm); }
+html.rk-ui-pablo .preview-label { font-family: var(--pb-mono); color: var(--pb-lime); letter-spacing: .1em; text-transform: uppercase; }
+html.rk-ui-pablo .preview-label::before { content: "// "; color: var(--pb-volt); }
+
+/* Vista previa con Pablo: cabecera oscura con la franja de energía y el menú con dorsales, como en roblox.com */
+.preview.rk-t-pablo .pv-header { background: linear-gradient(90deg, var(--pb-volt), var(--pb-lime)) 0 100% / 100% 2px no-repeat, rgba(11, 9, 32, .94); border-bottom: 0;
+  font-family: var(--pb-label); font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+.preview.rk-t-pablo .pv-search { border-radius: 0; background: var(--pb-void); border: 1px solid rgba(180, 174, 224, .4); color: var(--pb-faint); clip-path: var(--pb-cut-sm); }
+.preview.rk-t-pablo .pv-robux { color: var(--pb-lime); font-family: var(--pb-mono); }
+.preview.rk-t-pablo .pv-logo { border-radius: 0; clip-path: var(--pb-cut-sm); }
+.preview.rk-t-pablo .pv-side { background: linear-gradient(180deg, rgba(11, 9, 32, .92), rgba(19, 15, 46, .86)); border-right: 1px solid var(--pb-line); gap: 3px; padding-top: 12px; counter-reset: pb-nav; overflow: visible; }
+.preview.rk-t-pablo .pv-side-item { position: relative; isolation: isolate; counter-increment: pb-nav; background: none; border-radius: 0; color: var(--pb-text);
+  font-family: var(--pb-label); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.preview.rk-t-pablo .pv-side-item .rk-i { display: none; }
+.preview.rk-t-pablo .pv-side-item > span::before { content: counter(pb-nav, decimal-leading-zero); display: inline-block; min-width: 18px; margin-right: 8px; font: 400 10px/1 var(--pb-mono); letter-spacing: 0; color: var(--pb-faint); }
+.preview.rk-t-pablo .pv-side-item.on { color: var(--pb-void); }
+.preview.rk-t-pablo .pv-side-item.on::before { content: ""; position: absolute; inset: 2px -4px 2px -2px; z-index: -1; background: var(--pb-energy); transform: skewX(-14deg); }
+.preview.rk-t-pablo .pv-side-item.on > span::before { color: var(--pb-void); opacity: .7; }
+.preview.rk-t-pablo .pv-footer { color: var(--pb-muted); font-family: var(--pb-label); text-transform: uppercase; letter-spacing: .1em; }
 
 /* Dentro de Roblox (Ajustes → RoCer0) */
 html.embed { --side-w: 206px; }
